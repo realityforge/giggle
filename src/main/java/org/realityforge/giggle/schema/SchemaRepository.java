@@ -8,6 +8,7 @@ import graphql.schema.idl.ScalarInfo;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import graphql.schema.idl.errors.SchemaProblem;
 import graphql.schema.validation.SchemaValidator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,9 +45,11 @@ public final class SchemaRepository
    *
    * @param components the file components that are used to construct the schema.
    * @return a GraphQLSchema instance.
+   * @throws SchemaProblem if the schema can not be correctly parsed or validated.
    */
   @Nonnull
   public GraphQLSchema getSchema( @Nonnull final List<Path> components )
+    throws SchemaProblem
   {
 
     final List<byte[]> schemaBytes = loadFiles( components );

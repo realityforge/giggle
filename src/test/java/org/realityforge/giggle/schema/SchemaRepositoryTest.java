@@ -1,7 +1,10 @@
 package org.realityforge.giggle.schema;
 
 import gir.io.FileUtil;
+import graphql.ErrorType;
+import graphql.GraphQLError;
 import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.errors.SchemaProblem;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -144,6 +147,36 @@ public class SchemaRepositoryTest
       final GraphQLSchema schema = schemaRepository.getSchema( components );
 
       assertNotNull( schema.getType( "Date" ) );
+    } );
+  }
+
+  @Test
+  public void getSchema_SchemaProblem()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      FileUtil.write( "schema.graphql",
+                      "schema {\n" +
+                      "  query: Query\n" +
+                      "}\n" +
+                      "type Query {\n" +
+                      "}\n" +
+                      "type Person {\n" +
+                      "  DOB: Date\n" +
+                      "}" );
+      final SchemaRepository schemaRepository = new SchemaRepository();
+      final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
+      final List<Path> components = Collections.singletonList( schemaFile );
+
+      final SchemaProblem exception =
+        expectThrows( SchemaProblem.class, () -> schemaRepository.getSchema( components ) );
+
+      final List<GraphQLError> errors = exception.getErrors();
+
+      assertEquals( errors.size(), 1 );
+      final GraphQLError error = errors.iterator().next();
+      assertEquals( error.getMessage(), "The field type 'Date' is not present when resolving type 'Person' [@7:1]" );
+      assertEquals( error.getErrorType(), ErrorType.ValidationError );
     } );
   }
 }
