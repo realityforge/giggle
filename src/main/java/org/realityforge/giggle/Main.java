@@ -1,5 +1,6 @@
 package org.realityforge.giggle;
 
+import graphql.GraphQLError;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.errors.SchemaProblem;
 import java.nio.file.Path;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.realityforge.getopt4j.CLArgsParser;
 import org.realityforge.getopt4j.CLOption;
