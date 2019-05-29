@@ -48,6 +48,6 @@ public class MainTest
   {
     final TestHandler handler = new TestHandler();
     Main.processOptions( newEnvironment( createLogger( handler ) ), args );
-    return handler.getRecords().stream().map( LogRecord::getMessage ).collect( Collectors.joining( "\n" ) );
+    return handler.toString();
   }
 }
