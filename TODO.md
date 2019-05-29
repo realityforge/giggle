@@ -14,6 +14,19 @@ complete as there is too much un-said.
   Each generation cycle is triggered by a command that includes the input files, the sha256 of
   the input files and any parameters controlling the generation. The generation should be deterministic.
 
+## Actions
+
+Each Action takes in
++ schema files
++ document files
++ name mapping files that map a GraphQL symbol to an existing type. i.e.
+  - jpa entities for types on server side
+  - fragment interfaces defined by an earlier run of tool or manually written
+  - input types defined by an earlier run of tool or manually written
++ An expectation on whether an ID is an integer for a particular symbol
++ output directory.
++ A filter file or regex that determines which symbols will be processed in this action.
+
 ### Additional Notes
 
 The following notes were extracted from the original issue that motivated the creation of this project.
