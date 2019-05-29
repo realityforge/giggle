@@ -6,7 +6,7 @@
 ## What is giggle?
 
 This is a simple, self-contained, command line application that generates source code and other artifacts
-from a GraphQL schema and operations..
+from a GraphQL schema and operations.
 
 ### Getting Started
 
