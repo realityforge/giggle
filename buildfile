@@ -1,7 +1,7 @@
 require 'buildr/git_auto_version'
 require 'buildr/gpg'
 
-desc 'giggle: Generate artifacts from a GraphQL schema and operations'
+desc 'giggle: Generate source code and artifacts from a GraphQL schema and operations'
 define 'giggle' do
   project.group = 'org.realityforge.giggle'
   compile.options.source = '1.8'
