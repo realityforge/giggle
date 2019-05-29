@@ -1,5 +1,7 @@
 package org.realityforge.giggle;
 
+import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.errors.SchemaProblem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.realityforge.getopt4j.CLArgsParser;
 import org.realityforge.getopt4j.CLOption;
 import org.realityforge.getopt4j.CLOptionDescriptor;
 import org.realityforge.getopt4j.CLUtil;
+import org.realityforge.giggle.schema.SchemaRepository;
 
 /**
  * The entry point in which to run the tool.
@@ -62,7 +65,26 @@ public class Main
     final Logger logger = c_environment.logger();
     try
     {
+      final SchemaRepository schemaRepository = new SchemaRepository();
+      final GraphQLSchema schema = schemaRepository.getSchema( c_environment.getSchemaFiles() );
 
+    }
+    catch ( final SchemaProblem sp )
+    {
+      logger.log( Level.WARNING, "Error: Failed to parse schema" );
+      final List<GraphQLError> errors = sp.getErrors();
+      for ( final GraphQLError error : errors )
+      {
+        final String locations =
+          error.getLocations()
+            .stream()
+            .map( e -> e.getSourceName() + ":" + e.getLine() )
+            .collect( Collectors.joining( " " ) );
+        logger.log( Level.WARNING, error.getErrorType() + ":" + error.getMessage() +
+                                   ( locations.isEmpty() ? "" : " @ " + locations ) );
+      }
+
+      System.exit( ExitCodes.ERROR_PARSING_SCHEMA_EXIT_CODE );
     }
     catch ( final TerminalStateException tse )
     {
