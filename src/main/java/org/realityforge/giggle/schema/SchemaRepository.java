@@ -49,7 +49,6 @@ public final class SchemaRepository
   public GraphQLSchema getSchema( @Nonnull final List<Path> components )
     throws SchemaProblem
   {
-
     final List<byte[]> schemaBytes = loadFiles( components );
     final String id = deriveId( schemaBytes );
 
