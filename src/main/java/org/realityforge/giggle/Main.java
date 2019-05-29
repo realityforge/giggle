@@ -38,7 +38,7 @@ public class Main
                               "Verbose output of differences.",
                               new int[]{ QUIET_OPT } ),
       new CLOptionDescriptor( "schema",
-                              CLOptionDescriptor.ARGUMENT_REQUIRED,
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               SCHEMA_FILE_OPT,
                               "The path to a graphql schema file." )
     };
