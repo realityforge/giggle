@@ -21,6 +21,7 @@ public class Main
   private static final int QUIET_OPT = 'q';
   private static final int VERBOSE_OPT = 'v';
   private static final int SCHEMA_FILE_OPT = 's';
+  private static final int DOCUMENT_FILE_OPT = 'd';
   private static final CLOptionDescriptor[] OPTIONS = new CLOptionDescriptor[]
     {
       new CLOptionDescriptor( "help",
@@ -40,7 +41,11 @@ public class Main
       new CLOptionDescriptor( "schema",
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               SCHEMA_FILE_OPT,
-                              "The path to a graphql schema file." )
+                              "The path to a graphql schema file." ),
+      new CLOptionDescriptor( "document",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              DOCUMENT_FILE_OPT,
+                              "The path to a graphql document file." )
     };
   private static final Environment c_environment =
     new Environment( System.console(), Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
@@ -134,6 +139,19 @@ public class Main
             return false;
           }
           environment.addSchemaFile( schemaFile );
+          break;
+        }
+        case DOCUMENT_FILE_OPT:
+        {
+          final String argument = option.getArgument();
+          final Path documentFile = environment.currentDirectory().resolve( argument ).toAbsolutePath().normalize();
+          if ( !documentFile.toFile().exists() )
+          {
+            logger.log( Level.SEVERE,
+                        "Error: Specified graphql document file does not exist. Specified value: " + argument );
+            return false;
+          }
+          environment.addDocumentFile( documentFile );
           break;
         }
 

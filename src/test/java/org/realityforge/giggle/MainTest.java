@@ -25,7 +25,9 @@ public class MainTest
                   "\t-v, --verbose\n" +
                   "\t\tVerbose output of differences.\n" +
                   "\t-s, --schema <argument>\n" +
-                  "\t\tThe path to a graphql schema file." );
+                  "\t\tThe path to a graphql schema file.\n" +
+                  "\t-d, --document <argument>\n" +
+                  "\t\tThe path to a graphql document file." );
   }
 
   @Test
@@ -84,6 +86,58 @@ public class MainTest
       final List<Path> schemaFiles = environment.getSchemaFiles();
       assertEquals( schemaFiles.get( 0 ), file1 );
       assertEquals( schemaFiles.get( 1 ), file2 );
+    } );
+  }
+
+  @Test
+  public void processOptions_documentNoExist()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      FileUtil.write( "schema.graphql", "ContentIgnored" );
+      final String output = processOptions( "--schema", "schema.graphql", "--document", "query.graphql" );
+      assertOutputContains( output,
+                            "Error: Specified graphql document file does not exist. Specified value: query.graphql" );
+    } );
+  }
+
+  @Test
+  public void processOptions_singleDocument()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final Environment environment = newEnvironment();
+      FileUtil.write( "schema.graphql", "ContentIgnored" );
+      FileUtil.write( "query.graphql", "ContentIgnored" );
+      Main.processOptions( environment, "--schema", "schema.graphql", "--document", "query.graphql" );
+
+      final Path file = FileUtil.getCurrentDirectory().resolve( "query.graphql" );
+      assertEquals( environment.getDocumentFiles().get( 0 ), file );
+    } );
+  }
+
+  @Test
+  public void processOptions_multipleDocuments()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final Environment environment = newEnvironment();
+      FileUtil.write( "schema.graphql", "ContentIgnored" );
+      FileUtil.write( "query.graphql", "ContentIgnored" );
+      FileUtil.write( "mutation.graphql", "ContentIgnored" );
+      Main.processOptions( environment,
+                           "--schema",
+                           "schema.graphql",
+                           "--document",
+                           "query.graphql",
+                           "--document",
+                           "mutation.graphql" );
+
+      final Path file1 = FileUtil.getCurrentDirectory().resolve( "query.graphql" );
+      final Path file2 = FileUtil.getCurrentDirectory().resolve( "mutation.graphql" );
+      final List<Path> documentFiles = environment.getDocumentFiles();
+      assertEquals( documentFiles.get( 0 ), file1 );
+      assertEquals( documentFiles.get( 1 ), file2 );
     } );
   }
 

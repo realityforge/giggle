@@ -20,6 +20,8 @@ final class Environment
   private final Logger _logger;
   @Nonnull
   private final List<Path> _schemaFiles = new ArrayList<>();
+  @Nonnull
+  private final List<Path> _documentFiles = new ArrayList<>();
 
   Environment( @Nullable final Console console, @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -55,5 +57,16 @@ final class Environment
   List<Path> getSchemaFiles()
   {
     return Collections.unmodifiableList( _schemaFiles );
+  }
+
+  void addDocumentFile( @Nonnull final Path documentFile )
+  {
+    _documentFiles.add( Objects.requireNonNull( documentFile ) );
+  }
+
+  @Nonnull
+  List<Path> getDocumentFiles()
+  {
+    return Collections.unmodifiableList( _documentFiles );
   }
 }
