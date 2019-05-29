@@ -8,9 +8,9 @@ import javax.annotation.Nonnull;
 import static org.testng.Assert.*;
 
 @SuppressWarnings( "SameParameterValue" )
-abstract class AbstractTest
+public abstract class AbstractTest
 {
-  final void inIsolatedDirectory( @Nonnull final Task task )
+  protected final void inIsolatedDirectory( @Nonnull final Task task )
     throws Exception
   {
     Gir.go( () -> FileUtil.inTempDir( task ) );
