@@ -122,15 +122,15 @@ public final class SchemaRepository
   private List<byte[]> loadFiles( @Nonnull final List<Path> components )
   {
     final ArrayList<byte[]> schemaBytes = new ArrayList<>();
-    for ( final Path omponent : components )
+    for ( final Path component : components )
     {
       try
       {
-        schemaBytes.add( Files.readAllBytes( omponent ) );
+        schemaBytes.add( Files.readAllBytes( component ) );
       }
       catch ( final IOException ioe )
       {
-        throw new IllegalStateException( "Error reading schema file " + omponent, ioe );
+        throw new IllegalStateException( "Error reading schema file " + component, ioe );
       }
     }
     return schemaBytes;
