@@ -9,7 +9,6 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import graphql.schema.idl.errors.SchemaProblem;
-import graphql.schema.validation.SchemaValidator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +35,6 @@ public final class SchemaRepository
   private final SchemaGenerator _schemaGenerator = new SchemaGenerator();
   @Nonnull
   private final Map<String, WeakReference<GraphQLSchema>> _schemas = new HashMap<>();
-  private final SchemaValidator _validator = new SchemaValidator();
 
   /**
    * Return a GraphQLSchema instance constructed from the supplied files.
@@ -69,7 +67,6 @@ public final class SchemaRepository
     final RuntimeWiring runtimeWiring = buildRuntimeWiring( typeRegistry );
 
     final GraphQLSchema schema = _schemaGenerator.makeExecutableSchema( typeRegistry, runtimeWiring );
-    _validator.validateSchema( schema );
     _schemas.put( id, new WeakReference<>( schema ) );
     return schema;
   }
