@@ -67,7 +67,6 @@ public class Main
     {
       final SchemaRepository schemaRepository = new SchemaRepository();
       final GraphQLSchema schema = schemaRepository.getSchema( c_environment.getSchemaFiles() );
-
     }
     catch ( final SchemaProblem sp )
     {
