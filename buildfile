@@ -16,6 +16,10 @@ define 'giggle' do
 
   compile.with :javax_annotation,
                :getopt4j,
+               :graphql_java,
+               :slf4j_api,
+               :slf4j_jdk14,
+               :antlr4_runtime,
                :snakeyaml
 
   package(:jar)
