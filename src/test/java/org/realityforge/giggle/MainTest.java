@@ -50,7 +50,8 @@ public class MainTest
   {
     inIsolatedDirectory( () -> {
       final String output = processOptions( "--schema", "myschema.graphql" );
-      assertOutputContains( output, "Error: Specified graphql schema file does not exist. Specified value: myschema.graphql" );
+      assertOutputContains( output,
+                            "Error: Specified graphql schema file does not exist. Specified value: myschema.graphql" );
     } );
   }
 
