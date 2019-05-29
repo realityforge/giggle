@@ -1,4 +1,4 @@
-package org.realityforge.giggle;
+package org.realityforge.giggle.schema_store;
 
 import graphql.schema.Coercing;
 import graphql.schema.GraphQLScalarType;
