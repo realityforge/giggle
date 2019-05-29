@@ -1,6 +1,7 @@
 package org.realityforge.giggle.schema;
 
 import graphql.language.ScalarTypeDefinition;
+import graphql.parser.MultiSourceReader;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
@@ -61,7 +62,7 @@ public final class SchemaRepository
         return schema;
       }
     }
-    final TypeDefinitionRegistry typeRegistry = buildTypeDefinitionRegistry( schemaBytes );
+    final TypeDefinitionRegistry typeRegistry = buildTypeDefinitionRegistry( components, schemaBytes );
 
     final RuntimeWiring runtimeWiring = buildRuntimeWiring( typeRegistry );
 
@@ -90,14 +91,19 @@ public final class SchemaRepository
   }
 
   @Nonnull
-  private TypeDefinitionRegistry buildTypeDefinitionRegistry( @Nonnull final List<byte[]> schemaBytes )
+  private TypeDefinitionRegistry buildTypeDefinitionRegistry( @Nonnull final List<Path> components,
+                                                              @Nonnull final List<byte[]> schemaBytes )
   {
     final TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
+    int index = 0;
     for ( final byte[] data : schemaBytes )
     {
+      final Path path = components.get( index++ );
       final ByteArrayInputStream input = new ByteArrayInputStream( data );
       final InputStreamReader reader = new InputStreamReader( input, StandardCharsets.UTF_8 );
-      typeRegistry.merge( _schemaParser.parse( reader ) );
+      final MultiSourceReader msReader =
+        MultiSourceReader.newMultiSourceReader().reader( reader, path.toString() ).build();
+      typeRegistry.merge( _schemaParser.parse( msReader ) );
     }
     return typeRegistry;
   }

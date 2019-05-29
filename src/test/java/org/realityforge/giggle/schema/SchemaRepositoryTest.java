@@ -3,6 +3,7 @@ package org.realityforge.giggle.schema;
 import gir.io.FileUtil;
 import graphql.ErrorType;
 import graphql.GraphQLError;
+import graphql.language.SourceLocation;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.errors.SchemaProblem;
 import java.nio.file.Path;
@@ -177,6 +178,12 @@ public class SchemaRepositoryTest
       final GraphQLError error = errors.iterator().next();
       assertEquals( error.getMessage(), "The field type 'Date' is not present when resolving type 'Person' [@7:1]" );
       assertEquals( error.getErrorType(), ErrorType.ValidationError );
+      final List<SourceLocation> locations = error.getLocations();
+      assertEquals( locations.size(), 1 );
+      final SourceLocation location = locations.get( 0 );
+      assertEquals( location.getSourceName(), schemaFile.toString() );
+      assertEquals( location.getLine(), 7 );
+      assertEquals( location.getColumn(), 1 );
     } );
   }
 }
