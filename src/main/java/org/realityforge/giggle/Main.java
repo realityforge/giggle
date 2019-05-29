@@ -135,7 +135,7 @@ public class Main
           if ( !schemaFile.toFile().exists() )
           {
             logger.log( Level.SEVERE,
-                        "Error: Specified schema file does not exist. Specified value: " + argument );
+                        "Error: Specified graphql schema file does not exist. Specified value: " + argument );
             return false;
           }
           environment.addSchemaFile( schemaFile );
