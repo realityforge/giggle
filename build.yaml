@@ -1,0 +1,18 @@
+repositories:
+  remote:
+   - https://repo1.maven.org/maven2
+   - https://stocksoftware.jfrog.io/stocksoftware/public
+   - https://stocksoftware.jfrog.io/stocksoftware/staging
+
+artifacts:
+  idea_codestyle: au.com.stocksoftware.idea.codestyle:idea-codestyle:xml:1.13
+
+  javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.0.0
+
+  getopt4j: org.realityforge.getopt4j:getopt4j:jar:1.2
+
+  snakeyaml: org.yaml:snakeyaml:jar:1.24
+
+  gir: org.realityforge.gir:gir-core:jar:0.09
+
+  guiceyloops: org.realityforge.guiceyloops:guiceyloops:jar:0.98
