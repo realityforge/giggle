@@ -8,6 +8,7 @@ import graphql.validation.ValidationError;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -23,6 +24,7 @@ import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
+import org.realityforge.giggle.util.MappingUtil;
 
 /**
  * The entry point in which to run the tool.
@@ -99,6 +101,16 @@ public class Main
 
       final DocumentRepository documentRepository = new DocumentRepository();
       final Document document = documentRepository.getDocument( schema, c_environment.getDocumentFiles() );
+
+      final Map<String, String> enumMapping =
+        MappingUtil.getMapping( c_environment.getEnumMappingFiles() );
+      final Map<String, String> typeMapping =
+        MappingUtil.getMapping( c_environment.getTypeMappingFiles() );
+      final Map<String, String> fragmentMapping =
+        MappingUtil.getMapping( c_environment.getFragmentMappingFiles() );
+      final Map<String, String> operationMapping =
+        MappingUtil.getMapping( c_environment.getOperationMappingFiles() );
+
     }
     catch ( final DocumentReadException dre )
     {
