@@ -25,6 +25,7 @@ public final class DocumentRepository
   /**
    * Return a GraphQL Document instance constructed from the supplied files.
    *
+   * @param schema     the schema against which the document is validate.
    * @param components the file components that are used to construct the document.
    * @return a GraphQL Document instance.
    * @throws DocumentValidateException if the document can not be correctly parsed or validated.
