@@ -37,9 +37,9 @@ final class Environment
     return _logger;
   }
 
-  void addSchemaFile( @Nonnull final Path schemaFile )
+  void addSchemaFile( @Nonnull final Path file )
   {
-    _schemaFiles.add( Objects.requireNonNull( schemaFile ) );
+    _schemaFiles.add( Objects.requireNonNull( file ) );
   }
 
   @Nonnull
@@ -48,9 +48,9 @@ final class Environment
     return Collections.unmodifiableList( _schemaFiles );
   }
 
-  void addDocumentFile( @Nonnull final Path documentFile )
+  void addDocumentFile( @Nonnull final Path file )
   {
-    _documentFiles.add( Objects.requireNonNull( documentFile ) );
+    _documentFiles.add( Objects.requireNonNull( file ) );
   }
 
   @Nonnull
