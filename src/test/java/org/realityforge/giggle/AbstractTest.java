@@ -35,7 +35,7 @@ public abstract class AbstractTest
 
   final Environment newEnvironment( @Nonnull final Logger logger )
   {
-    return new Environment( null, FileUtil.getCurrentDirectory(), logger );
+    return new Environment( FileUtil.getCurrentDirectory(), logger );
   }
 
   @Nonnull

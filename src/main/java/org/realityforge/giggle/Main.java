@@ -59,7 +59,7 @@ public class Main
                               "The path to a graphql document file." )
     };
   private static final Environment c_environment =
-    new Environment( System.console(), Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
+    new Environment( Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
 
   public static void main( final String[] args )
   {
