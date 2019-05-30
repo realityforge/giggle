@@ -185,6 +185,43 @@ public class DocumentRepositoryTest
     } );
   }
 
+  @Test
+  public void getDocument_documentInvalid_duplicateFragments()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final GraphQLSchema schema =
+        buildGraphQLSchema( "type Person {\n" +
+                            "  name: String\n" +
+                            "}\n" +
+                            "extend type Query {\n" +
+                            "  person: Person" +
+                            "}\n" );
+
+      final Path documentFile =
+        writeContent( "document.graphql",
+                      "fragment NameParts on Person {\n" +
+                      "  name\n" +
+                      "}\n" +
+                      "fragment NameParts on Person {\n" +
+                      "  name\n" +
+                      "}\n" +
+                      "query myQuery {\n" +
+                      "  person {\n" +
+                      "    ...NameParts\n" +
+                      "  }\n" +
+                      "}\n" );
+
+      final DocumentValidateException exception =
+        expectThrows( DocumentValidateException.class,
+                      () -> new DocumentRepository().getDocument( schema, Collections.singletonList( documentFile ) ) );
+      final List<ValidationError> errors = exception.getErrors();
+      assertEquals( errors.size(), 1 );
+      final ValidationError error = errors.get( 0 );
+      assertEquals( error.getMessage(), "Validation error of type FragmentCycle: Multiple fragments defined with the name 'NameParts'" );
+    } );
+  }
+
   @Nonnull
   private Path writeContent( @Nonnull final String path, @Nonnull final String content )
     throws IOException
