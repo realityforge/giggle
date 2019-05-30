@@ -44,11 +44,12 @@ public final class SchemaRepository
    *
    * @param components the file components that are used to construct the schema.
    * @return a GraphQLSchema instance.
-   * @throws SchemaProblem if the schema can not be correctly parsed or validated.
+   * @throws SchemaProblem       if the schema can not be correctly parsed or validated.
+   * @throws SchemaReadException if there is an error reading a file component.
    */
   @Nonnull
   public GraphQLSchema getSchema( @Nonnull final List<Path> components )
-    throws SchemaProblem
+    throws SchemaProblem, SchemaReadException
   {
     final List<byte[]> schemaBytes = loadFiles( components );
     final String id = deriveId( schemaBytes );
@@ -130,7 +131,7 @@ public final class SchemaRepository
       }
       catch ( final IOException ioe )
       {
-        throw new IllegalStateException( "Error reading schema file " + component, ioe );
+        throw new SchemaReadException( "Error reading schema file " + component, ioe );
       }
     }
     return schemaBytes;

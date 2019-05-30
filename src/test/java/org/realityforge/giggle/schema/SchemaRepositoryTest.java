@@ -120,8 +120,8 @@ public class SchemaRepositoryTest
       final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
       final List<Path> components = Collections.singletonList( schemaFile );
 
-      final IllegalStateException exception =
-        expectThrows( IllegalStateException.class, () -> schemaRepository.getSchema( components ) );
+      final SchemaReadException exception =
+        expectThrows( SchemaReadException.class, () -> schemaRepository.getSchema( components ) );
       assertTrue( exception.getMessage().startsWith( "Error reading schema file " ) );
     } );
   }

@@ -15,6 +15,7 @@ import org.realityforge.getopt4j.CLArgsParser;
 import org.realityforge.getopt4j.CLOption;
 import org.realityforge.getopt4j.CLOptionDescriptor;
 import org.realityforge.getopt4j.CLUtil;
+import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
 
 /**
@@ -69,6 +70,11 @@ public class Main
     {
       final SchemaRepository schemaRepository = new SchemaRepository();
       final GraphQLSchema schema = schemaRepository.getSchema( c_environment.getSchemaFiles() );
+    }
+    catch ( final SchemaReadException sre )
+    {
+      logger.log( Level.WARNING, sre.getMessage() );
+      System.exit( ExitCodes.ERROR_READING_SCHEMA_EXIT_CODE );
     }
     catch ( final SchemaProblem sp )
     {
