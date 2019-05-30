@@ -189,31 +189,20 @@ public class Main
         }
         case SCHEMA_FILE_OPT:
         {
-          final String argument = option.getArgument();
-          final Path schemaFile = environment.currentDirectory().resolve( argument ).toAbsolutePath().normalize();
-          if ( !schemaFile.toFile().exists() )
+          if ( fileArgument( environment, option, "schema file", environment::addSchemaFile ) )
           {
-            logger.log( Level.SEVERE,
-                        "Error: Specified graphql schema file does not exist. Specified value: " + argument );
             return false;
           }
-          environment.addSchemaFile( schemaFile );
           break;
         }
         case DOCUMENT_FILE_OPT:
         {
-          final String argument = option.getArgument();
-          final Path documentFile = environment.currentDirectory().resolve( argument ).toAbsolutePath().normalize();
-          if ( !documentFile.toFile().exists() )
+          if ( fileArgument( environment, option, "graphql document", environment::addDocumentFile ) )
           {
-            logger.log( Level.SEVERE,
-                        "Error: Specified graphql document file does not exist. Specified value: " + argument );
             return false;
           }
-          environment.addDocumentFile( documentFile );
           break;
         }
-
         case VERBOSE_OPT:
         {
           logger.setLevel( Level.ALL );
@@ -245,6 +234,23 @@ public class Main
     }
 
     return true;
+  }
+
+  private static boolean fileArgument( @Nonnull final Environment environment,
+                                       @Nonnull final CLOption option,
+                                       @Nonnull final String label,
+                                       @Nonnull final Consumer<Path> action )
+  {
+    final String argument = option.getArgument();
+    final Path file = environment.currentDirectory().resolve( argument ).toAbsolutePath().normalize();
+    if ( !file.toFile().exists() )
+    {
+      final String message = "Error: Specified graphql " + label + " does not exist. Specified value: " + argument;
+      environment.logger().log( Level.SEVERE, message );
+      return true;
+    }
+    action.accept( file );
+    return false;
   }
 
   /**
