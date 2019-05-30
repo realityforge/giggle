@@ -189,7 +189,7 @@ public class Main
         }
         case SCHEMA_FILE_OPT:
         {
-          if ( fileArgument( environment, option, "schema file", environment::addSchemaFile ) )
+          if ( fileArgument( environment, option, "schema", environment::addSchemaFile ) )
           {
             return false;
           }
@@ -197,7 +197,7 @@ public class Main
         }
         case DOCUMENT_FILE_OPT:
         {
-          if ( fileArgument( environment, option, "graphql document", environment::addDocumentFile ) )
+          if ( fileArgument( environment, option, "document", environment::addDocumentFile ) )
           {
             return false;
           }
@@ -245,7 +245,7 @@ public class Main
     final Path file = environment.currentDirectory().resolve( argument ).toAbsolutePath().normalize();
     if ( !file.toFile().exists() )
     {
-      final String message = "Error: Specified graphql " + label + " does not exist. Specified value: " + argument;
+      final String message = "Error: Specified graphql " + label + " file does not exist. Specified value: " + argument;
       environment.logger().log( Level.SEVERE, message );
       return true;
     }
