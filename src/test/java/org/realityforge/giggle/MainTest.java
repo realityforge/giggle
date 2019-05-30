@@ -67,8 +67,7 @@ public class MainTest
       writeFile( "schema.graphql" );
       Main.processOptions( environment, "--schema", "schema.graphql" );
 
-      final Path file = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
-      assertEquals( environment.getSchemaFiles().get( 0 ), file );
+      assertEquals( environment.getSchemaFiles().get( 0 ), toPath( "schema.graphql" ) );
     } );
   }
 
@@ -82,11 +81,9 @@ public class MainTest
       writeFile( "schema2.graphql" );
       Main.processOptions( environment, "--schema", "schema1.graphql", "--schema", "schema2.graphql" );
 
-      final Path file1 = FileUtil.getCurrentDirectory().resolve( "schema1.graphql" );
-      final Path file2 = FileUtil.getCurrentDirectory().resolve( "schema2.graphql" );
       final List<Path> schemaFiles = environment.getSchemaFiles();
-      assertEquals( schemaFiles.get( 0 ), file1 );
-      assertEquals( schemaFiles.get( 1 ), file2 );
+      assertEquals( schemaFiles.get( 0 ), toPath( "schema1.graphql" ) );
+      assertEquals( schemaFiles.get( 1 ), toPath( "schema2.graphql" ) );
     } );
   }
 
@@ -112,8 +109,7 @@ public class MainTest
       writeFile( "query.graphql" );
       Main.processOptions( environment, "--schema", "schema.graphql", "--document", "query.graphql" );
 
-      final Path file = FileUtil.getCurrentDirectory().resolve( "query.graphql" );
-      assertEquals( environment.getDocumentFiles().get( 0 ), file );
+      assertEquals( environment.getDocumentFiles().get( 0 ), toPath( "query.graphql" ) );
     } );
   }
 
@@ -134,11 +130,9 @@ public class MainTest
                            "--document",
                            "mutation.graphql" );
 
-      final Path file1 = FileUtil.getCurrentDirectory().resolve( "query.graphql" );
-      final Path file2 = FileUtil.getCurrentDirectory().resolve( "mutation.graphql" );
       final List<Path> documentFiles = environment.getDocumentFiles();
-      assertEquals( documentFiles.get( 0 ), file1 );
-      assertEquals( documentFiles.get( 1 ), file2 );
+      assertEquals( documentFiles.get( 0 ), toPath( "query.graphql" ) );
+      assertEquals( documentFiles.get( 1 ), toPath( "mutation.graphql" ) );
     } );
   }
 
@@ -154,5 +148,11 @@ public class MainTest
     throws IOException
   {
     FileUtil.write( path, "ContentIgnored" );
+  }
+
+  @Nonnull
+  private Path toPath( @Nonnull final String filename )
+  {
+    return FileUtil.getCurrentDirectory().resolve( filename );
   }
 }
