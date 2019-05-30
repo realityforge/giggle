@@ -1,6 +1,7 @@
 package org.realityforge.giggle;
 
 import gir.io.FileUtil;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -63,7 +64,7 @@ public class MainTest
   {
     inIsolatedDirectory( () -> {
       final Environment environment = newEnvironment();
-      FileUtil.write( "schema.graphql", "ContentIgnored" );
+      writeFile( "schema.graphql" );
       Main.processOptions( environment, "--schema", "schema.graphql" );
 
       final Path file = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
@@ -77,8 +78,8 @@ public class MainTest
   {
     inIsolatedDirectory( () -> {
       final Environment environment = newEnvironment();
-      FileUtil.write( "schema1.graphql", "ContentIgnored" );
-      FileUtil.write( "schema2.graphql", "ContentIgnored" );
+      writeFile( "schema1.graphql" );
+      writeFile( "schema2.graphql" );
       Main.processOptions( environment, "--schema", "schema1.graphql", "--schema", "schema2.graphql" );
 
       final Path file1 = FileUtil.getCurrentDirectory().resolve( "schema1.graphql" );
@@ -94,7 +95,7 @@ public class MainTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      FileUtil.write( "schema.graphql", "ContentIgnored" );
+      writeFile( "schema.graphql" );
       final String output = processOptions( "--schema", "schema.graphql", "--document", "query.graphql" );
       assertOutputContains( output,
                             "Error: Specified graphql document file does not exist. Specified value: query.graphql" );
@@ -107,8 +108,8 @@ public class MainTest
   {
     inIsolatedDirectory( () -> {
       final Environment environment = newEnvironment();
-      FileUtil.write( "schema.graphql", "ContentIgnored" );
-      FileUtil.write( "query.graphql", "ContentIgnored" );
+      writeFile( "schema.graphql" );
+      writeFile( "query.graphql" );
       Main.processOptions( environment, "--schema", "schema.graphql", "--document", "query.graphql" );
 
       final Path file = FileUtil.getCurrentDirectory().resolve( "query.graphql" );
@@ -122,9 +123,9 @@ public class MainTest
   {
     inIsolatedDirectory( () -> {
       final Environment environment = newEnvironment();
-      FileUtil.write( "schema.graphql", "ContentIgnored" );
-      FileUtil.write( "query.graphql", "ContentIgnored" );
-      FileUtil.write( "mutation.graphql", "ContentIgnored" );
+      writeFile( "schema.graphql" );
+      writeFile( "query.graphql" );
+      writeFile( "mutation.graphql" );
       Main.processOptions( environment,
                            "--schema",
                            "schema.graphql",
@@ -147,5 +148,11 @@ public class MainTest
     final TestHandler handler = new TestHandler();
     Main.processOptions( newEnvironment( createLogger( handler ) ), args );
     return handler.toString();
+  }
+
+  private void writeFile( @Nonnull final String path )
+    throws IOException
+  {
+    FileUtil.write( path, "ContentIgnored" );
   }
 }
