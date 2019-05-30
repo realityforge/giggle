@@ -7,6 +7,8 @@ final class ExitCodes
   static final int ERROR_PARSING_ARGS_EXIT_CODE = 2;
   static final int ERROR_READING_SCHEMA_EXIT_CODE = 3;
   static final int ERROR_PARSING_SCHEMA_EXIT_CODE = 4;
+  static final int ERROR_READING_DOCUMENT_EXIT_CODE = 5;
+  static final int ERROR_PARSING_DOCUMENT_EXIT_CODE = 6;
 
   private ExitCodes()
   {

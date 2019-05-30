@@ -1,8 +1,10 @@
 package org.realityforge.giggle;
 
 import graphql.GraphQLError;
+import graphql.language.Document;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.errors.SchemaProblem;
+import graphql.validation.ValidationError;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -15,6 +17,9 @@ import org.realityforge.getopt4j.CLArgsParser;
 import org.realityforge.getopt4j.CLOption;
 import org.realityforge.getopt4j.CLOptionDescriptor;
 import org.realityforge.getopt4j.CLUtil;
+import org.realityforge.giggle.document.DocumentReadException;
+import org.realityforge.giggle.document.DocumentRepository;
+import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
 
@@ -70,6 +75,31 @@ public class Main
     {
       final SchemaRepository schemaRepository = new SchemaRepository();
       final GraphQLSchema schema = schemaRepository.getSchema( c_environment.getSchemaFiles() );
+
+      final DocumentRepository documentRepository = new DocumentRepository();
+      final Document document = documentRepository.getDocument( schema, c_environment.getDocumentFiles() );
+    }
+    catch ( final DocumentReadException dre )
+    {
+      logger.log( Level.WARNING, dre.getMessage() );
+      System.exit( ExitCodes.ERROR_READING_DOCUMENT_EXIT_CODE );
+    }
+    catch ( final DocumentValidateException dve )
+    {
+      logger.log( Level.WARNING, "Error: Failed to validate document" );
+      final List<ValidationError> errors = dve.getErrors();
+      for ( final ValidationError error : errors )
+      {
+        final String locations =
+          error.getLocations()
+            .stream()
+            .map( e -> e.getSourceName() + ":" + e.getLine() )
+            .collect( Collectors.joining( " " ) );
+        logger.log( Level.WARNING, error.getErrorType() + ":" + error.getMessage() +
+                                   ( locations.isEmpty() ? "" : " @ " + locations ) );
+      }
+
+      System.exit( ExitCodes.ERROR_READING_DOCUMENT_EXIT_CODE );
     }
     catch ( final SchemaReadException sre )
     {
