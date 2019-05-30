@@ -8,6 +8,7 @@ import graphql.validation.ValidationError;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +34,10 @@ public class Main
   private static final int VERBOSE_OPT = 'v';
   private static final int SCHEMA_FILE_OPT = 's';
   private static final int DOCUMENT_FILE_OPT = 'd';
+  private static final int ENUM_MAPPING_FILE_OPT = 1;
+  private static final int TYPE_MAPPING_FILE_OPT = 2;
+  private static final int FRAGMENT_MAPPING_FILE_OPT = 3;
+  private static final int OPERATION_MAPPING_FILE_OPT = 4;
   private static final CLOptionDescriptor[] OPTIONS = new CLOptionDescriptor[]
     {
       new CLOptionDescriptor( "help",
@@ -56,7 +61,23 @@ public class Main
       new CLOptionDescriptor( "document",
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               DOCUMENT_FILE_OPT,
-                              "The path to a graphql document file." )
+                              "The path to a graphql document file." ),
+      new CLOptionDescriptor( "enum-mapping",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              ENUM_MAPPING_FILE_OPT,
+                              "The path to a mapping file for enums." ),
+      new CLOptionDescriptor( "type-mapping",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              TYPE_MAPPING_FILE_OPT,
+                              "The path to a mapping file for types." ),
+      new CLOptionDescriptor( "fragment-mapping",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              FRAGMENT_MAPPING_FILE_OPT,
+                              "The path to a mapping file for fragments." ),
+      new CLOptionDescriptor( "operation-mapping",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              OPERATION_MAPPING_FILE_OPT,
+                              "The path to a mapping file for operations." )
     };
   private static final Environment c_environment =
     new Environment( Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
@@ -198,6 +219,38 @@ public class Main
         case DOCUMENT_FILE_OPT:
         {
           if ( fileArgument( environment, option, "document", environment::addDocumentFile ) )
+          {
+            return false;
+          }
+          break;
+        }
+        case ENUM_MAPPING_FILE_OPT:
+        {
+          if ( fileArgument( environment, option, "enum mapping", environment::addEnumMappingFile ) )
+          {
+            return false;
+          }
+          break;
+        }
+        case TYPE_MAPPING_FILE_OPT:
+        {
+          if ( fileArgument( environment, option, "type mapping", environment::addTypeMappingFile ) )
+          {
+            return false;
+          }
+          break;
+        }
+        case FRAGMENT_MAPPING_FILE_OPT:
+        {
+          if ( fileArgument( environment, option, "fragment mapping", environment::addFragmentMappingFile ) )
+          {
+            return false;
+          }
+          break;
+        }
+        case OPERATION_MAPPING_FILE_OPT:
+        {
+          if ( fileArgument( environment, option, "operation mapping", environment::addOperationMappingFile ) )
           {
             return false;
           }

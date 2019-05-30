@@ -18,6 +18,14 @@ final class Environment
   private final List<Path> _schemaFiles = new ArrayList<>();
   @Nonnull
   private final List<Path> _documentFiles = new ArrayList<>();
+  @Nonnull
+  private final List<Path> _enumMappingFiles = new ArrayList<>();
+  @Nonnull
+  private final List<Path> _typeMappingFiles = new ArrayList<>();
+  @Nonnull
+  private final List<Path> _fragmentMappingFiles = new ArrayList<>();
+  @Nonnull
+  private final List<Path> _operationMappingFiles = new ArrayList<>();
 
   Environment( @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -57,5 +65,49 @@ final class Environment
   List<Path> getDocumentFiles()
   {
     return Collections.unmodifiableList( _documentFiles );
+  }
+
+  void addEnumMappingFile( @Nonnull final Path file )
+  {
+    _enumMappingFiles.add( Objects.requireNonNull( file ) );
+  }
+
+  @Nonnull
+  List<Path> getEnumMappingFiles()
+  {
+    return Collections.unmodifiableList( _enumMappingFiles );
+  }
+
+  void addTypeMappingFile( @Nonnull final Path file )
+  {
+    _typeMappingFiles.add( Objects.requireNonNull( file ) );
+  }
+
+  @Nonnull
+  List<Path> getTypeMappingFiles()
+  {
+    return Collections.unmodifiableList( _typeMappingFiles );
+  }
+
+  void addFragmentMappingFile( @Nonnull final Path file )
+  {
+    _fragmentMappingFiles.add( Objects.requireNonNull( file ) );
+  }
+
+  @Nonnull
+  List<Path> getFragmentMappingFiles()
+  {
+    return Collections.unmodifiableList( _fragmentMappingFiles );
+  }
+
+  void addOperationMappingFile( @Nonnull final Path file )
+  {
+    _operationMappingFiles.add( Objects.requireNonNull( file ) );
+  }
+
+  @Nonnull
+  List<Path> getOperationMappingFiles()
+  {
+    return Collections.unmodifiableList( _operationMappingFiles );
   }
 }
