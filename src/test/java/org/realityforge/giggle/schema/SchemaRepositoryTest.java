@@ -22,14 +22,14 @@ public class SchemaRepositoryTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      FileUtil.write( "schema.graphql",
+      final Path schemaFile =
+        writeContent( "schema.graphql",
                       "schema {\n" +
                       "  query: Query\n" +
                       "}\n" +
                       "type Query {\n" +
                       "}" );
       final SchemaRepository schemaRepository = new SchemaRepository();
-      final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
       final List<Path> components = Collections.singletonList( schemaFile );
 
       final GraphQLSchema schema1 = schemaRepository.getSchema( components );
@@ -39,12 +39,12 @@ public class SchemaRepositoryTest
       assertSame( schema1, schema2 );
 
       //Slightly different file with trailing whitespace
-      FileUtil.write( "schema.graphql",
-                      "schema {\n" +
-                      "  query: Query\n" +
-                      "}\n" +
-                      "type Query {\n" +
-                      "}  " );
+      writeContent( "schema.graphql",
+                    "schema {\n" +
+                    "  query: Query\n" +
+                    "}\n" +
+                    "type Query {\n" +
+                    "}  " );
 
       final GraphQLSchema schema3 = schemaRepository.getSchema( components );
 
@@ -58,21 +58,21 @@ public class SchemaRepositoryTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      FileUtil.write( "schema1.graphql",
+      final Path schemaFile1 =
+        writeContent( "schema1.graphql",
                       "schema {\n" +
                       "  query: Query\n" +
                       "}\n" +
                       "type Query {\n" +
                       "}" );
-      FileUtil.write( "schema2.graphql",
+      final Path schemaFile2 =
+        writeContent( "schema2.graphql",
                       " type Person {\n" +
                       "}\n" +
                       "extend type Query {\n" +
                       "  person(id: ID!): Person\n" +
                       "}" );
       final SchemaRepository schemaRepository = new SchemaRepository();
-      final Path schemaFile1 = FileUtil.getCurrentDirectory().resolve( "schema1.graphql" );
-      final Path schemaFile2 = FileUtil.getCurrentDirectory().resolve( "schema2.graphql" );
       final List<Path> components = Arrays.asList( schemaFile1, schemaFile2 );
 
       final GraphQLSchema schema1 = schemaRepository.getSchema( components );
@@ -87,12 +87,12 @@ public class SchemaRepositoryTest
       assertSame( schema1, schema2 );
 
       //Slightly different file with trailing whitespace
-      FileUtil.write( "schema1.graphql",
-                      "schema {\n" +
-                      "  query: Query\n" +
-                      "}\n" +
-                      "type Query {\n" +
-                      "}  " );
+      writeContent( "schema1.graphql",
+                    "schema {\n" +
+                    "  query: Query\n" +
+                    "}\n" +
+                    "type Query {\n" +
+                    "}  " );
 
       final GraphQLSchema schema3 = schemaRepository.getSchema( components );
 
@@ -131,7 +131,8 @@ public class SchemaRepositoryTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      FileUtil.write( "schema.graphql",
+      final Path schemaFile =
+        writeContent( "schema.graphql",
                       "schema {\n" +
                       "  query: Query\n" +
                       "}\n" +
@@ -142,7 +143,6 @@ public class SchemaRepositoryTest
                       "  DOB: Date\n" +
                       "}" );
       final SchemaRepository schemaRepository = new SchemaRepository();
-      final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
       final List<Path> components = Collections.singletonList( schemaFile );
 
       final GraphQLSchema schema = schemaRepository.getSchema( components );
@@ -156,7 +156,8 @@ public class SchemaRepositoryTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      FileUtil.write( "schema.graphql",
+      final Path schemaFile =
+        writeContent( "schema.graphql",
                       "schema {\n" +
                       "  query: Query\n" +
                       "}\n" +
@@ -166,7 +167,6 @@ public class SchemaRepositoryTest
                       "  DOB: Date\n" +
                       "}" );
       final SchemaRepository schemaRepository = new SchemaRepository();
-      final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
       final List<Path> components = Collections.singletonList( schemaFile );
 
       final SchemaProblem exception =

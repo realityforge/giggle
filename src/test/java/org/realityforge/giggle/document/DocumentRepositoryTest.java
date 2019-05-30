@@ -223,14 +223,6 @@ public class DocumentRepositoryTest
   }
 
   @Nonnull
-  private Path writeContent( @Nonnull final String path, @Nonnull final String content )
-    throws IOException
-  {
-    FileUtil.write( path, content );
-    return FileUtil.getCurrentDirectory().resolve( path );
-  }
-
-  @Nonnull
   private GraphQLSchema buildGraphQLSchema( @Nonnull final String schemaExtension )
     throws IOException
   {

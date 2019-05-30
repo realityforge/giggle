@@ -3,6 +3,8 @@ package org.realityforge.giggle;
 import gir.Gir;
 import gir.Task;
 import gir.io.FileUtil;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import static org.testng.Assert.*;
@@ -14,6 +16,14 @@ public abstract class AbstractTest
     throws Exception
   {
     Gir.go( () -> FileUtil.inTempDir( task ) );
+  }
+
+  @Nonnull
+  protected final Path writeContent( @Nonnull final String path, @Nonnull final String content )
+    throws IOException
+  {
+    FileUtil.write( path, content );
+    return FileUtil.getCurrentDirectory().resolve( path );
   }
 
   final void assertOutputContains( @Nonnull final String output, @Nonnull final String text )
