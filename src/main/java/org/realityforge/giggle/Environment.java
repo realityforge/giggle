@@ -19,8 +19,6 @@ final class Environment
   @Nonnull
   private final List<Path> _documentFiles = new ArrayList<>();
   @Nonnull
-  private final List<Path> _enumMappingFiles = new ArrayList<>();
-  @Nonnull
   private final List<Path> _typeMappingFiles = new ArrayList<>();
   @Nonnull
   private final List<Path> _fragmentMappingFiles = new ArrayList<>();
@@ -65,17 +63,6 @@ final class Environment
   List<Path> getDocumentFiles()
   {
     return Collections.unmodifiableList( _documentFiles );
-  }
-
-  void addEnumMappingFile( @Nonnull final Path file )
-  {
-    _enumMappingFiles.add( Objects.requireNonNull( file ) );
-  }
-
-  @Nonnull
-  List<Path> getEnumMappingFiles()
-  {
-    return Collections.unmodifiableList( _enumMappingFiles );
   }
 
   void addTypeMappingFile( @Nonnull final Path file )

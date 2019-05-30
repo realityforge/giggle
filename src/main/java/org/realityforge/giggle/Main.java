@@ -36,7 +36,6 @@ public class Main
   private static final int VERBOSE_OPT = 'v';
   private static final int SCHEMA_FILE_OPT = 's';
   private static final int DOCUMENT_FILE_OPT = 'd';
-  private static final int ENUM_MAPPING_FILE_OPT = 1;
   private static final int TYPE_MAPPING_FILE_OPT = 2;
   private static final int FRAGMENT_MAPPING_FILE_OPT = 3;
   private static final int OPERATION_MAPPING_FILE_OPT = 4;
@@ -64,10 +63,6 @@ public class Main
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               DOCUMENT_FILE_OPT,
                               "The path to a graphql document file." ),
-      new CLOptionDescriptor( "enum-mapping",
-                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
-                              ENUM_MAPPING_FILE_OPT,
-                              "The path to a mapping file for enums." ),
       new CLOptionDescriptor( "type-mapping",
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               TYPE_MAPPING_FILE_OPT,
@@ -102,8 +97,6 @@ public class Main
       final DocumentRepository documentRepository = new DocumentRepository();
       final Document document = documentRepository.getDocument( schema, c_environment.getDocumentFiles() );
 
-      final Map<String, String> enumMapping =
-        MappingUtil.getMapping( c_environment.getEnumMappingFiles() );
       final Map<String, String> typeMapping =
         MappingUtil.getMapping( c_environment.getTypeMappingFiles() );
       final Map<String, String> fragmentMapping =
@@ -231,14 +224,6 @@ public class Main
         case DOCUMENT_FILE_OPT:
         {
           if ( fileArgument( environment, option, "document", environment::addDocumentFile ) )
-          {
-            return false;
-          }
-          break;
-        }
-        case ENUM_MAPPING_FILE_OPT:
-        {
-          if ( fileArgument( environment, option, "enum mapping", environment::addEnumMappingFile ) )
           {
             return false;
           }

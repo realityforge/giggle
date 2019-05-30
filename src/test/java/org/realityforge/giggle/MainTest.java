@@ -31,8 +31,6 @@ public class MainTest
                   "\t\tThe path to a graphql schema file.\n" +
                   "\t-d, --document <argument>\n" +
                   "\t\tThe path to a graphql document file.\n" +
-                  "\t--enum-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for enums.\n" +
                   "\t--type-mapping <argument>\n" +
                   "\t\tThe path to a mapping file for types.\n" +
                   "\t--fragment-mapping <argument>\n" +
@@ -154,8 +152,6 @@ public class MainTest
       final Environment environment = newEnvironment();
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
-      writeFile( "enum1-mapping.properties" );
-      writeFile( "enum2-mapping.properties" );
       writeFile( "type1-mapping.properties" );
       writeFile( "type2-mapping.properties" );
       writeFile( "fragment1-mapping.properties" );
@@ -165,8 +161,6 @@ public class MainTest
       Main.processOptions( environment,
                            "--schema", "schema.graphql",
                            "--document", "query.graphql",
-                           "--enum-mapping", "enum1-mapping.properties",
-                           "--enum-mapping", "enum2-mapping.properties",
                            "--type-mapping", "type1-mapping.properties",
                            "--type-mapping", "type2-mapping.properties",
                            "--fragment-mapping", "fragment1-mapping.properties",
@@ -176,29 +170,12 @@ public class MainTest
 
       assertEquals( environment.getSchemaFiles(), Collections.singletonList( toPath( "schema.graphql" ) ) );
       assertEquals( environment.getDocumentFiles(), Collections.singletonList( toPath( "query.graphql" ) ) );
-      assertEquals( environment.getEnumMappingFiles(), Arrays.asList( toPath( "enum1-mapping.properties" ),
-                                                                      toPath( "enum2-mapping.properties" ) ) );
       assertEquals( environment.getTypeMappingFiles(), Arrays.asList( toPath( "type1-mapping.properties" ),
                                                                       toPath( "type2-mapping.properties" ) ) );
       assertEquals( environment.getFragmentMappingFiles(), Arrays.asList( toPath( "fragment1-mapping.properties" ),
                                                                           toPath( "fragment2-mapping.properties" ) ) );
       assertEquals( environment.getOperationMappingFiles(), Arrays.asList( toPath( "operation1-mapping.properties" ),
                                                                            toPath( "operation2-mapping.properties" ) ) );
-    } );
-  }
-
-  @Test
-  public void processOptions_enumMappingNoExist()
-    throws Exception
-  {
-    inIsolatedDirectory( () -> {
-      writeFile( "schema.graphql" );
-      writeFile( "query.graphql" );
-      final String output = processOptions( "--schema", "schema.graphql",
-                                            "--document", "query.graphql",
-                                            "--enum-mapping", "mapping.properties" );
-      assertOutputContains( output,
-                            "Error: Specified graphql enum mapping file does not exist. Specified value: mapping.properties" );
     } );
   }
 
