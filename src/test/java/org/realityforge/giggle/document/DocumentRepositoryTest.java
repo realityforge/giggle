@@ -218,7 +218,8 @@ public class DocumentRepositoryTest
       final List<ValidationError> errors = exception.getErrors();
       assertEquals( errors.size(), 1 );
       final ValidationError error = errors.get( 0 );
-      assertEquals( error.getMessage(), "Validation error of type FragmentCycle: Multiple fragments defined with the name 'NameParts'" );
+      assertEquals( error.getMessage(),
+                    "Validation error of type FragmentCycle: Multiple fragments defined with the name 'NameParts'" );
     } );
   }
 
