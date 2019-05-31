@@ -268,12 +268,9 @@ public class MainTest
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
       final String output = processOptions( false,
-                                            "--schema",
-                                            "schema.graphql",
-                                            "--document",
-                                            "query.graphql",
-                                            "--type-mapping",
-                                            "mapping.properties" );
+                                            "--schema", "schema.graphql",
+                                            "--document", "query.graphql",
+                                            "--type-mapping", "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql type mapping file does not exist. Specified value: mapping.properties" );
     } );
@@ -287,12 +284,9 @@ public class MainTest
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
       final String output = processOptions( false,
-                                            "--schema",
-                                            "schema.graphql",
-                                            "--document",
-                                            "query.graphql",
-                                            "--fragment-mapping",
-                                            "mapping.properties" );
+                                            "--schema", "schema.graphql",
+                                            "--document", "query.graphql",
+                                            "--fragment-mapping", "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql fragment mapping file does not exist. Specified value: mapping.properties" );
     } );
@@ -306,17 +300,15 @@ public class MainTest
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
       final String output = processOptions( false,
-                                            "--schema",
-                                            "schema.graphql",
-                                            "--document",
-                                            "query.graphql",
-                                            "--operation-mapping",
-                                            "mapping.properties" );
+                                            "--schema", "schema.graphql",
+                                            "--document", "query.graphql",
+                                            "--operation-mapping", "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql operation mapping file does not exist. Specified value: mapping.properties" );
     } );
   }
 
+  @SuppressWarnings( "SameParameterValue" )
   @Nonnull
   private String processOptions( final boolean expectedResult, @Nonnull final String... args )
   {
