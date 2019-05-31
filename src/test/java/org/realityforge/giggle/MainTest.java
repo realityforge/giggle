@@ -36,8 +36,6 @@ public class MainTest
                   "\t\tThe path to a mapping file for types.\n" +
                   "\t--fragment-mapping <argument>\n" +
                   "\t\tThe path to a mapping file for fragments.\n" +
-                  "\t--operation-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for operations.\n" +
                   "\t--package <argument>\n" +
                   "\t\tThe java package name used to generate artifacts.\n" +
                   "\t--output-directory <argument>\n" +
@@ -66,7 +64,6 @@ public class MainTest
       assertOutputContains( output, "  Document files: " );
       assertOutputContains( output, "  Type mapping files: " );
       assertOutputContains( output, "  Fragment mapping files: " );
-      assertOutputContains( output, "  Operation mapping files: " );
     } );
   }
 
@@ -319,9 +316,7 @@ public class MainTest
                       "--type-mapping", "type1-mapping.properties",
                       "--type-mapping", "type2-mapping.properties",
                       "--fragment-mapping", "fragment1-mapping.properties",
-                      "--fragment-mapping", "fragment2-mapping.properties",
-                      "--operation-mapping", "operation1-mapping.properties",
-                      "--operation-mapping", "operation2-mapping.properties" );
+                      "--fragment-mapping", "fragment2-mapping.properties" );
 
       assertEquals( environment.getSchemaFiles(), Collections.singletonList( toPath( "schema.graphql" ) ) );
       assertEquals( environment.getDocumentFiles(), Collections.singletonList( toPath( "query.graphql" ) ) );
@@ -329,8 +324,6 @@ public class MainTest
                                                                       toPath( "type2-mapping.properties" ) ) );
       assertEquals( environment.getFragmentMappingFiles(), Arrays.asList( toPath( "fragment1-mapping.properties" ),
                                                                           toPath( "fragment2-mapping.properties" ) ) );
-      assertEquals( environment.getOperationMappingFiles(), Arrays.asList( toPath( "operation1-mapping.properties" ),
-                                                                           toPath( "operation2-mapping.properties" ) ) );
     } );
   }
 
@@ -363,22 +356,6 @@ public class MainTest
                                             "--fragment-mapping", "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql fragment mapping file does not exist. Specified value: mapping.properties" );
-    } );
-  }
-
-  @Test
-  public void processOptions_operationMappingNoExist()
-    throws Exception
-  {
-    inIsolatedDirectory( () -> {
-      writeFile( "schema.graphql" );
-      writeFile( "query.graphql" );
-      final String output = processOptions( false,
-                                            "--schema", "schema.graphql",
-                                            "--document", "query.graphql",
-                                            "--operation-mapping", "mapping.properties" );
-      assertOutputContains( output,
-                            "Error: Specified graphql operation mapping file does not exist. Specified value: mapping.properties" );
     } );
   }
 

@@ -43,7 +43,6 @@ public class Main
   private static final int DOCUMENT_FILE_OPT = 2;
   private static final int TYPE_MAPPING_FILE_OPT = 3;
   private static final int FRAGMENT_MAPPING_FILE_OPT = 4;
-  private static final int OPERATION_MAPPING_FILE_OPT = 5;
   private static final int OUTPUT_DIRECTORY_OPT = 6;
   private static final int PACKAGE_NAME_OPT = 7;
   private static final int GENERATOR_OPT = 8;
@@ -79,10 +78,6 @@ public class Main
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               FRAGMENT_MAPPING_FILE_OPT,
                               "The path to a mapping file for fragments." ),
-      new CLOptionDescriptor( "operation-mapping",
-                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
-                              OPERATION_MAPPING_FILE_OPT,
-                              "The path to a mapping file for operations." ),
       new CLOptionDescriptor( "package",
                               CLOptionDescriptor.ARGUMENT_REQUIRED,
                               PACKAGE_NAME_OPT,
@@ -121,8 +116,6 @@ public class Main
         MappingUtil.getMapping( c_environment.getTypeMappingFiles() );
       final Map<String, String> fragmentMapping =
         MappingUtil.getMapping( c_environment.getFragmentMappingFiles() );
-      final Map<String, String> operationMapping =
-        MappingUtil.getMapping( c_environment.getOperationMappingFiles() );
 
       final List<String> generators = c_environment.getGenerators();
       if ( !generators.isEmpty() )
@@ -294,14 +287,6 @@ public class Main
           }
           break;
         }
-        case OPERATION_MAPPING_FILE_OPT:
-        {
-          if ( fileArgument( environment, option, "operation mapping", environment::addOperationMappingFile ) )
-          {
-            return false;
-          }
-          break;
-        }
         case OUTPUT_DIRECTORY_OPT:
         {
           final String argument = option.getArgument();
@@ -384,7 +369,6 @@ public class Main
       logger.log( Level.FINE, "  Document files: " + environment.getDocumentFiles() );
       logger.log( Level.FINE, "  Type mapping files: " + environment.getTypeMappingFiles() );
       logger.log( Level.FINE, "  Fragment mapping files: " + environment.getTypeMappingFiles() );
-      logger.log( Level.FINE, "  Operation mapping files: " + environment.getOperationMappingFiles() );
     }
   }
 

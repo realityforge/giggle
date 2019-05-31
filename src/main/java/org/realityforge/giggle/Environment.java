@@ -23,8 +23,6 @@ final class Environment
   private final List<Path> _typeMappingFiles = new ArrayList<>();
   @Nonnull
   private final List<Path> _fragmentMappingFiles = new ArrayList<>();
-  @Nonnull
-  private final List<Path> _operationMappingFiles = new ArrayList<>();
   @Nullable
   private Path _outputDirectory;
   @Nullable
@@ -92,17 +90,6 @@ final class Environment
   List<Path> getFragmentMappingFiles()
   {
     return Collections.unmodifiableList( _fragmentMappingFiles );
-  }
-
-  void addOperationMappingFile( @Nonnull final Path file )
-  {
-    _operationMappingFiles.add( Objects.requireNonNull( file ) );
-  }
-
-  @Nonnull
-  List<Path> getOperationMappingFiles()
-  {
-    return Collections.unmodifiableList( _operationMappingFiles );
   }
 
   boolean hasOutputDirectory()

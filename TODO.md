@@ -21,8 +21,6 @@ complete as there is too much un-said.
   Each generation cycle is triggered by a command that includes the input files, the sha256 of
   the input files and any parameters controlling the generation. The generation should be deterministic.
 
-* Remove Operation mapping files config as it makes no sense.
-
 * Add configuration files to control shape of output files.
 
 ## Actions
