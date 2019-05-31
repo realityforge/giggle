@@ -396,7 +396,7 @@ public class MainTest
                                @Nonnull final String... args )
   {
     final boolean result = Main.processOptions( environment, args );
-    assertEquals( expectedResult, result, "Return value for Main.processOptions" );
+    assertEquals( result, expectedResult, "Return value for Main.processOptions" );
   }
 
   private void writeFile( @Nonnull final String path )
