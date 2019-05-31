@@ -355,9 +355,9 @@ public class Main
       logger.log( Level.SEVERE, "Error: No schema files specified." );
       return false;
     }
-    if ( !environment.hasOutputDirectory() )
+    if ( !environment.hasOutputDirectory() && !environment.getGenerators().isEmpty() )
     {
-      logger.log( Level.SEVERE, "Error: Must specify output directory." );
+      logger.log( Level.SEVERE, "Error: Must specify output directory if a generator is specified." );
       return false;
     }
     if ( !environment.hasPackageName() )

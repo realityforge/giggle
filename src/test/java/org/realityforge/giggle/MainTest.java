@@ -154,6 +154,21 @@ public class MainTest
   }
 
   @Test
+  public void processOptions_generatorButNoOutput()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final String output =
+        processOptions( false,
+                        "--package", "com.example.model",
+                        "--schema", "schema.graphql",
+                        "--generator=graphql-java-server" );
+      assertOutputContains( output, "Error: Must specify output directory if a generator is specified." );
+    } );
+  }
+
+  @Test
   public void processOptions_outputDirectoryIsAFile()
     throws Exception
   {
