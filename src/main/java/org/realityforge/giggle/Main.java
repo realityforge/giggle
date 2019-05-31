@@ -34,11 +34,11 @@ public class Main
   private static final int HELP_OPT = 'h';
   private static final int QUIET_OPT = 'q';
   private static final int VERBOSE_OPT = 'v';
-  private static final int SCHEMA_FILE_OPT = 's';
-  private static final int DOCUMENT_FILE_OPT = 'd';
-  private static final int TYPE_MAPPING_FILE_OPT = 2;
-  private static final int FRAGMENT_MAPPING_FILE_OPT = 3;
-  private static final int OPERATION_MAPPING_FILE_OPT = 4;
+  private static final int SCHEMA_FILE_OPT = 1;
+  private static final int DOCUMENT_FILE_OPT = 2;
+  private static final int TYPE_MAPPING_FILE_OPT = 3;
+  private static final int FRAGMENT_MAPPING_FILE_OPT = 4;
+  private static final int OPERATION_MAPPING_FILE_OPT = 5;
   private static final CLOptionDescriptor[] OPTIONS = new CLOptionDescriptor[]
     {
       new CLOptionDescriptor( "help",

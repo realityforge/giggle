@@ -27,9 +27,9 @@ public class MainTest
                   "\t\tDo not output unless an error occurs.\n" +
                   "\t-v, --verbose\n" +
                   "\t\tVerbose output of differences.\n" +
-                  "\t-s, --schema <argument>\n" +
+                  "\t--schema <argument>\n" +
                   "\t\tThe path to a graphql schema file.\n" +
-                  "\t-d, --document <argument>\n" +
+                  "\t--document <argument>\n" +
                   "\t\tThe path to a graphql document file.\n" +
                   "\t--type-mapping <argument>\n" +
                   "\t\tThe path to a mapping file for types.\n" +
