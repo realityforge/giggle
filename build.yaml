@@ -11,8 +11,6 @@ artifacts:
 
   getopt4j: org.realityforge.getopt4j:getopt4j:jar:1.2
 
-  snakeyaml: org.yaml:snakeyaml:jar:1.24
-
   gir: org.realityforge.gir:gir-core:jar:0.09
 
   guiceyloops: org.realityforge.guiceyloops:guiceyloops:jar:0.98

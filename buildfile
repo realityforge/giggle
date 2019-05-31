@@ -19,8 +19,7 @@ define 'giggle' do
                :graphql_java,
                :slf4j_api,
                :slf4j_jdk14,
-               :antlr4_runtime,
-               :snakeyaml
+               :antlr4_runtime
 
   package(:jar)
   package(:sources)
