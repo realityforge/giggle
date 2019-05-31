@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -39,6 +40,27 @@ public class MainTest
                   "\t\tThe path to a mapping file for operations.\n" +
                   "\t--output-directory <argument>\n" +
                   "\t\tThe directory where generated files are output." );
+  }
+
+  @Test
+  public void printBanner()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.setOutputDirectory( FileUtil.getCurrentDirectory().resolve( "generated" ) );
+      environment.logger().setLevel( Level.ALL );
+      Main.printBanner( environment );
+      final String output = handler.toString();
+      assertOutputContains( output, "Giggle Starting..." );
+      assertOutputContains( output, "  Output directory: " );
+      assertOutputContains( output, "  Schema files: " );
+      assertOutputContains( output, "  Document files: " );
+      assertOutputContains( output, "  Type mapping files: " );
+      assertOutputContains( output, "  Fragment mapping files: " );
+      assertOutputContains( output, "  Operation mapping files: " );
+    } );
   }
 
   @Test

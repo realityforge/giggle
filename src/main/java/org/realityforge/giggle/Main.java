@@ -301,13 +301,24 @@ public class Main
       return false;
     }
 
+    printBanner( environment );
+
+    return true;
+  }
+
+  static void printBanner( @Nonnull final Environment environment )
+  {
+    final Logger logger = environment.logger();
     if ( logger.isLoggable( Level.FINE ) )
     {
       logger.log( Level.FINE, "Giggle Starting..." );
+      logger.log( Level.FINE, "  Output directory: " + environment.getOutputDirectory() );
       logger.log( Level.FINE, "  Schema files: " + environment.getSchemaFiles() );
+      logger.log( Level.FINE, "  Document files: " + environment.getDocumentFiles() );
+      logger.log( Level.FINE, "  Type mapping files: " + environment.getTypeMappingFiles() );
+      logger.log( Level.FINE, "  Fragment mapping files: " + environment.getTypeMappingFiles() );
+      logger.log( Level.FINE, "  Operation mapping files: " + environment.getOperationMappingFiles() );
     }
-
-    return true;
   }
 
   private static boolean fileArgument( @Nonnull final Environment environment,
