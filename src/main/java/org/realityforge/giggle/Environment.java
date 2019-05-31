@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 final class Environment
 {
@@ -24,6 +25,8 @@ final class Environment
   private final List<Path> _fragmentMappingFiles = new ArrayList<>();
   @Nonnull
   private final List<Path> _operationMappingFiles = new ArrayList<>();
+  @Nullable
+  private Path _outputDirectory;
 
   Environment( @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -96,5 +99,21 @@ final class Environment
   List<Path> getOperationMappingFiles()
   {
     return Collections.unmodifiableList( _operationMappingFiles );
+  }
+
+  boolean hasOutputDirectory()
+  {
+    return null != _outputDirectory;
+  }
+
+  @Nonnull
+  Path getOutputDirectory()
+  {
+    return Objects.requireNonNull( _outputDirectory );
+  }
+
+  void setOutputDirectory( @Nonnull final Path outputDirectory )
+  {
+    _outputDirectory = Objects.requireNonNull( outputDirectory );
   }
 }

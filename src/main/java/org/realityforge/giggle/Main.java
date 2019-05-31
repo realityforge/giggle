@@ -39,6 +39,7 @@ public class Main
   private static final int TYPE_MAPPING_FILE_OPT = 3;
   private static final int FRAGMENT_MAPPING_FILE_OPT = 4;
   private static final int OPERATION_MAPPING_FILE_OPT = 5;
+  private static final int OUTPUT_DIRECTORY_OPT = 6;
   private static final CLOptionDescriptor[] OPTIONS = new CLOptionDescriptor[]
     {
       new CLOptionDescriptor( "help",
@@ -74,7 +75,11 @@ public class Main
       new CLOptionDescriptor( "operation-mapping",
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               OPERATION_MAPPING_FILE_OPT,
-                              "The path to a mapping file for operations." )
+                              "The path to a mapping file for operations." ),
+      new CLOptionDescriptor( "output-directory",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED,
+                              OUTPUT_DIRECTORY_OPT,
+                              "The directory where generated files are output." )
     };
   private static final Environment c_environment =
     new Environment( Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
@@ -253,6 +258,20 @@ public class Main
           }
           break;
         }
+        case OUTPUT_DIRECTORY_OPT:
+        {
+          final String argument = option.getArgument();
+          final Path dir = environment.currentDirectory().resolve( argument ).toAbsolutePath().normalize();
+          if ( dir.toFile().exists() && !dir.toFile().isDirectory() )
+          {
+            final String message =
+              "Error: Specified output directory exists and is not a directory. Specified value: " + argument;
+            environment.logger().log( Level.SEVERE, message );
+            return false;
+          }
+          environment.setOutputDirectory( dir );
+          break;
+        }
         case VERBOSE_OPT:
         {
           logger.setLevel( Level.ALL );
@@ -274,6 +293,11 @@ public class Main
     if ( environment.getSchemaFiles().isEmpty() )
     {
       logger.log( Level.SEVERE, "Error: No schema files specified." );
+      return false;
+    }
+    if ( !environment.hasOutputDirectory() )
+    {
+      logger.log( Level.SEVERE, "Error: Must specify output directory." );
       return false;
     }
 

@@ -17,7 +17,7 @@ public class MainTest
   public void printUsage()
   {
     final TestHandler handler = new TestHandler();
-    Main.printUsage( newEnvironment( createLogger( handler ) ) );
+    Main.printUsage( newEnvironment( handler ) );
     assertEquals( handler.toString(),
                   "java org.realityforge.giggle.Main [options]\n" +
                   "\tOptions:\n" +
@@ -36,13 +36,42 @@ public class MainTest
                   "\t--fragment-mapping <argument>\n" +
                   "\t\tThe path to a mapping file for fragments.\n" +
                   "\t--operation-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for operations." );
+                  "\t\tThe path to a mapping file for operations.\n" +
+                  "\t--output-directory <argument>\n" +
+                  "\t\tThe directory where generated files are output." );
   }
 
   @Test
   public void processOptions_unknownArgument()
   {
-    assertEquals( processOptions( "someArg" ), "Error: Unknown argument: someArg" );
+    assertEquals( processOptions( false, "someArg" ), "Error: Unknown argument: someArg" );
+  }
+
+  @Test
+  public void processOptions()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( true, environment, "--output-directory", "output", "--schema", "schema.graphql" );
+      assertEquals( handler.toString(), "" );
+      assertTrue( environment.hasOutputDirectory() );
+      assertEquals( environment.getOutputDirectory(), FileUtil.getCurrentDirectory().resolve( "output" ) );
+    } );
+  }
+
+  @Test
+  public void processOptions_outputDirectoryIsAFile()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "output" );
+      writeFile( "schema.graphql" );
+      assertEquals( processOptions( false, "--output-directory", "output", "--schema", "schema.graphql" ),
+                    "Error: Specified output directory exists and is not a directory. Specified value: output" );
+    } );
   }
 
   @Test
@@ -50,7 +79,7 @@ public class MainTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      final String output = processOptions();
+      final String output = processOptions( false );
       assertOutputContains( output, "Error: No schema files specified." );
     } );
   }
@@ -60,7 +89,7 @@ public class MainTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      final String output = processOptions( "--schema", "myschema.graphql" );
+      final String output = processOptions( false, "--schema", "myschema.graphql" );
       assertOutputContains( output,
                             "Error: Specified graphql schema file does not exist. Specified value: myschema.graphql" );
     } );
@@ -73,7 +102,7 @@ public class MainTest
     inIsolatedDirectory( () -> {
       final Environment environment = newEnvironment();
       writeFile( "schema.graphql" );
-      Main.processOptions( environment, "--schema", "schema.graphql" );
+      processOptions( true, environment, "--output-directory", "output", "--schema", "schema.graphql" );
 
       assertEquals( environment.getSchemaFiles().get( 0 ), toPath( "schema.graphql" ) );
     } );
@@ -87,7 +116,11 @@ public class MainTest
       final Environment environment = newEnvironment();
       writeFile( "schema1.graphql" );
       writeFile( "schema2.graphql" );
-      Main.processOptions( environment, "--schema", "schema1.graphql", "--schema", "schema2.graphql" );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--schema", "schema1.graphql",
+                      "--schema", "schema2.graphql" );
 
       final List<Path> schemaFiles = environment.getSchemaFiles();
       assertEquals( schemaFiles.get( 0 ), toPath( "schema1.graphql" ) );
@@ -101,7 +134,7 @@ public class MainTest
   {
     inIsolatedDirectory( () -> {
       writeFile( "schema.graphql" );
-      final String output = processOptions( "--schema", "schema.graphql", "--document", "query.graphql" );
+      final String output = processOptions( false, "--document", "query.graphql" );
       assertOutputContains( output,
                             "Error: Specified graphql document file does not exist. Specified value: query.graphql" );
     } );
@@ -115,7 +148,11 @@ public class MainTest
       final Environment environment = newEnvironment();
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
-      Main.processOptions( environment, "--schema", "schema.graphql", "--document", "query.graphql" );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--schema", "schema.graphql",
+                      "--document", "query.graphql" );
 
       assertEquals( environment.getDocumentFiles().get( 0 ), toPath( "query.graphql" ) );
     } );
@@ -130,13 +167,12 @@ public class MainTest
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
       writeFile( "mutation.graphql" );
-      Main.processOptions( environment,
-                           "--schema",
-                           "schema.graphql",
-                           "--document",
-                           "query.graphql",
-                           "--document",
-                           "mutation.graphql" );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--schema", "schema.graphql",
+                      "--document", "query.graphql",
+                      "--document", "mutation.graphql" );
 
       final List<Path> documentFiles = environment.getDocumentFiles();
       assertEquals( documentFiles.get( 0 ), toPath( "query.graphql" ) );
@@ -158,15 +194,17 @@ public class MainTest
       writeFile( "fragment2-mapping.properties" );
       writeFile( "operation1-mapping.properties" );
       writeFile( "operation2-mapping.properties" );
-      Main.processOptions( environment,
-                           "--schema", "schema.graphql",
-                           "--document", "query.graphql",
-                           "--type-mapping", "type1-mapping.properties",
-                           "--type-mapping", "type2-mapping.properties",
-                           "--fragment-mapping", "fragment1-mapping.properties",
-                           "--fragment-mapping", "fragment2-mapping.properties",
-                           "--operation-mapping", "operation1-mapping.properties",
-                           "--operation-mapping", "operation2-mapping.properties" );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--schema", "schema.graphql",
+                      "--document", "query.graphql",
+                      "--type-mapping", "type1-mapping.properties",
+                      "--type-mapping", "type2-mapping.properties",
+                      "--fragment-mapping", "fragment1-mapping.properties",
+                      "--fragment-mapping", "fragment2-mapping.properties",
+                      "--operation-mapping", "operation1-mapping.properties",
+                      "--operation-mapping", "operation2-mapping.properties" );
 
       assertEquals( environment.getSchemaFiles(), Collections.singletonList( toPath( "schema.graphql" ) ) );
       assertEquals( environment.getDocumentFiles(), Collections.singletonList( toPath( "query.graphql" ) ) );
@@ -186,9 +224,13 @@ public class MainTest
     inIsolatedDirectory( () -> {
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
-      final String output = processOptions( "--schema", "schema.graphql",
-                                            "--document", "query.graphql",
-                                            "--type-mapping", "mapping.properties" );
+      final String output = processOptions( false,
+                                            "--schema",
+                                            "schema.graphql",
+                                            "--document",
+                                            "query.graphql",
+                                            "--type-mapping",
+                                            "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql type mapping file does not exist. Specified value: mapping.properties" );
     } );
@@ -201,9 +243,13 @@ public class MainTest
     inIsolatedDirectory( () -> {
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
-      final String output = processOptions( "--schema", "schema.graphql",
-                                            "--document", "query.graphql",
-                                            "--fragment-mapping", "mapping.properties" );
+      final String output = processOptions( false,
+                                            "--schema",
+                                            "schema.graphql",
+                                            "--document",
+                                            "query.graphql",
+                                            "--fragment-mapping",
+                                            "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql fragment mapping file does not exist. Specified value: mapping.properties" );
     } );
@@ -216,20 +262,32 @@ public class MainTest
     inIsolatedDirectory( () -> {
       writeFile( "schema.graphql" );
       writeFile( "query.graphql" );
-      final String output = processOptions( "--schema", "schema.graphql",
-                                            "--document", "query.graphql",
-                                            "--operation-mapping", "mapping.properties" );
+      final String output = processOptions( false,
+                                            "--schema",
+                                            "schema.graphql",
+                                            "--document",
+                                            "query.graphql",
+                                            "--operation-mapping",
+                                            "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql operation mapping file does not exist. Specified value: mapping.properties" );
     } );
   }
 
   @Nonnull
-  private String processOptions( @Nonnull final String... args )
+  private String processOptions( final boolean expectedResult, @Nonnull final String... args )
   {
     final TestHandler handler = new TestHandler();
-    Main.processOptions( newEnvironment( createLogger( handler ) ), args );
+    processOptions( expectedResult, newEnvironment( handler ), args );
     return handler.toString();
+  }
+
+  private void processOptions( final boolean expectedResult,
+                               @Nonnull final Environment environment,
+                               @Nonnull final String... args )
+  {
+    final boolean result = Main.processOptions( environment, args );
+    assertEquals( expectedResult, result, "Return value for Main.processOptions" );
   }
 
   private void writeFile( @Nonnull final String path )

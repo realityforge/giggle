@@ -32,30 +32,18 @@ public abstract class AbstractTest
                 "Expected output\n---\n" + output + "\n---\nto contain text\n---\n" + text + "\n---\n" );
   }
 
-  final void assertOutputDoesNotContain( @Nonnull final String output, @Nonnull final String text )
-  {
-    assertFalse( output.contains( text ),
-                 "Expected output\n---\n" + output + "\n---\nto not contain text\n---\n" + text + "\n---\n" );
-  }
-
   final Environment newEnvironment()
   {
-    return newEnvironment( createLogger() );
+    return newEnvironment( new TestHandler() );
   }
 
-  final Environment newEnvironment( @Nonnull final Logger logger )
+  final Environment newEnvironment( @Nonnull final TestHandler handler )
   {
-    return new Environment( FileUtil.getCurrentDirectory(), logger );
+    return new Environment( FileUtil.getCurrentDirectory(), createLogger( handler ) );
   }
 
   @Nonnull
-  final Logger createLogger()
-  {
-    return Logger.getAnonymousLogger();
-  }
-
-  @Nonnull
-  final Logger createLogger( @Nonnull final TestHandler handler )
+  private Logger createLogger( @Nonnull final TestHandler handler )
   {
     final Logger logger = Logger.getAnonymousLogger();
     logger.setUseParentHandlers( false );
