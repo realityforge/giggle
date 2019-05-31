@@ -38,6 +38,8 @@ public class MainTest
                   "\t\tThe path to a mapping file for fragments.\n" +
                   "\t--operation-mapping <argument>\n" +
                   "\t\tThe path to a mapping file for operations.\n" +
+                  "\t--package <argument>\n" +
+                  "\t\tThe java package name used to generate artifacts.\n" +
                   "\t--output-directory <argument>\n" +
                   "\t\tThe directory where generated files are output." );
   }
@@ -50,11 +52,13 @@ public class MainTest
       final TestHandler handler = new TestHandler();
       final Environment environment = newEnvironment( handler );
       environment.setOutputDirectory( FileUtil.getCurrentDirectory().resolve( "generated" ) );
+      environment.setPackageName( "com.biz" );
       environment.logger().setLevel( Level.ALL );
       Main.printBanner( environment );
       final String output = handler.toString();
       assertOutputContains( output, "Giggle Starting..." );
       assertOutputContains( output, "  Output directory: " );
+      assertOutputContains( output, "  Output Package: " );
       assertOutputContains( output, "  Schema files: " );
       assertOutputContains( output, "  Document files: " );
       assertOutputContains( output, "  Type mapping files: " );
@@ -77,10 +81,16 @@ public class MainTest
       writeFile( "schema.graphql" );
       final TestHandler handler = new TestHandler();
       final Environment environment = newEnvironment( handler );
-      processOptions( true, environment, "--output-directory", "output", "--schema", "schema.graphql" );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql" );
       assertEquals( handler.toString(), "" );
       assertTrue( environment.hasOutputDirectory() );
       assertEquals( environment.getOutputDirectory(), FileUtil.getCurrentDirectory().resolve( "output" ) );
+      assertTrue( environment.hasPackageName() );
+      assertEquals( environment.getPackageName(), "com.example.model" );
     } );
   }
 
@@ -91,7 +101,10 @@ public class MainTest
     inIsolatedDirectory( () -> {
       writeFile( "output" );
       writeFile( "schema.graphql" );
-      assertEquals( processOptions( false, "--output-directory", "output", "--schema", "schema.graphql" ),
+      assertEquals( processOptions( false,
+                                    "--output-directory", "output",
+                                    "--package", "com.example.model",
+                                    "--schema", "schema.graphql" ),
                     "Error: Specified output directory exists and is not a directory. Specified value: output" );
     } );
   }
@@ -124,7 +137,11 @@ public class MainTest
     inIsolatedDirectory( () -> {
       final Environment environment = newEnvironment();
       writeFile( "schema.graphql" );
-      processOptions( true, environment, "--output-directory", "output", "--schema", "schema.graphql" );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql" );
 
       assertEquals( environment.getSchemaFiles().get( 0 ), toPath( "schema.graphql" ) );
     } );
@@ -141,6 +158,7 @@ public class MainTest
       processOptions( true,
                       environment,
                       "--output-directory", "output",
+                      "--package", "com.example.model",
                       "--schema", "schema1.graphql",
                       "--schema", "schema2.graphql" );
 
@@ -173,6 +191,7 @@ public class MainTest
       processOptions( true,
                       environment,
                       "--output-directory", "output",
+                      "--package", "com.example.model",
                       "--schema", "schema.graphql",
                       "--document", "query.graphql" );
 
@@ -192,6 +211,7 @@ public class MainTest
       processOptions( true,
                       environment,
                       "--output-directory", "output",
+                      "--package", "com.example.model",
                       "--schema", "schema.graphql",
                       "--document", "query.graphql",
                       "--document", "mutation.graphql" );
@@ -219,6 +239,7 @@ public class MainTest
       processOptions( true,
                       environment,
                       "--output-directory", "output",
+                      "--package", "com.example.model",
                       "--schema", "schema.graphql",
                       "--document", "query.graphql",
                       "--type-mapping", "type1-mapping.properties",

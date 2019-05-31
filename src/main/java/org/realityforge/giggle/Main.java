@@ -40,6 +40,7 @@ public class Main
   private static final int FRAGMENT_MAPPING_FILE_OPT = 4;
   private static final int OPERATION_MAPPING_FILE_OPT = 5;
   private static final int OUTPUT_DIRECTORY_OPT = 6;
+  private static final int PACKAGE_NAME_OPT = 7;
   private static final CLOptionDescriptor[] OPTIONS = new CLOptionDescriptor[]
     {
       new CLOptionDescriptor( "help",
@@ -76,6 +77,10 @@ public class Main
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               OPERATION_MAPPING_FILE_OPT,
                               "The path to a mapping file for operations." ),
+      new CLOptionDescriptor( "package",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED,
+                              PACKAGE_NAME_OPT,
+                              "The java package name used to generate artifacts." ),
       new CLOptionDescriptor( "output-directory",
                               CLOptionDescriptor.ARGUMENT_REQUIRED,
                               OUTPUT_DIRECTORY_OPT,
@@ -272,6 +277,11 @@ public class Main
           environment.setOutputDirectory( dir );
           break;
         }
+        case PACKAGE_NAME_OPT:
+        {
+          environment.setPackageName( option.getArgument() );
+          break;
+        }
         case VERBOSE_OPT:
         {
           logger.setLevel( Level.ALL );
@@ -300,6 +310,11 @@ public class Main
       logger.log( Level.SEVERE, "Error: Must specify output directory." );
       return false;
     }
+    if ( !environment.hasPackageName() )
+    {
+      logger.log( Level.SEVERE, "Error: Must specify output package name." );
+      return false;
+    }
 
     printBanner( environment );
 
@@ -313,6 +328,7 @@ public class Main
     {
       logger.log( Level.FINE, "Giggle Starting..." );
       logger.log( Level.FINE, "  Output directory: " + environment.getOutputDirectory() );
+      logger.log( Level.FINE, "  Output Package: " + environment.getPackageName() );
       logger.log( Level.FINE, "  Schema files: " + environment.getSchemaFiles() );
       logger.log( Level.FINE, "  Document files: " + environment.getDocumentFiles() );
       logger.log( Level.FINE, "  Type mapping files: " + environment.getTypeMappingFiles() );

@@ -27,6 +27,8 @@ final class Environment
   private final List<Path> _operationMappingFiles = new ArrayList<>();
   @Nullable
   private Path _outputDirectory;
+  @Nullable
+  private String _packageName;
 
   Environment( @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -115,5 +117,21 @@ final class Environment
   void setOutputDirectory( @Nonnull final Path outputDirectory )
   {
     _outputDirectory = Objects.requireNonNull( outputDirectory );
+  }
+
+  boolean hasPackageName()
+  {
+    return null != _packageName;
+  }
+
+  @Nonnull
+  String getPackageName()
+  {
+    return Objects.requireNonNull( _packageName );
+  }
+
+  void setPackageName( @Nonnull final String packageName )
+  {
+    _packageName = Objects.requireNonNull( packageName );
   }
 }
