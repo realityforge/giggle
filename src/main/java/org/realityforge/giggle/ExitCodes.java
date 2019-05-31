@@ -9,6 +9,7 @@ final class ExitCodes
   static final int ERROR_PARSING_SCHEMA_EXIT_CODE = 4;
   static final int ERROR_READING_DOCUMENT_EXIT_CODE = 5;
   static final int ERROR_PARSING_DOCUMENT_EXIT_CODE = 6;
+  static final int UNKNOWN_GENERATOR_EXIT_CODE = 7;
 
   private ExitCodes()
   {

@@ -22,8 +22,13 @@ import org.realityforge.getopt4j.CLUtil;
 import org.realityforge.giggle.document.DocumentReadException;
 import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.document.DocumentValidateException;
+import org.realityforge.giggle.generator.GenerateException;
+import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GeneratorRepository;
+import org.realityforge.giggle.generator.NoSuchGeneratorException;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
+import org.realityforge.giggle.util.IoUtil;
 import org.realityforge.giggle.util.MappingUtil;
 
 /**
@@ -119,6 +124,35 @@ public class Main
       final Map<String, String> operationMapping =
         MappingUtil.getMapping( c_environment.getOperationMappingFiles() );
 
+      final List<String> generators = c_environment.getGenerators();
+      if ( !generators.isEmpty() )
+      {
+        IoUtil.deleteDirIfExists( c_environment.getOutputDirectory() );
+        final GeneratorContext context =
+          new GeneratorContext( schema,
+                                document,
+                                typeMapping,
+                                fragmentMapping,
+                                c_environment.getOutputDirectory(),
+                                c_environment.getPackageName() );
+        final GeneratorRepository generatorRepository = new GeneratorRepository();
+        for ( final String generator : generators )
+        {
+          generatorRepository.generate( generator, context );
+        }
+      }
+    }
+    catch ( final GenerateException ge )
+    {
+      logger.log( Level.WARNING,
+                  "Error: Failed generating artifacts using generator named " + ge.getName(),
+                  ge.getCause() );
+      System.exit( ExitCodes.UNKNOWN_GENERATOR_EXIT_CODE );
+    }
+    catch ( final NoSuchGeneratorException nsge )
+    {
+      logger.log( Level.WARNING, "Error: Unable to locate generator named " + nsge.getName() );
+      System.exit( ExitCodes.UNKNOWN_GENERATOR_EXIT_CODE );
     }
     catch ( final DocumentReadException dre )
     {
