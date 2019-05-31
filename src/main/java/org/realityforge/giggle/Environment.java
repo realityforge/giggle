@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-final class Environment
+public final class Environment
 {
   @Nonnull
   private final Path _currentDirectory;
@@ -56,7 +56,7 @@ final class Environment
   }
 
   @Nonnull
-  List<Path> getSchemaFiles()
+  public List<Path> getSchemaFiles()
   {
     return Collections.unmodifiableList( _schemaFiles );
   }
@@ -67,7 +67,7 @@ final class Environment
   }
 
   @Nonnull
-  List<Path> getDocumentFiles()
+  public List<Path> getDocumentFiles()
   {
     return Collections.unmodifiableList( _documentFiles );
   }
@@ -78,7 +78,7 @@ final class Environment
   }
 
   @Nonnull
-  List<Path> getTypeMappingFiles()
+  public List<Path> getTypeMappingFiles()
   {
     return Collections.unmodifiableList( _typeMappingFiles );
   }
@@ -89,7 +89,7 @@ final class Environment
   }
 
   @Nonnull
-  List<Path> getFragmentMappingFiles()
+  public List<Path> getFragmentMappingFiles()
   {
     return Collections.unmodifiableList( _fragmentMappingFiles );
   }
@@ -100,7 +100,7 @@ final class Environment
   }
 
   @Nonnull
-  List<Path> getOperationMappingFiles()
+  public List<Path> getOperationMappingFiles()
   {
     return Collections.unmodifiableList( _operationMappingFiles );
   }
@@ -111,7 +111,7 @@ final class Environment
   }
 
   @Nonnull
-  Path getOutputDirectory()
+  public Path getOutputDirectory()
   {
     return Objects.requireNonNull( _outputDirectory );
   }
@@ -127,7 +127,7 @@ final class Environment
   }
 
   @Nonnull
-  String getPackageName()
+  public String getPackageName()
   {
     return Objects.requireNonNull( _packageName );
   }
@@ -143,7 +143,7 @@ final class Environment
   }
 
   @Nonnull
-  List<String> getGenerators()
+  public List<String> getGenerators()
   {
     return Collections.unmodifiableList( _generators );
   }
