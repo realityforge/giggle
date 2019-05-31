@@ -140,7 +140,7 @@ public class Main
                                    ( locations.isEmpty() ? "" : " @ " + locations ) );
       }
 
-      System.exit( ExitCodes.ERROR_READING_DOCUMENT_EXIT_CODE );
+      System.exit( ExitCodes.ERROR_PARSING_DOCUMENT_EXIT_CODE );
     }
     catch ( final SchemaReadException sre )
     {
