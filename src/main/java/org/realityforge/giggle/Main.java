@@ -41,6 +41,7 @@ public class Main
   private static final int OPERATION_MAPPING_FILE_OPT = 5;
   private static final int OUTPUT_DIRECTORY_OPT = 6;
   private static final int PACKAGE_NAME_OPT = 7;
+  private static final int GENERATOR_OPT = 8;
   private static final CLOptionDescriptor[] OPTIONS = new CLOptionDescriptor[]
     {
       new CLOptionDescriptor( "help",
@@ -84,7 +85,11 @@ public class Main
       new CLOptionDescriptor( "output-directory",
                               CLOptionDescriptor.ARGUMENT_REQUIRED,
                               OUTPUT_DIRECTORY_OPT,
-                              "The directory where generated files are output." )
+                              "The directory where generated files are output." ),
+      new CLOptionDescriptor( "generator",
+                              CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              GENERATOR_OPT,
+                              "The name of a generator to run on the model." )
     };
   private static final Environment c_environment =
     new Environment( Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
@@ -277,6 +282,17 @@ public class Main
           environment.setOutputDirectory( dir );
           break;
         }
+        case GENERATOR_OPT:
+        {
+          final String argument = option.getArgument();
+          if ( environment.getGenerators().contains( argument ) )
+          {
+            logger.log( Level.SEVERE, "Error: Duplicate generators specified: " + argument );
+            return false;
+          }
+          environment.addGenerator( argument );
+          break;
+        }
         case PACKAGE_NAME_OPT:
         {
           environment.setPackageName( option.getArgument() );
@@ -329,6 +345,7 @@ public class Main
       logger.log( Level.FINE, "Giggle Starting..." );
       logger.log( Level.FINE, "  Output directory: " + environment.getOutputDirectory() );
       logger.log( Level.FINE, "  Output Package: " + environment.getPackageName() );
+      logger.log( Level.FINE, "  Generators: " + environment.getGenerators() );
       logger.log( Level.FINE, "  Schema files: " + environment.getSchemaFiles() );
       logger.log( Level.FINE, "  Document files: " + environment.getDocumentFiles() );
       logger.log( Level.FINE, "  Type mapping files: " + environment.getTypeMappingFiles() );

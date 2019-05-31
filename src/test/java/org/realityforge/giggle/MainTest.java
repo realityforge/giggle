@@ -41,7 +41,9 @@ public class MainTest
                   "\t--package <argument>\n" +
                   "\t\tThe java package name used to generate artifacts.\n" +
                   "\t--output-directory <argument>\n" +
-                  "\t\tThe directory where generated files are output." );
+                  "\t\tThe directory where generated files are output.\n" +
+                  "\t--generator <argument>\n" +
+                  "\t\tThe name of a generator to run on the model." );
   }
 
   @Test
@@ -59,6 +61,7 @@ public class MainTest
       assertOutputContains( output, "Giggle Starting..." );
       assertOutputContains( output, "  Output directory: " );
       assertOutputContains( output, "  Output Package: " );
+      assertOutputContains( output, "  Generators: " );
       assertOutputContains( output, "  Schema files: " );
       assertOutputContains( output, "  Document files: " );
       assertOutputContains( output, "  Type mapping files: " );
@@ -91,6 +94,62 @@ public class MainTest
       assertEquals( environment.getOutputDirectory(), FileUtil.getCurrentDirectory().resolve( "output" ) );
       assertTrue( environment.hasPackageName() );
       assertEquals( environment.getPackageName(), "com.example.model" );
+    } );
+  }
+
+  @Test
+  public void processOptions_singleGenerator()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "--generator=graphql-java-server" );
+      assertEquals( handler.toString(), "" );
+      assertEquals( environment.getGenerators(), Collections.singletonList( "graphql-java-server" ) );
+    } );
+  }
+
+  @Test
+  public void processOptions_multipleGenerators()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "--generator=graphql-java-server",
+                      "--generator=graphql-java-client" );
+      assertEquals( handler.toString(), "" );
+      assertEquals( environment.getGenerators(), Arrays.asList( "graphql-java-server", "graphql-java-client" ) );
+    } );
+  }
+
+  @Test
+  public void processOptions_duplicateGenerators()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final String output = processOptions( false,
+                                            "--output-directory", "output",
+                                            "--package", "com.example.model",
+                                            "--schema", "schema.graphql",
+                                            "--generator=graphql-java-server",
+                                            "--generator=graphql-java-server" );
+      assertOutputContains( output,
+                            "Error: Duplicate generators specified: graphql-java-server" );
     } );
   }
 

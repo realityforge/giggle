@@ -29,6 +29,8 @@ final class Environment
   private Path _outputDirectory;
   @Nullable
   private String _packageName;
+  @Nonnull
+  private final List<String> _generators = new ArrayList<>();
 
   Environment( @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -133,5 +135,16 @@ final class Environment
   void setPackageName( @Nonnull final String packageName )
   {
     _packageName = Objects.requireNonNull( packageName );
+  }
+
+  void addGenerator( @Nonnull final String generator )
+  {
+    _generators.add( Objects.requireNonNull( generator ) );
+  }
+
+  @Nonnull
+  List<String> getGenerators()
+  {
+    return Collections.unmodifiableList( _generators );
   }
 }
