@@ -271,7 +271,7 @@ public class Main
           {
             final String message =
               "Error: Specified output directory exists and is not a directory. Specified value: " + argument;
-            environment.logger().log( Level.SEVERE, message );
+            logger.log( Level.SEVERE, message );
             return false;
           }
           environment.setOutputDirectory( dir );
