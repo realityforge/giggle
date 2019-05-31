@@ -17,6 +17,7 @@ public final class IoUtil
    * Recursively delete directory if it exists.
    *
    * @param directory the directory to delete.
+   * @throws IOException if unable to delete dir or a file contained within directory.
    */
   @SuppressWarnings( "ResultOfMethodCallIgnored" )
   public static void deleteDirIfExists( @Nonnull final Path directory )
