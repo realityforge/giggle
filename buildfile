@@ -25,7 +25,7 @@ define 'giggle' do
   package(:sources)
   package(:javadoc)
   package(:jar, :classifier => 'all').tap do |jar|
-    jar.with :manifest => {'Main-Class'=>'org.realityforge.giggle.Main'}
+    jar.with :manifest => { 'Main-Class' => 'org.realityforge.giggle.Main' }
     compile.dependencies.each do |d|
       jar.merge(d)
     end
