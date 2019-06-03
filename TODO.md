@@ -12,8 +12,6 @@ complete as there is too much un-said.
   - Names within a schema are unique
   - Operations, Fragments (from the executable document) and Types can have the same name
 
-* Mapping files should be validated such that every mapping is used.
-
 * The tool should be built so that it is command driven to make it compatible with Bazel's
   [Persistent Worker](https://medium.com/@mmorearty/how-to-create-a-persistent-worker-for-bazel-7738bba2cabb)
   infrastructure.
