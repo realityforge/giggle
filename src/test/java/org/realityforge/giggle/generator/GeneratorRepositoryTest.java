@@ -14,6 +14,7 @@ public class GeneratorRepositoryTest
   {
   }
 
+  @Generator.MetaData( name = "test" )
   private static class TestGenerator
     implements Generator
   {
@@ -26,6 +27,16 @@ public class GeneratorRepositoryTest
     }
   }
 
+  private static class DefaultNamedGenerator
+    implements Generator
+  {
+    @Override
+    public void generate( @Nonnull final GeneratorContext context )
+    {
+    }
+  }
+
+  @Generator.MetaData( name = "fail" )
   private static class FailingGenerator
     implements Generator
   {
@@ -40,11 +51,21 @@ public class GeneratorRepositoryTest
   public void getGenerator()
   {
     final TestGeneratorRepository repository = new TestGeneratorRepository();
-    final String name = ValueUtil.randomString();
     final TestGenerator generator = new TestGenerator();
-    repository.registerGenerator( name, () -> generator );
+    repository.registerGenerator( generator );
 
-    final Generator result = repository.getGenerator( name );
+    final Generator result = repository.getGenerator( "test" );
+    assertEquals( result, generator );
+  }
+
+  @Test
+  public void getGenerator_noExplicitName()
+  {
+    final TestGeneratorRepository repository = new TestGeneratorRepository();
+    final DefaultNamedGenerator generator = new DefaultNamedGenerator();
+    repository.registerGenerator( generator );
+
+    final Generator result = repository.getGenerator( "DefaultNamed" );
     assertEquals( result, generator );
   }
 
@@ -63,9 +84,9 @@ public class GeneratorRepositoryTest
   public void generate_error()
   {
     final TestGeneratorRepository repository = new TestGeneratorRepository();
-    final String name = ValueUtil.randomString();
+    final String name = "fail";
     final FailingGenerator generator = new FailingGenerator();
-    repository.registerGenerator( name, () -> generator );
+    repository.registerGenerator( generator );
 
     //noinspection ConstantConditions
     final GenerateException exception =
@@ -79,13 +100,12 @@ public class GeneratorRepositoryTest
   public void generate()
   {
     final TestGeneratorRepository repository = new TestGeneratorRepository();
-    final String name = ValueUtil.randomString();
     final TestGenerator generator = new TestGenerator();
-    repository.registerGenerator( name, () -> generator );
+    repository.registerGenerator( generator );
 
     assertEquals( generator._generateCount, 0 );
     //noinspection ConstantConditions
-    repository.generate( name, null );
+    repository.generate( "test", null );
     assertEquals( generator._generateCount, 1 );
   }
 }
