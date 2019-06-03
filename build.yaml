@@ -21,6 +21,8 @@ artifacts:
   slf4j_jdk14: org.slf4j:slf4j-jdk14:jar:1.7.25
   antlr4_runtime: org.antlr:antlr4-runtime:jar:4.7.2
 
+  javapoet: com.squareup:javapoet:jar:1.11.1
+
   autoservice: com.google.auto.service:auto-service:jar:1.0-rc3
   autocommon: com.google.auto:auto-common:jar:0.10
   guava: com.google.guava:guava:jar:25.0-jre

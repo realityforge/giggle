@@ -1,6 +1,17 @@
 require 'buildr/git_auto_version'
 require 'buildr/gpg'
 
+PACKAGED_DEPS =
+  [
+    :javax_annotation,
+    :getopt4j,
+    :javapoet,
+    :graphql_java,
+    :slf4j_api,
+    :slf4j_jdk14,
+    :antlr4_runtime
+  ]
+
 desc 'giggle: Generate source code and artifacts from a GraphQL schema and operations'
 define 'giggle' do
   project.group = 'org.realityforge.giggle'
@@ -17,19 +28,14 @@ define 'giggle' do
   compile.with :autoservice,
                :guava,
                :autocommon,
-               :javax_annotation,
-               :getopt4j,
-               :graphql_java,
-               :slf4j_api,
-               :slf4j_jdk14,
-               :antlr4_runtime
+               PACKAGED_DEPS
 
   package(:jar)
   package(:sources)
   package(:javadoc)
   package(:jar, :classifier => 'all').tap do |jar|
     jar.with :manifest => { 'Main-Class' => 'org.realityforge.giggle.Main' }
-    compile.dependencies.each do |d|
+    PACKAGED_DEPS.collect {|dep| Buildr.artifact(dep)}.each do |d|
       jar.merge(d)
     end
   end
