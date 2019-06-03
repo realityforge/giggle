@@ -3,10 +3,13 @@ package org.realityforge.giggle;
 import gir.Gir;
 import gir.Task;
 import gir.io.FileUtil;
+import graphql.schema.GraphQLSchema;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
 
 public abstract class AbstractTest
@@ -48,5 +51,21 @@ public abstract class AbstractTest
     logger.setUseParentHandlers( false );
     logger.addHandler( handler );
     return logger;
+  }
+
+  @Nonnull
+  protected final GraphQLSchema buildGraphQLSchema( @Nonnull final String schemaExtension )
+    throws IOException
+  {
+    final Path schemaFile =
+      writeContent( "schema.graphql",
+                    "schema {\n" +
+                    "  query: Query\n" +
+                    "}\n" +
+                    "type Query {\n" +
+                    "}\n" +
+                    schemaExtension );
+
+    return new SchemaRepository().getSchema( Collections.singletonList( schemaFile ) );
   }
 }

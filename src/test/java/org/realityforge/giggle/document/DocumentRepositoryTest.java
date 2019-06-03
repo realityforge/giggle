@@ -222,20 +222,4 @@ public class DocumentRepositoryTest
                     "Validation error of type FragmentCycle: Multiple fragments defined with the name 'NameParts'" );
     } );
   }
-
-  @Nonnull
-  private GraphQLSchema buildGraphQLSchema( @Nonnull final String schemaExtension )
-    throws IOException
-  {
-    final Path schemaFile =
-      writeContent( "schema.graphql",
-                    "schema {\n" +
-                    "  query: Query\n" +
-                    "}\n" +
-                    "type Query {\n" +
-                    "}\n" +
-                    schemaExtension );
-
-    return new SchemaRepository().getSchema( Collections.singletonList( schemaFile ) );
-  }
 }
