@@ -1,7 +1,9 @@
 package org.realityforge.giggle.generator.java;
 
 import gir.io.FileUtil;
+import graphql.introspection.Introspection;
 import graphql.language.Document;
+import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLType;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,5 +51,13 @@ public class JavaGeneratorTest
       assertEquals( entry.getKey().getName(), "Person" );
       assertEquals( entry.getValue(), "com.biz.Person" );
     } );
+  }
+
+  @Test
+  public void isNotIntrospectionType()
+  {
+    final MyTestJavaGenerator gen = new MyTestJavaGenerator();
+    assertTrue( gen.isNotIntrospectionType( GraphQLEnumType.newEnum().name( "Foo" ).build() ) );
+    assertFalse( gen.isNotIntrospectionType( Introspection.__Directive ) );
   }
 }
