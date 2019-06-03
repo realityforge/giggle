@@ -128,6 +128,7 @@ public class Main
                                 fragmentMapping,
                                 c_environment.getOutputDirectory(),
                                 c_environment.getPackageName() );
+        verifyTypeMapping( context );
         final GeneratorRepository generatorRepository = new GeneratorRepository();
         for ( final String generator : generators )
         {
@@ -219,6 +220,22 @@ public class Main
     }
 
     System.exit( ExitCodes.SUCCESS_EXIT_CODE );
+  }
+
+  static void verifyTypeMapping( @Nonnull final GeneratorContext context )
+  {
+    final GraphQLSchema schema = context.getSchema();
+    for ( final Map.Entry<String, String> entry : context.getTypeMapping().entrySet() )
+    {
+      final String key = entry.getKey();
+      final String value = entry.getValue();
+      if ( null == schema.getType( key ) )
+      {
+        throw new TerminalStateException( "Type mapping attempted to map the type named '" + key + "' to " +
+                                          value + " but there is no type named '" + key + "'",
+                                          ExitCodes.BAD_TYPE_MAPPING_EXIT_CODE );
+      }
+    }
   }
 
   private static void setupLogger()

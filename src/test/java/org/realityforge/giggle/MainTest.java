@@ -1,13 +1,16 @@
 package org.realityforge.giggle;
 
 import gir.io.FileUtil;
+import graphql.language.Document;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.generator.GeneratorContext;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -356,6 +359,64 @@ public class MainTest
                                             "--fragment-mapping", "mapping.properties" );
       assertOutputContains( output,
                             "Error: Specified graphql fragment mapping file does not exist. Specified value: mapping.properties" );
+    } );
+  }
+
+  @Test
+  public void verifyTypeMapping_noMappings()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final GeneratorContext context =
+        new GeneratorContext( buildGraphQLSchema( "" ),
+                              Document.newDocument().build(),
+                              Collections.emptyMap(),
+                              Collections.emptyMap(),
+                              FileUtil.createLocalTempDir(),
+                              "com.example" );
+      Main.verifyTypeMapping( context );
+    } );
+  }
+
+  @Test
+  public void verifyTypeMapping_validMappings()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final HashMap<String, String> typeMapping = new HashMap<>();
+      typeMapping.put( "Person", "com.biz.Person" );
+      final GeneratorContext context =
+        new GeneratorContext( buildGraphQLSchema( "type Person {\n" +
+                                                  "  name: String\n" +
+                                                  "}\n" ),
+                              Document.newDocument().build(),
+                              typeMapping,
+                              Collections.emptyMap(),
+                              FileUtil.createLocalTempDir(),
+                              "com.example" );
+      Main.verifyTypeMapping( context );
+    } );
+  }
+
+  @Test
+  public void verifyTypeMapping_invalidMappings()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final HashMap<String, String> typeMapping = new HashMap<>();
+      typeMapping.put( "Person", "com.biz.Person" );
+      final GeneratorContext context =
+        new GeneratorContext( buildGraphQLSchema( "" ),
+                              Document.newDocument().build(),
+                              typeMapping,
+                              Collections.emptyMap(),
+                              FileUtil.createLocalTempDir(),
+                              "com.example" );
+      final TerminalStateException exception =
+        expectThrows( TerminalStateException.class, () -> Main.verifyTypeMapping( context ) );
+      assertEquals( exception.getMessage(),
+                    "Type mapping attempted to map the type named 'Person' to com.biz.Person but there is no type named 'Person'" );
+      assertEquals( exception.getExitCode(), ExitCodes.BAD_TYPE_MAPPING_EXIT_CODE );
     } );
   }
 
