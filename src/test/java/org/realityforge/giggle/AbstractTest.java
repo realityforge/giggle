@@ -3,12 +3,14 @@ package org.realityforge.giggle;
 import gir.Gir;
 import gir.Task;
 import gir.io.FileUtil;
+import graphql.language.Document;
 import graphql.schema.GraphQLSchema;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
 
@@ -51,6 +53,18 @@ public abstract class AbstractTest
     logger.setUseParentHandlers( false );
     logger.addHandler( handler );
     return logger;
+  }
+
+  @Nonnull
+  protected final GeneratorContext newContext( @Nonnull final Path outputDir )
+    throws IOException
+  {
+    return new GeneratorContext( buildGraphQLSchema( "" ),
+                                 Document.newDocument().build(),
+                                 Collections.emptyMap(),
+                                 Collections.emptyMap(),
+                                 outputDir,
+                                 "com.example" );
   }
 
   @Nonnull

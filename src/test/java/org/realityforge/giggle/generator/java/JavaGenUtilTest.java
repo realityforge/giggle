@@ -2,11 +2,9 @@ package org.realityforge.giggle.generator.java;
 
 import com.squareup.javapoet.TypeSpec;
 import gir.io.FileUtil;
-import graphql.language.Document;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import org.realityforge.giggle.AbstractTest;
 import org.realityforge.giggle.generator.GeneratorContext;
 import org.testng.annotations.Test;
@@ -21,13 +19,7 @@ public class JavaGenUtilTest
   {
     inIsolatedDirectory( () -> {
       final Path dir = FileUtil.getCurrentDirectory();
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "" ),
-                              Document.newDocument().build(),
-                              Collections.emptyMap(),
-                              Collections.emptyMap(),
-                              dir,
-                              "com.example" );
+      final GeneratorContext context = newContext( dir );
       final Path file = dir.resolve( "com/example/MyEnum.java" );
 
       assertFalse( file.toFile().exists() );
