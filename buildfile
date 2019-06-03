@@ -25,10 +25,7 @@ define 'giggle' do
   pom.add_github_project('realityforge/giggle')
   pom.add_developer('realityforge', 'Peter Donald')
 
-  compile.with :autoservice,
-               :guava,
-               :autocommon,
-               PACKAGED_DEPS
+  compile.with PACKAGED_DEPS
 
   package(:jar)
   package(:sources)
