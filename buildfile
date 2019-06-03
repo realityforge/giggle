@@ -14,7 +14,10 @@ define 'giggle' do
   pom.add_github_project('realityforge/giggle')
   pom.add_developer('realityforge', 'Peter Donald')
 
-  compile.with :javax_annotation,
+  compile.with :autoservice,
+               :guava,
+               :autocommon,
+               :javax_annotation,
                :getopt4j,
                :graphql_java,
                :slf4j_api,
