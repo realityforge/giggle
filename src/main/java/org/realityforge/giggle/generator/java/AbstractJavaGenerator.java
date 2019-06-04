@@ -17,6 +17,18 @@ public abstract class AbstractJavaGenerator
   implements Generator
 {
   /**
+   * Ensure that the supplied text is cleaned for insertion into javadoc.
+   *
+   * @param text the text.
+   * @return the cleaned text.
+   */
+  @Nonnull
+  protected final String asJavadoc( @Nonnull final String text )
+  {
+    return text.trim() + "\n";
+  }
+
+  /**
    * Return true if type does not look like types derived from the
    * {@link graphql.introspection.Introspection#__Schema introspection schema}
    *

@@ -67,6 +67,15 @@ public class JavaGeneratorTest
   }
 
   @Test
+  public void asJavadoc()
+  {
+    final MyTestJavaGenerator gen = new MyTestJavaGenerator();
+    assertEquals( gen.asJavadoc( "\n\n\nHello" ), "Hello\n" );
+    assertEquals( gen.asJavadoc( "\n\n\nHello\n\n\n" ), "Hello\n" );
+    assertEquals( gen.asJavadoc( "\n\n\nHello\n\nWorld\n" ), "Hello\n\nWorld\n" );
+  }
+
+  @Test
   public void writeTypeMappingFile()
     throws Exception
   {

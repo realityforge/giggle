@@ -58,7 +58,7 @@ public class JavaServerGenerator
     final String description = value.getDescription();
     if ( null != description )
     {
-      builder.addJavadoc( description.trim() + "\n" );
+      builder.addJavadoc( asJavadoc( description ) );
     }
     final String deprecationReason = value.getDeprecationReason();
     if ( null != deprecationReason )
