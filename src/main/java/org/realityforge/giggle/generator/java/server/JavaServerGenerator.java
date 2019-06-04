@@ -43,11 +43,11 @@ public class JavaServerGenerator
     writeTypeMappingFile( context, typeMap );
   }
 
-  private void emitEnum( @Nonnull final GeneratorContext context, @Nonnull final GraphQLEnumType enumType )
+  private void emitEnum( @Nonnull final GeneratorContext context, @Nonnull final GraphQLEnumType type )
     throws IOException
   {
-    final TypeSpec.Builder builder = TypeSpec.enumBuilder( enumType.getName() );
-    enumType.getValues().forEach( value -> emitEnumValue( builder, value ) );
+    final TypeSpec.Builder builder = TypeSpec.enumBuilder( type.getName() );
+    type.getValues().forEach( value -> emitEnumValue( builder, value ) );
     JavaGenUtil.writeTopLevelType( context, builder );
   }
 
