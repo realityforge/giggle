@@ -1,8 +1,14 @@
 package org.realityforge.giggle.generator.java;
 
 import graphql.schema.GraphQLType;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
@@ -20,6 +26,27 @@ public abstract class AbstractJavaGenerator
   protected final boolean isNotIntrospectionType( @Nonnull final GraphQLType type )
   {
     return !type.getName().startsWith( "__" );
+  }
+
+  protected final void writeTypeMappingFile( @Nonnull final GeneratorContext context,
+                                             @Nonnull final Map<GraphQLType, String> typeMap )
+    throws IOException
+  {
+    final Path typeMappingFile = context.getOutputDirectory()
+      .resolve( context.getPackageName().replaceAll( "\\.", File.separator ) )
+      .resolve( "types.mapping" );
+    final String typeMappingContent =
+      typeMap.keySet()
+        .stream()
+        .map( type -> type.getName() + "=" + typeMap.get( type ) )
+        .sorted()
+        .collect( Collectors.joining( "\n" ) ) + "\n";
+    final Path dir = typeMappingFile.getParent();
+    if ( !Files.exists( dir ) )
+    {
+      Files.createDirectories( dir );
+    }
+    Files.write( typeMappingFile, typeMappingContent.getBytes( StandardCharsets.US_ASCII ) );
   }
 
   @Nonnull
