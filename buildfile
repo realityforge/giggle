@@ -39,8 +39,10 @@ define 'giggle' do
 
   test.using :testng
   test.with :gir, :guiceyloops
+  test.options[:properties] = {'giggle.fixture_dir' => _('src/test/fixtures')}
+  test.options[:java_args] = %w(-ea)
 
-  ipr.add_default_testng_configuration(:jvm_args => '-ea')
+  ipr.add_default_testng_configuration(:jvm_args => '-ea -Dgiggle.output_fixture_data=false -Dgiggle.fixture_dir=src/test/fixtures')
 
   iml.excluded_directories << project._('tmp')
 
