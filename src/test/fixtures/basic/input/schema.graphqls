@@ -25,8 +25,8 @@ enum EventType {
 }
 
 input EventInput {
-  name: String
-  type: EventType
+  name: String!
+  type: EventType!
   startedAt: Date
 }
 
