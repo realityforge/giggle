@@ -1,0 +1,43 @@
+schema {
+  query: Query
+}
+
+type Query {
+  event(id: ID!): Event
+}
+
+type Mutation {
+  createEvent(clientMutationId: String = null, event: EventInput!): CreateEventResponse
+}
+
+scalar Date
+
+enum EventType {
+  Wildfire
+  """
+  A wildfire set intentionally for purposes of forest management, farming, prairie restoration or greenhouse gas abatement.
+  """
+  Burn
+  """A flood is an overflow of water that submerges land that is usually dry."""
+  FloodOrStorm
+  RegenBurnEvent  @deprecated(reason: "Use `Burn`.")
+}
+
+input EventInput {
+  name: String
+  type: EventType
+  startedAt: Date
+}
+
+
+type CreateEventResponse {
+  clientMutationId: String
+  event: Event!
+}
+
+type Event {
+  id: ID!
+  name: String
+  type: EventType
+  startedAt: Date
+}
