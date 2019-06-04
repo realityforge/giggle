@@ -47,6 +47,7 @@ public class JavaServerGenerator
     throws IOException
   {
     final TypeSpec.Builder builder = TypeSpec.enumBuilder( type.getName() );
+    builder.addModifiers( Modifier.PUBLIC );
     type.getValues().forEach( value -> emitEnumValue( builder, value ) );
     JavaGenUtil.writeTopLevelType( context, builder );
   }

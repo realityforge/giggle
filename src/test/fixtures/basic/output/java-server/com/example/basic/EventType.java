@@ -1,6 +1,6 @@
 package com.example.basic;
 
-enum EventType {
+public enum EventType {
   /**
    * A wildfire set intentionally for purposes of forest management, farming, prairie restoration or greenhouse gas abatement.
    */
