@@ -6,7 +6,11 @@ import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +44,13 @@ public class JavaServerGenerator
         typeMap.put( type, context.getPackageName() + "." + type.getName() );
       }
     }
+    final Path typeMappingFile = context.getOutputDirectory()
+      .resolve( context.getPackageName().replaceAll( "\\.", File.separator ) )
+      .resolve( "types.mapping" );
+    final String typeMappingContent =
+      typeMap.keySet().stream().sorted().map( type -> type.getName() + "=" + typeMap.get( type ) ).collect(
+        Collectors.joining( "\n" ) );
+    Files.write( typeMappingFile, typeMappingContent.getBytes( StandardCharsets.US_ASCII ) );
   }
 
   private void emitEnum( @Nonnull final GeneratorContext context, @Nonnull final GraphQLEnumType enumType )
