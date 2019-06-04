@@ -12,6 +12,7 @@ type Mutation {
 
 scalar Date
 
+"""Classification of Event"""
 enum EventType {
   Wildfire
   """

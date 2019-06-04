@@ -48,6 +48,11 @@ public class JavaServerGenerator
   {
     final TypeSpec.Builder builder = TypeSpec.enumBuilder( type.getName() );
     builder.addModifiers( Modifier.PUBLIC );
+    final String description = type.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
     type.getValues().forEach( value -> emitEnumValue( builder, value ) );
     JavaGenUtil.writeTopLevelType( context, builder );
   }
