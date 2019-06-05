@@ -7,7 +7,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import graphql.Scalars;
-import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import java.io.IOException;
@@ -66,7 +65,7 @@ public final class JavaGenUtil
 
   @Nonnull
   public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
-                                      @Nonnull final GraphQLInputType graphQLType )
+                                      @Nonnull final GraphQLType graphQLType )
   {
     final boolean isList = isListRecursive( graphQLType );
     final boolean isNonnull = GraphQLTypeUtil.isNonNull( graphQLType );
