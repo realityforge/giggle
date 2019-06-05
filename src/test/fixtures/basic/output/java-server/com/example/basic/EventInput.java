@@ -10,13 +10,13 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class EventInput {
   @Nonnull
-  private String name;
+  private final String name;
 
   @Nullable
-  private Date startedAt;
+  private final Date startedAt;
 
   @Nonnull
-  private EventType type;
+  private final EventType type;
 
   public EventInput(@Nonnull final String name, @Nullable final Date startedAt,
       @Nonnull final EventType type) {

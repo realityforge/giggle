@@ -216,7 +216,7 @@ public class JavaServerGenerator
                                @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final FieldSpec.Builder builder =
-      FieldSpec.builder( fieldTypes.get( field ), field.getName(), Modifier.PRIVATE );
+      FieldSpec.builder( fieldTypes.get( field ), field.getName(), Modifier.PRIVATE, Modifier.FINAL );
     builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
 
     final String description = field.getDescription();

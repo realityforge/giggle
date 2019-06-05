@@ -8,10 +8,10 @@ import javax.annotation.Nonnull;
 @Generated("org.realityforge.giggle.Main")
 public final class ResourceInput {
   @Nonnull
-  private String name;
+  private final String name;
 
   @Nonnull
-  private ResourceType type;
+  private final ResourceType type;
 
   public ResourceInput(@Nonnull final String name, @Nonnull final ResourceType type) {
     this.name = Objects.requireNonNull( name );
