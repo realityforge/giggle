@@ -30,6 +30,9 @@ public class JavaGenUtilTest
       assertEquals( new String( Files.readAllBytes( file ), StandardCharsets.US_ASCII ),
                     "package com.example;\n" +
                     "\n" +
+                    "import javax.annotation.Generated;\n" +
+                    "\n" +
+                    "@Generated(\"org.realityforge.giggle.Main\")\n" +
                     "enum MyEnum {\n" +
                     "  Foo\n" +
                     "}\n" );

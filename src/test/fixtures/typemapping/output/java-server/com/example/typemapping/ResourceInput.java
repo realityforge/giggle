@@ -2,8 +2,10 @@ package com.example.typemapping;
 
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
+@Generated("org.realityforge.giggle.Main")
 public final class ResourceInput {
   @Nonnull
   private String name;

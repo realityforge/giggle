@@ -3,8 +3,10 @@ package com.example.typemapping;
 import com.example.typemapping.model.EventInput;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
+@Generated("org.realityforge.giggle.Main")
 public final class DeploymentInput {
   @Nonnull
   private EventInput event;

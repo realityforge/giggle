@@ -3,9 +3,11 @@ package com.example.basic;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Generated("org.realityforge.giggle.Main")
 public final class EventInput {
   @Nonnull
   private String name;

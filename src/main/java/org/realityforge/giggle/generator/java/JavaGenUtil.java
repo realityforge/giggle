@@ -1,5 +1,6 @@
 package org.realityforge.giggle.generator.java;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -31,10 +32,36 @@ public final class JavaGenUtil
                                         @Nonnull final TypeSpec.Builder builder )
     throws IOException
   {
+    writeGeneratedAnnotation( builder );
     JavaFile.builder( context.getPackageName(), builder.build() ).
       skipJavaLangImports( true ).
       build().
       writeTo( context.getOutputDirectory() );
+  }
+
+  private static void writeGeneratedAnnotation( @Nonnull final TypeSpec.Builder builder )
+    throws IOException
+  {
+    Class<?> generated;
+    try
+    {
+      generated = Class.forName( "javax.annotation.processing.Generated" );
+    }
+    catch ( final ClassNotFoundException ignored )
+    {
+      try
+      {
+        generated = Class.forName( "javax.annotation.Generated" );
+      }
+      catch ( final ClassNotFoundException ignored2 )
+      {
+        //Generate no annotation
+        return;
+      }
+    }
+    builder.addAnnotation( AnnotationSpec.builder( ClassName.get( generated ) )
+                             .addMember( "value", "$S", "org.realityforge.giggle.Main" )
+                             .build() );
   }
 
   @Nonnull

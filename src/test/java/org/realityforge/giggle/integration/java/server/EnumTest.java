@@ -31,6 +31,9 @@ public class EnumTest
       assertEquals( toJavaFile( results, name ),
                     "package com.example;\n" +
                     "\n" +
+                    "import javax.annotation.Generated;\n" +
+                    "\n" +
+                    "@Generated(\"org.realityforge.giggle.Main\")\n" +
                     "public enum EventState {\n" +
                     "  GOING,\n" +
                     "\n" +
@@ -65,6 +68,9 @@ public class EnumTest
       assertEquals( toJavaFile( results, eventType ),
                     "package com.example;\n" +
                     "\n" +
+                    "import javax.annotation.Generated;\n" +
+                    "\n" +
+                    "@Generated(\"org.realityforge.giggle.Main\")\n" +
                     "public enum EventType {\n" +
                     "  Burn,\n" +
                     "\n" +
@@ -99,9 +105,12 @@ public class EnumTest
       assertEquals( toJavaFile( results, "EventType" ),
                     "package com.example;\n" +
                     "\n" +
+                    "import javax.annotation.Generated;\n" +
+                    "\n" +
                     "/**\n" +
                     " * Classification of Event\n" +
                     " */\n" +
+                    "@Generated(\"org.realityforge.giggle.Main\")\n" +
                     "public enum EventType {\n" +
                     "  /**\n" +
                     "   * A wildfire set intentionally for purposes of forest management, farming, prairie restoration or greenhouse gas abatement.\n" +
