@@ -31,6 +31,16 @@ input EventInput {
   startedAt: Date
 }
 
+input ObservationInput {
+  type: String!
+  value: Int!
+}
+
+input ObservationsInput {
+  name: String!
+  type: [ObservationInput!]!
+}
+
 type CreateEventResponse {
   clientMutationId: String
   event: Event!

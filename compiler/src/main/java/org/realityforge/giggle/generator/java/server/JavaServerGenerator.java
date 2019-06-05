@@ -298,9 +298,7 @@ public class JavaServerGenerator
       }
 
       final TypeName javaType =
-        isInputType ?
-        ParameterizedTypeName.get( Map.class, String.class, Object.class ) :
-        typeName;
+        isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) : isInputType ? VALUE_MAP : typeName;
       ctor.addStatement( "final $T $N = ($T) args.get( $S )",
                          javaType,
                          name,
@@ -308,9 +306,21 @@ public class JavaServerGenerator
                          name );
       if ( isInputType )
       {
-        params.add( "$T.from( $N )" );
-        args.add( typeName );
-        args.add( name );
+        if ( isListType )
+        {
+          params.add( "$N.stream().map( $N -> $T.from( $N ) ).collect( $T.toList() )" );
+          args.add( name );
+          args.add( "$element$" );
+          args.add( ( (ParameterizedTypeName) typeName ).typeArguments.get( 0 ) );
+          args.add( "$element$" );
+          args.add( Collectors.class );
+        }
+        else
+        {
+          params.add( "$T.from( $N )" );
+          args.add( typeName );
+          args.add( name );
+        }
       }
       else
       {

@@ -1,2 +1,4 @@
 EventInput=com.example.basic.EventInput
 EventType=com.example.basic.EventType
+ObservationInput=com.example.basic.ObservationInput
+ObservationsInput=com.example.basic.ObservationsInput
