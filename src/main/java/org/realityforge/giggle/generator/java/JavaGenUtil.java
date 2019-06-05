@@ -39,7 +39,6 @@ public final class JavaGenUtil
   }
 
   private static void writeGeneratedAnnotation( @Nonnull final TypeSpec.Builder builder )
-    throws IOException
   {
     Class<?> generated;
     try
