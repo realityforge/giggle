@@ -282,6 +282,8 @@ public class JavaServerGenerator
                          .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
                          .build() );
 
+    boolean suppressedUnchecked = false;
+
     final List<String> params = new ArrayList<>();
     final List<Object> args = new ArrayList<>();
     args.add( self );
@@ -290,6 +292,15 @@ public class JavaServerGenerator
       final String name = field.getName();
       final TypeName typeName = fieldTypes.get( field );
       final boolean isInputType = GraphQLTypeUtil.unwrapAll( field.getType() ) instanceof GraphQLInputObjectType;
+      final boolean isListType = JavaGenUtil.isList( field.getType() );
+
+      if ( ( isInputType || isListType ) && !suppressedUnchecked )
+      {
+        suppressedUnchecked = true;
+        ctor.addAnnotation( AnnotationSpec.builder( SuppressWarnings.class )
+                              .addMember( "value", "$S", "unchecked" )
+                              .build() );
+      }
 
       final TypeName javaType =
         isInputType ?

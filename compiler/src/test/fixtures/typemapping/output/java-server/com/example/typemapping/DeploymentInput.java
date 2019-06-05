@@ -20,6 +20,7 @@ public final class DeploymentInput {
   }
 
   @Nonnull
+  @SuppressWarnings("unchecked")
   public static DeploymentInput from(@Nonnull final Map<String, Object> args) {
     final Map<String, Object> event = (Map<String, Object>) args.get( "event" );
     final Map<String, Object> resource = (Map<String, Object>) args.get( "resource" );
