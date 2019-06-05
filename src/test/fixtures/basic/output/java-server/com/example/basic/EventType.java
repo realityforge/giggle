@@ -18,7 +18,7 @@ public enum EventType {
    * @deprecated Use `Burn`.
    */
   @Deprecated
-  RegenBurnEvent,
+  RegenBurn,
 
   Wildfire
 }

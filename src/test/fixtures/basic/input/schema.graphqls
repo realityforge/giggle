@@ -21,7 +21,7 @@ enum EventType {
   Burn
   """A flood is an overflow of water that submerges land that is usually dry."""
   FloodOrStorm
-  RegenBurnEvent  @deprecated(reason: "Use `Burn`.")
+  RegenBurn @deprecated(reason: "Use `Burn`.")
 }
 
 input EventInput {
