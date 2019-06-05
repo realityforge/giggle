@@ -41,21 +41,25 @@ public class JavaServerGenerator
   public void generate( @Nonnull final GeneratorContext context )
     throws Exception
   {
-    final Map<GraphQLType, String> typeMap = buildTypeMapping( context );
+    final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
+    final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
     final GraphQLSchema schema = context.getSchema();
     final List<GraphQLType> types =
       schema.getAllTypesAsList()
         .stream()
         .filter( this::isNotIntrospectionType )
-        .filter( t -> !typeMap.containsKey( t ) )
+        .filter( t -> !inputTypeMap.containsKey( t ) )
         .collect( Collectors.toList() );
     for ( final GraphQLType type : types )
     {
       if ( type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType )
       {
-        typeMap.put( type, context.getPackageName() + "." + type.getName() );
+        generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
       }
     }
+    final Map<GraphQLType, String> fullTypeMap = new HashMap<>();
+    fullTypeMap.putAll( inputTypeMap );
+    fullTypeMap.putAll( generatedTypeMap );
     for ( final GraphQLType type : types )
     {
       if ( type instanceof GraphQLEnumType )
@@ -64,10 +68,10 @@ public class JavaServerGenerator
       }
       else if ( type instanceof GraphQLInputObjectType )
       {
-        emitInput( context, typeMap, (GraphQLInputObjectType) type );
+        emitInput( context, fullTypeMap, (GraphQLInputObjectType) type );
       }
     }
-    writeTypeMappingFile( context, typeMap );
+    writeTypeMappingFile( context, generatedTypeMap );
   }
 
   private void emitInput( @Nonnull final GeneratorContext context,
