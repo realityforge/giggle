@@ -48,6 +48,34 @@ define 'giggle' do
     test.options[:java_args] = %w(-ea)
   end
 
+  desc 'Integration Tests'
+  define 'integration-tests' do
+    test.options[:java_args] = %w(-ea)
+
+    test.using :testng
+    test.compile.with :gir, :guiceyloops,
+                      project('compiler').package(:jar),
+                      project('compiler').compile.dependencies
+
+
+    generated_dir = _(:target, :generated, :giggle, :test, :java)
+    iml.test_source_directories << generated_dir
+    task(generated_dir).enhance(['generate'])
+    test.compile.enhance(['generate'])
+    test.compile.from(generated_dir)
+    test.resources.from(generated_dir)
+
+    task 'generate' do
+      target = generated_dir
+      jar = project('compiler').package(:jar, :classifier => 'all')
+      jar.invoke
+      Dir["#{_('src/test/java/org/realityforge/giggle/integration/scenarios/*/schema.graphqls')}"].each do |file|
+        name = File.basename(File.dirname(file))
+        Java::Commands.java %W(-jar #{jar} --package org.realityforge.giggle.integration.scenarios.#{name} --schema #{file} --output-directory #{target} --generator java-server)
+      end
+    end
+  end
+
   ipr.add_default_testng_configuration(:jvm_args => '-ea -Dgiggle.output_fixture_data=false -Dgiggle.fixture_dir=compiler/src/test/fixtures')
 
   iml.excluded_directories << project._('tmp')
