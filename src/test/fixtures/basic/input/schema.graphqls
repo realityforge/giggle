@@ -30,7 +30,6 @@ input EventInput {
   startedAt: Date
 }
 
-
 type CreateEventResponse {
   clientMutationId: String
   event: Event!
