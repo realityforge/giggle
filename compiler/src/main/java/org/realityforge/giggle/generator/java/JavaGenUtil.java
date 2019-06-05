@@ -145,7 +145,7 @@ public final class JavaGenUtil
   }
 
   @Nonnull
-  private static ParameterizedTypeName listOf( @Nonnull final TypeName typeName )
+  public static TypeName listOf( @Nonnull final TypeName typeName )
   {
     return ParameterizedTypeName.get( LIST_CLASSNAME, typeName );
   }
