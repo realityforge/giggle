@@ -191,10 +191,7 @@ public class JavaServerGenerator
                                       @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final String name = field.getName();
-    final MethodSpec.Builder builder =
-      MethodSpec.methodBuilder( "get" +
-                                Character.toUpperCase( name.charAt( 0 ) ) +
-                                ( name.length() > 1 ? name.substring( 1 ) : "" ) );
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
     builder.addModifiers( Modifier.PUBLIC );
     builder.returns( fieldTypes.get( field ) );
     builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
