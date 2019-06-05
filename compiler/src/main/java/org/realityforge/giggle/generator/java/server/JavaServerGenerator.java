@@ -41,6 +41,9 @@ import org.realityforge.giggle.generator.java.NamingUtil;
 public class JavaServerGenerator
   extends AbstractJavaGenerator
 {
+  private static final ParameterizedTypeName VALUE_MAP =
+    ParameterizedTypeName.get( Map.class, String.class, Object.class );
+
   @Override
   public void generate( @Nonnull final GeneratorContext context )
     throws Exception
@@ -132,11 +135,7 @@ public class JavaServerGenerator
     final ClassName self = ClassName.bestGuess( className );
     ctor.returns( self );
 
-    ctor.addParameter( ParameterSpec.builder( ParameterizedTypeName.get( ClassName.get( Map.class ),
-                                                                         ClassName.get( String.class ),
-                                                                         ClassName.OBJECT ),
-                                              "args",
-                                              Modifier.FINAL )
+    ctor.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
                          .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
                          .build() );
 
@@ -151,7 +150,7 @@ public class JavaServerGenerator
 
       final TypeName javaType =
         isInputType ?
-        ParameterizedTypeName.get( Map.class, String.class, Object.class ) :
+        VALUE_MAP :
         typeName;
       ctor.addStatement( "final $T $N = ($T) args.get( $S )",
                          javaType,
@@ -274,11 +273,7 @@ public class JavaServerGenerator
     final ClassName self = ClassName.bestGuess( typeMap.get( type ) );
     ctor.returns( self );
 
-    ctor.addParameter( ParameterSpec.builder( ParameterizedTypeName.get( ClassName.get( Map.class ),
-                                                                         ClassName.get( String.class ),
-                                                                         ClassName.OBJECT ),
-                                              "args",
-                                              Modifier.FINAL )
+    ctor.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
                          .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
                          .build() );
 
