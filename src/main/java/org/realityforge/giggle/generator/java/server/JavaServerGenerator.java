@@ -8,9 +8,12 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLDirective;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
+import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
@@ -31,6 +34,7 @@ import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.generator.java.AbstractJavaGenerator;
 import org.realityforge.giggle.generator.java.JavaGenUtil;
+import org.realityforge.giggle.generator.java.NamingUtil;
 
 @SuppressWarnings( "Duplicates" )
 @Generator.MetaData( name = "java-server" )
@@ -70,8 +74,165 @@ public class JavaServerGenerator
       {
         emitInput( context, fullTypeMap, (GraphQLInputObjectType) type );
       }
+      else if ( type instanceof GraphQLFieldsContainer )
+      {
+        final GraphQLFieldsContainer container = (GraphQLFieldsContainer) type;
+        for ( final GraphQLFieldDefinition definition : container.getFieldDefinitions() )
+        {
+          final List<GraphQLArgument> arguments = definition.getArguments();
+          if ( !arguments.isEmpty() )
+          {
+            final String name = container.getName();
+            final String argsName =
+              "Query".equals( name ) || "Mutation".equals( name ) ?
+              definition.getName() :
+              container.getName() + definition.getName();
+            emitArgs( context, fullTypeMap, NamingUtil.uppercaseFirstCharacter( argsName ) + "Args", arguments );
+          }
+        }
+      }
     }
     writeTypeMappingFile( context, generatedTypeMap );
+  }
+
+  private void emitArgs( @Nonnull final GeneratorContext context,
+                         @Nonnull final Map<GraphQLType, String> typeMap,
+                         @Nonnull final String name,
+                         @Nonnull final List<GraphQLArgument> arguments )
+    throws IOException
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( name );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
+
+    final Map<GraphQLArgument, TypeName> argTypes = new HashMap<>();
+    for ( final GraphQLArgument argument : arguments )
+    {
+      argTypes.put( argument, JavaGenUtil.getJavaType( typeMap, argument.getType() ) );
+    }
+
+    builder.addMethod( emitArgsFrom( name, arguments, argTypes ) );
+    builder.addMethod( emitArgsConstructor( arguments, argTypes ) );
+    for ( final GraphQLArgument argument : arguments )
+    {
+      builder.addField( emitArgsField( argument, argTypes ) );
+      builder.addMethod( emitArgsFieldGetter( argument, argTypes ) );
+    }
+
+    JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  @Nonnull
+  private MethodSpec emitArgsFrom( @Nonnull final String className,
+                                   @Nonnull final List<GraphQLArgument> arguments,
+                                   @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  {
+    final MethodSpec.Builder ctor = MethodSpec.methodBuilder( "from" );
+    ctor.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
+    ctor.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
+    final ClassName self = ClassName.bestGuess( className );
+    ctor.returns( self );
+
+    ctor.addParameter( ParameterSpec.builder( ParameterizedTypeName.get( ClassName.get( Map.class ),
+                                                                         ClassName.get( String.class ),
+                                                                         ClassName.OBJECT ),
+                                              "args",
+                                              Modifier.FINAL )
+                         .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
+                         .build() );
+
+    final List<String> params = new ArrayList<>();
+    final List<Object> args = new ArrayList<>();
+    args.add( self );
+    for ( final GraphQLArgument argument : arguments )
+    {
+      final String name = argument.getName();
+      final TypeName typeName = argTypes.get( argument );
+      final boolean isInputType = GraphQLTypeUtil.unwrapAll( argument.getType() ) instanceof GraphQLInputObjectType;
+
+      final TypeName javaType =
+        isInputType ?
+        ParameterizedTypeName.get( Map.class, String.class, Object.class ) :
+        typeName;
+      ctor.addStatement( "final $T $N = ($T) args.get( $S )",
+                         javaType,
+                         name,
+                         javaType.isPrimitive() ? javaType.box() : javaType,
+                         name );
+      if ( isInputType )
+      {
+        params.add( "$T.from( $N )" );
+        args.add( typeName );
+        args.add( name );
+      }
+      else
+      {
+        params.add( "$N" );
+        args.add( name );
+      }
+    }
+    ctor.addStatement( "return new $T(" + String.join( ", ", params ) + ")", args.toArray() );
+
+    return ctor.build();
+  }
+
+  @Nonnull
+  private MethodSpec emitArgsConstructor( @Nonnull final List<GraphQLArgument> arguments,
+                                          @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  {
+    final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
+    ctor.addModifiers( Modifier.PUBLIC );
+    for ( final GraphQLArgument argument : arguments )
+    {
+      final GraphQLInputType fieldType = argument.getType();
+      ctor.addParameter( ParameterSpec
+                           .builder( argTypes.get( argument ), argument.getName(), Modifier.FINAL )
+                           .addAnnotation( getNullabilityAnnotation( fieldType ) )
+                           .build() );
+      if ( GraphQLTypeUtil.isNonNull( fieldType ) )
+      {
+        ctor.addStatement( "this.$N = $T.requireNonNull( $N )", argument.getName(), Objects.class, argument.getName() );
+      }
+      else
+      {
+        ctor.addStatement( "this.$N = $N", argument.getName(), argument.getName() );
+      }
+    }
+    return ctor.build();
+  }
+
+  @Nonnull
+  private MethodSpec emitArgsFieldGetter( @Nonnull final GraphQLArgument argument,
+                                          @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  {
+    final String name = argument.getName();
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
+    builder.addModifiers( Modifier.PUBLIC );
+    builder.returns( argTypes.get( argument ) );
+    builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+
+    final String description = argument.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    builder.addStatement( "return $N", name );
+    return builder.build();
+  }
+
+  @Nonnull
+  private FieldSpec emitArgsField( @Nonnull final GraphQLArgument argument,
+                                   @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  {
+    final FieldSpec.Builder builder =
+      FieldSpec.builder( argTypes.get( argument ), argument.getName(), Modifier.PRIVATE, Modifier.FINAL );
+    builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+
+    final String description = argument.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    return builder.build();
   }
 
   private void emitInput( @Nonnull final GeneratorContext context,
