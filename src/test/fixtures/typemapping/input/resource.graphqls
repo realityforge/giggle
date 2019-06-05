@@ -1,0 +1,9 @@
+enum ResourceType {
+  Tanker
+  Person
+}
+
+input ResourceInput {
+  name: String!
+  type: ResourceType!
+}

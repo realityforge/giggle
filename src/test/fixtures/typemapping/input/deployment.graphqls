@@ -1,0 +1,4 @@
+input DeploymentInput {
+  event: EventInput!
+  resource: ResourceInput!
+}

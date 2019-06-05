@@ -1,0 +1,11 @@
+enum EventType {
+  Wildfire
+  Burn
+  FloodOrStorm
+  RegenBurn @deprecated(reason: "Use `Burn`.")
+}
+
+input EventInput {
+  name: String!
+  type: EventType!
+}

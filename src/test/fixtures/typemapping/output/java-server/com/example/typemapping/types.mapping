@@ -1,0 +1,3 @@
+DeploymentInput=com.example.typemapping.DeploymentInput
+ResourceInput=com.example.typemapping.ResourceInput
+ResourceType=com.example.typemapping.ResourceType
