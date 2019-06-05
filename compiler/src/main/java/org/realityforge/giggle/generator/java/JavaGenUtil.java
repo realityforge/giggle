@@ -66,7 +66,7 @@ public final class JavaGenUtil
   public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
                                       @Nonnull final GraphQLType graphQLType )
   {
-    final boolean isList = isListRecursive( graphQLType );
+    final boolean isList = isList( graphQLType );
     final boolean isNonnull = GraphQLTypeUtil.isNonNull( graphQLType );
     final GraphQLType type = GraphQLTypeUtil.unwrapAll( graphQLType );
     final String typeName = typeMap.get( type );
@@ -150,9 +150,9 @@ public final class JavaGenUtil
     return ParameterizedTypeName.get( LIST_CLASSNAME, typeName );
   }
 
-  private static boolean isListRecursive( @Nonnull final GraphQLType type )
+  public static boolean isList( @Nonnull final GraphQLType type )
   {
     return GraphQLTypeUtil.isList( type ) ||
-           ( GraphQLTypeUtil.isWrapped( type ) && isListRecursive( GraphQLTypeUtil.unwrapOne( type ) ) );
+           ( GraphQLTypeUtil.isWrapped( type ) && isList( GraphQLTypeUtil.unwrapOne( type ) ) );
   }
 }
