@@ -326,7 +326,17 @@ public class JavaServerGenerator
       {
         if ( isListType )
         {
-          params.add( "$N.stream().map( $N -> $T.from( $N ) ).collect( $T.toList() )" );
+          final String prefix;
+          if ( GraphQLTypeUtil.isNonNull( field.getType() ) )
+          {
+            prefix = "";
+          }
+          else
+          {
+            prefix = "null == $N ? null : ";
+            args.add( name );
+          }
+          params.add( prefix + "$N.stream().map( $N -> $T.from( $N ) ).collect( $T.toList() )" );
           args.add( name );
           args.add( "$element$" );
           args.add( ( (ParameterizedTypeName) typeName ).typeArguments.get( 0 ) );
