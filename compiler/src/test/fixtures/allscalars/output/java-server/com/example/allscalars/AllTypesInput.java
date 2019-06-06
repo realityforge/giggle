@@ -173,7 +173,7 @@ public final class AllTypesInput {
     final List<Integer> requiredIntList = (List<Integer>) args.get( "requiredIntList" );
     final String requiredString = (String) args.get( "requiredString" );
     final List<String> requiredStringList = (List<String>) args.get( "requiredStringList" );
-    return new AllTypesInput(optionalBoolean, optionalBooleanList, optionalEnum, optionalEnumList, optionalFloat, optionalFloatList, optionalID, optionalIDList, MyInput.from( optionalInput ), optionalInputList.stream().map( $element$ -> MyInput.from( $element$ ) ).collect( Collectors.toList() ), optionalInt, optionalIntList, optionalString, optionalStringList, requiredBoolean, requiredBooleanList, requiredEnum, requiredEnumList, requiredFloat, requiredFloatList, requiredID, requiredIDList, MyInput.from( requiredInput ), requiredInputList.stream().map( $element$ -> MyInput.from( $element$ ) ).collect( Collectors.toList() ), requiredInt, requiredIntList, requiredString, requiredStringList);
+    return new AllTypesInput(optionalBoolean, optionalBooleanList, optionalEnum, optionalEnumList, optionalFloat, optionalFloatList, optionalID, optionalIDList, null == optionalInput ? null : MyInput.from( optionalInput ), optionalInputList.stream().map( $element$ -> MyInput.from( $element$ ) ).collect( Collectors.toList() ), optionalInt, optionalIntList, optionalString, optionalStringList, requiredBoolean, requiredBooleanList, requiredEnum, requiredEnumList, requiredFloat, requiredFloatList, requiredID, requiredIDList, MyInput.from( requiredInput ), requiredInputList.stream().map( $element$ -> MyInput.from( $element$ ) ).collect( Collectors.toList() ), requiredInt, requiredIntList, requiredString, requiredStringList);
   }
 
   @Nullable

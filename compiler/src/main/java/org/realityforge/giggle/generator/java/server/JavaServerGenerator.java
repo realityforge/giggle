@@ -156,9 +156,19 @@ public class JavaServerGenerator
                          name );
       if ( isInputType )
       {
-        params.add( "$T.from( $N )" );
-        args.add( typeName );
-        args.add( name );
+        if ( GraphQLTypeUtil.isNonNull( argument ) )
+        {
+          params.add( "$T.from( $N )" );
+          args.add( typeName );
+          args.add( name );
+        }
+        else
+        {
+          params.add( "null == $N ? null : $T.from( $N )" );
+          args.add( name );
+          args.add( typeName );
+          args.add( name );
+        }
       }
       else
       {
@@ -325,9 +335,19 @@ public class JavaServerGenerator
         }
         else
         {
-          params.add( "$T.from( $N )" );
-          args.add( typeName );
-          args.add( name );
+          if ( GraphQLTypeUtil.isNonNull( field.getType() ) )
+          {
+            params.add( "$T.from( $N )" );
+            args.add( typeName );
+            args.add( name );
+          }
+          else
+          {
+            params.add( "null == $N ? null : $T.from( $N )" );
+            args.add( name );
+            args.add( typeName );
+            args.add( name );
+          }
         }
       }
       else
