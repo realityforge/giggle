@@ -29,7 +29,6 @@ import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.generator.GeneratorRepository;
 import org.realityforge.giggle.schema.SchemaRepository;
 import org.realityforge.giggle.util.MappingUtil;
-import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 public abstract class AbstractIntegrationTest
@@ -52,8 +51,10 @@ public abstract class AbstractIntegrationTest
     return classLoader.loadClass( results.getPackageName() + "." + simpleName );
   }
 
+  @SuppressWarnings( "SameParameterValue" )
   @Nonnull
-  protected final CompileResults compileFragment( @Nonnull final String generator, @Nonnull final String schemaFragment )
+  protected final CompileResults compileFragment( @Nonnull final String generator,
+                                                  @Nonnull final String schemaFragment )
     throws Exception
   {
     final Path schemaFile = FileUtil.createLocalTempDir().resolve( "schema.graphql" );
@@ -74,8 +75,9 @@ public abstract class AbstractIntegrationTest
                                null );
   }
 
+  @SuppressWarnings( "SameParameterValue" )
   @Nonnull
-  protected final CompileResults generateAndCompile( @Nonnull final String generator,
+  private CompileResults generateAndCompile( @Nonnull final String generator,
                                              @Nonnull final List<Path> schemaFiles,
                                              @Nonnull final List<Path> documentFiles,
                                              @Nonnull final List<Path> typeMappingFiles,
