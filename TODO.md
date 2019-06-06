@@ -21,8 +21,6 @@ complete as there is too much un-said.
 
 * Add configuration files to control shape of output files.
 
-* inputs should have equals and hashCode implemented and possibly toString
-
 * We should be able to mark `ID` arguments/fields as integers and throw a `CoercingParseLiteralException` if they turn out not to be.
 
 ## Actions
