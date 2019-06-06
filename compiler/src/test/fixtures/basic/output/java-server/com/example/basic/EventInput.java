@@ -55,19 +55,13 @@ public final class EventInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof EventInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof EventInput ) ) {
       return false;
+    } else {
+      final EventInput that = (EventInput) o;
+      return Objects.equals( name, that.name ) && Objects.equals( startedAt, that.startedAt ) && Objects.equals( type, that.type );
     }
-    final EventInput that = (EventInput) o;
-    if ( !Objects.equals( name, that.name ) ) {
-      return false;
-    }
-    if ( !Objects.equals( startedAt, that.startedAt ) ) {
-      return false;
-    }
-    if ( !Objects.equals( type, that.type ) ) {
-      return false;
-    }
-    return true;
   }
 }

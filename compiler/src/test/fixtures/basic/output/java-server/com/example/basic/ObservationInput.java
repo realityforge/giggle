@@ -41,16 +41,13 @@ public final class ObservationInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof ObservationInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof ObservationInput ) ) {
       return false;
+    } else {
+      final ObservationInput that = (ObservationInput) o;
+      return Objects.equals( type, that.type ) && Objects.equals( value, that.value );
     }
-    final ObservationInput that = (ObservationInput) o;
-    if ( !Objects.equals( type, that.type ) ) {
-      return false;
-    }
-    if ( !Objects.equals( value, that.value ) ) {
-      return false;
-    }
-    return true;
   }
 }

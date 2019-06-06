@@ -400,115 +400,13 @@ public final class AllTypesInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof AllTypesInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof AllTypesInput ) ) {
       return false;
+    } else {
+      final AllTypesInput that = (AllTypesInput) o;
+      return Objects.equals( optionalBoolean, that.optionalBoolean ) && Objects.equals( optionalBooleanList, that.optionalBooleanList ) && Objects.equals( optionalEnum, that.optionalEnum ) && Objects.equals( optionalEnumList, that.optionalEnumList ) && Objects.equals( optionalFloat, that.optionalFloat ) && Objects.equals( optionalFloatList, that.optionalFloatList ) && Objects.equals( optionalID, that.optionalID ) && Objects.equals( optionalIDList, that.optionalIDList ) && Objects.equals( optionalInput, that.optionalInput ) && Objects.equals( optionalInputList, that.optionalInputList ) && Objects.equals( optionalInt, that.optionalInt ) && Objects.equals( optionalIntList, that.optionalIntList ) && Objects.equals( optionalString, that.optionalString ) && Objects.equals( optionalStringList, that.optionalStringList ) && Objects.equals( requiredBoolean, that.requiredBoolean ) && Objects.equals( requiredBooleanList, that.requiredBooleanList ) && Objects.equals( requiredBooleanListContainingNulls, that.requiredBooleanListContainingNulls ) && Objects.equals( requiredEnum, that.requiredEnum ) && Objects.equals( requiredEnumList, that.requiredEnumList ) && Objects.equals( requiredEnumListContainingNulls, that.requiredEnumListContainingNulls ) && Objects.equals( requiredFloat, that.requiredFloat ) && Objects.equals( requiredFloatList, that.requiredFloatList ) && Objects.equals( requiredFloatListContainingNulls, that.requiredFloatListContainingNulls ) && Objects.equals( requiredID, that.requiredID ) && Objects.equals( requiredIDList, that.requiredIDList ) && Objects.equals( requiredIDListContainingNulls, that.requiredIDListContainingNulls ) && Objects.equals( requiredInput, that.requiredInput ) && Objects.equals( requiredInputList, that.requiredInputList ) && Objects.equals( requiredInputListContainingNulls, that.requiredInputListContainingNulls ) && Objects.equals( requiredInt, that.requiredInt ) && Objects.equals( requiredIntList, that.requiredIntList ) && Objects.equals( requiredIntListContainingNulls, that.requiredIntListContainingNulls ) && Objects.equals( requiredString, that.requiredString ) && Objects.equals( requiredStringList, that.requiredStringList ) && Objects.equals( requiredStringListContainingNulls, that.requiredStringListContainingNulls );
     }
-    final AllTypesInput that = (AllTypesInput) o;
-    if ( !Objects.equals( optionalBoolean, that.optionalBoolean ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalBooleanList, that.optionalBooleanList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalEnum, that.optionalEnum ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalEnumList, that.optionalEnumList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalFloat, that.optionalFloat ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalFloatList, that.optionalFloatList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalID, that.optionalID ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalIDList, that.optionalIDList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalInput, that.optionalInput ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalInputList, that.optionalInputList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalInt, that.optionalInt ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalIntList, that.optionalIntList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalString, that.optionalString ) ) {
-      return false;
-    }
-    if ( !Objects.equals( optionalStringList, that.optionalStringList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredBoolean, that.requiredBoolean ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredBooleanList, that.requiredBooleanList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredBooleanListContainingNulls, that.requiredBooleanListContainingNulls ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredEnum, that.requiredEnum ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredEnumList, that.requiredEnumList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredEnumListContainingNulls, that.requiredEnumListContainingNulls ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredFloat, that.requiredFloat ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredFloatList, that.requiredFloatList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredFloatListContainingNulls, that.requiredFloatListContainingNulls ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredID, that.requiredID ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredIDList, that.requiredIDList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredIDListContainingNulls, that.requiredIDListContainingNulls ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredInput, that.requiredInput ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredInputList, that.requiredInputList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredInputListContainingNulls, that.requiredInputListContainingNulls ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredInt, that.requiredInt ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredIntList, that.requiredIntList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredIntListContainingNulls, that.requiredIntListContainingNulls ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredString, that.requiredString ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredStringList, that.requiredStringList ) ) {
-      return false;
-    }
-    if ( !Objects.equals( requiredStringListContainingNulls, that.requiredStringListContainingNulls ) ) {
-      return false;
-    }
-    return true;
   }
 }

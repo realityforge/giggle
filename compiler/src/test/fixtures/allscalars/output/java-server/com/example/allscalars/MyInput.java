@@ -55,19 +55,13 @@ public final class MyInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof MyInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof MyInput ) ) {
       return false;
+    } else {
+      final MyInput that = (MyInput) o;
+      return Objects.equals( data, that.data ) && Objects.equals( other, that.other ) && Objects.equals( v, that.v );
     }
-    final MyInput that = (MyInput) o;
-    if ( !Objects.equals( data, that.data ) ) {
-      return false;
-    }
-    if ( !Objects.equals( other, that.other ) ) {
-      return false;
-    }
-    if ( !Objects.equals( v, that.v ) ) {
-      return false;
-    }
-    return true;
   }
 }

@@ -324,26 +324,23 @@ public class JavaServerGenerator
         returns( TypeName.BOOLEAN );
 
     final CodeBlock.Builder codeBlock = CodeBlock.builder();
-    codeBlock.beginControlFlow( "if ( !( o instanceof $T ) )", self );
+    codeBlock.beginControlFlow( "if ( this == o )" );
+    codeBlock.addStatement( "return true" );
+    codeBlock.nextControlFlow( "else if ( !( o instanceof $T ) )", self );
     codeBlock.addStatement( "return false" );
+    codeBlock.nextControlFlow( "else" );
+    codeBlock.addStatement( "final $T that = ($T) o", self, self );
+
+    final ArrayList<Object> args = new ArrayList<>();
+    final String expr = type.getFields().stream().map( field -> {
+      args.add( Objects.class );
+      args.add( field.getName() );
+      args.add( field.getName() );
+      return "$T.equals( $N, that.$N )";
+    } ).collect( Collectors.joining( " && " ) );
+    codeBlock.addStatement( "return " + expr, args.toArray() );
     codeBlock.endControlFlow();
     method.addCode( codeBlock.build() );
-
-    method.addStatement( "final $T that = ($T) o", self, self );
-
-    for ( final GraphQLInputObjectField field : type.getFields() )
-    {
-      final CodeBlock.Builder block = CodeBlock.builder();
-      block.beginControlFlow( "if ( !$T.equals( $N, that.$N ) )",
-                              Objects.class,
-                              field.getName(),
-                              field.getName() );
-      block.addStatement( "return false" );
-      block.endControlFlow();
-      method.addCode( block.build() );
-
-    }
-    method.addStatement( "return true" );
     return method.build();
   }
 

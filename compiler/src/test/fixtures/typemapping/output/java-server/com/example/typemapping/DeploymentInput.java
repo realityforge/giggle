@@ -45,16 +45,13 @@ public final class DeploymentInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof DeploymentInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof DeploymentInput ) ) {
       return false;
+    } else {
+      final DeploymentInput that = (DeploymentInput) o;
+      return Objects.equals( event, that.event ) && Objects.equals( resource, that.resource );
     }
-    final DeploymentInput that = (DeploymentInput) o;
-    if ( !Objects.equals( event, that.event ) ) {
-      return false;
-    }
-    if ( !Objects.equals( resource, that.resource ) ) {
-      return false;
-    }
-    return true;
   }
 }

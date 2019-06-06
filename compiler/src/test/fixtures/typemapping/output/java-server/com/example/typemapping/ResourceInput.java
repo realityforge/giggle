@@ -43,16 +43,13 @@ public final class ResourceInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof ResourceInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof ResourceInput ) ) {
       return false;
+    } else {
+      final ResourceInput that = (ResourceInput) o;
+      return Objects.equals( name, that.name ) && Objects.equals( type, that.type );
     }
-    final ResourceInput that = (ResourceInput) o;
-    if ( !Objects.equals( name, that.name ) ) {
-      return false;
-    }
-    if ( !Objects.equals( type, that.type ) ) {
-      return false;
-    }
-    return true;
   }
 }

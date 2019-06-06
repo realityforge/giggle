@@ -44,16 +44,13 @@ public final class MyRecursiveInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof MyRecursiveInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof MyRecursiveInput ) ) {
       return false;
+    } else {
+      final MyRecursiveInput that = (MyRecursiveInput) o;
+      return Objects.equals( child, that.child ) && Objects.equals( v, that.v );
     }
-    final MyRecursiveInput that = (MyRecursiveInput) o;
-    if ( !Objects.equals( child, that.child ) ) {
-      return false;
-    }
-    if ( !Objects.equals( v, that.v ) ) {
-      return false;
-    }
-    return true;
   }
 }

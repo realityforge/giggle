@@ -47,16 +47,13 @@ public final class MyRecursiveListInput {
 
   @Override
   public final boolean equals(final Object o) {
-    if ( !( o instanceof MyRecursiveListInput ) ) {
+    if ( this == o ) {
+      return true;
+    } else if ( !( o instanceof MyRecursiveListInput ) ) {
       return false;
+    } else {
+      final MyRecursiveListInput that = (MyRecursiveListInput) o;
+      return Objects.equals( child, that.child ) && Objects.equals( v, that.v );
     }
-    final MyRecursiveListInput that = (MyRecursiveListInput) o;
-    if ( !Objects.equals( child, that.child ) ) {
-      return false;
-    }
-    if ( !Objects.equals( v, that.v ) ) {
-      return false;
-    }
-    return true;
   }
 }
