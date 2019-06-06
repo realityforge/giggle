@@ -215,7 +215,12 @@ public final class AllTypesInput {
     final String requiredString = (String) args.get( "requiredString" );
     final List<String> requiredStringList = (List<String>) args.get( "requiredStringList" );
     final List<String> requiredStringListContainingNulls = (List<String>) args.get( "requiredStringListContainingNulls" );
-    return new AllTypesInput(optionalBoolean, optionalBooleanList, optionalEnum, optionalEnumList, optionalFloat, optionalFloatList, optionalID, optionalIDList, null == optionalInput ? null : MyInput.from( optionalInput ), null == optionalInputList ? null : optionalInputList.stream().map( $e$ -> null == $e$ ? null : MyInput.from( $e$ ) ).collect( Collectors.toList() ), optionalInt, optionalIntList, optionalString, optionalStringList, requiredBoolean, requiredBooleanList, requiredBooleanListContainingNulls, requiredEnum, requiredEnumList, requiredEnumListContainingNulls, requiredFloat, requiredFloatList, requiredFloatListContainingNulls, requiredID, requiredIDList, requiredIDListContainingNulls, MyInput.from( requiredInput ), requiredInputList.stream().map( $e$ ->  MyInput.from( $e$ ) ).collect( Collectors.toList() ), requiredInputListContainingNulls.stream().map( $e$ -> null == $e$ ? null : MyInput.from( $e$ ) ).collect( Collectors.toList() ), requiredInt, requiredIntList, requiredIntListContainingNulls, requiredString, requiredStringList, requiredStringListContainingNulls);
+    return new AllTypesInput(optionalBoolean, optionalBooleanList, optionalEnum, optionalEnumList, optionalFloat, optionalFloatList, optionalID, optionalIDList, MyInput.maybeFrom( optionalInput ), null == optionalInputList ? null : optionalInputList.stream().map( MyInput::maybeFrom ).collect( Collectors.toList() ), optionalInt, optionalIntList, optionalString, optionalStringList, requiredBoolean, requiredBooleanList, requiredBooleanListContainingNulls, requiredEnum, requiredEnumList, requiredEnumListContainingNulls, requiredFloat, requiredFloatList, requiredFloatListContainingNulls, requiredID, requiredIDList, requiredIDListContainingNulls, MyInput.from( requiredInput ), requiredInputList.stream().map( MyInput::from ).collect( Collectors.toList() ), requiredInputListContainingNulls.stream().map( MyInput::maybeFrom ).collect( Collectors.toList() ), requiredInt, requiredIntList, requiredIntListContainingNulls, requiredString, requiredStringList, requiredStringListContainingNulls);
+  }
+
+  @Nullable
+  public static AllTypesInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
   }
 
   @Nullable

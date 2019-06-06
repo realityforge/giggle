@@ -30,7 +30,12 @@ public final class MyInput {
     final Map<String, Object> data = (Map<String, Object>) args.get( "data" );
     final Map<String, Object> other = (Map<String, Object>) args.get( "other" );
     final String v = (String) args.get( "v" );
-    return new MyInput(null == data ? null : MyRecursiveListInput.from( data ), MyRecursiveInput.from( other ), v);
+    return new MyInput(MyRecursiveListInput.maybeFrom( data ), MyRecursiveInput.from( other ), v);
+  }
+
+  @Nullable
+  public static MyInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
   }
 
   @Nullable

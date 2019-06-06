@@ -156,19 +156,10 @@ public class JavaServerGenerator
                          name );
       if ( isInputType )
       {
-        if ( GraphQLTypeUtil.isNonNull( argument ) )
-        {
-          params.add( "$T.from( $N )" );
-          args.add( typeName );
-          args.add( name );
-        }
-        else
-        {
-          params.add( "null == $N ? null : $T.from( $N )" );
-          args.add( name );
-          args.add( typeName );
-          args.add( name );
-        }
+        params.add( "$T.$N( $N )" );
+        args.add( typeName );
+        args.add( GraphQLTypeUtil.isNonNull( argument ) ? "from" : "maybeFrom" );
+        args.add( name );
       }
       else
       {
@@ -271,6 +262,7 @@ public class JavaServerGenerator
     }
 
     builder.addMethod( emitInputFrom( type, typeMap, fieldTypes ) );
+    builder.addMethod( emitInputMaybeFrom( type, typeMap ) );
     builder.addMethod( emitInputConstructor( type, fieldTypes ) );
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
@@ -278,6 +270,21 @@ public class JavaServerGenerator
       builder.addMethod( emitFieldGetter( field, fieldTypes ) );
     }
     JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  @Nonnull
+  private MethodSpec emitInputMaybeFrom( @Nonnull final GraphQLInputObjectType type,
+                                         @Nonnull final Map<GraphQLType, String> typeMap )
+  {
+    return MethodSpec.methodBuilder( "maybeFrom" )
+      .addModifiers( Modifier.PUBLIC, Modifier.STATIC )
+      .addAnnotation( JavaGenUtil.NULLABLE_CLASSNAME )
+      .returns( ClassName.bestGuess( typeMap.get( type ) ) )
+      .addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
+                       .addAnnotation( JavaGenUtil.NULLABLE_CLASSNAME )
+                       .build() )
+      .addStatement( "return null == args ? null : from( args )" )
+      .build();
   }
 
   @Nonnull
@@ -339,34 +346,18 @@ public class JavaServerGenerator
           final boolean listMayContainNulls =
             !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( field.getType() ) ) );
 
-          params.add( prefix + "$N.stream().map( $N -> " +
-                      ( listMayContainNulls ? "null == $N ? null :" : "" ) +
-                      " $T.from( $N ) ).collect( $T.toList() )" );
+          params.add( prefix + "$N.stream().map( $T::$N ).collect( $T.toList() )" );
           args.add( name );
-          args.add( "$e$" );
-          if ( listMayContainNulls )
-          {
-            args.add( "$e$" );
-          }
           args.add( ( (ParameterizedTypeName) typeName ).typeArguments.get( 0 ) );
-          args.add( "$e$" );
+          args.add( listMayContainNulls ? "maybeFrom" : "from" );
           args.add( Collectors.class );
         }
         else
         {
-          if ( GraphQLTypeUtil.isNonNull( field.getType() ) )
-          {
-            params.add( "$T.from( $N )" );
-            args.add( typeName );
-            args.add( name );
-          }
-          else
-          {
-            params.add( "null == $N ? null : $T.from( $N )" );
-            args.add( name );
-            args.add( typeName );
-            args.add( name );
-          }
+          params.add( "$T.$N( $N )" );
+          args.add( typeName );
+          args.add( GraphQLTypeUtil.isNonNull( field.getType() ) ? "from" : "maybeFrom" );
+          args.add( name );
         }
       }
       else

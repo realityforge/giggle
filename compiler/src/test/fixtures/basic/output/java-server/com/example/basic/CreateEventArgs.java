@@ -23,7 +23,7 @@ public final class CreateEventArgs {
   public static CreateEventArgs from(@Nonnull final Map<String, Object> args) {
     final String clientMutationId = (String) args.get( "clientMutationId" );
     final Map<String, Object> event = (Map<String, Object>) args.get( "event" );
-    return new CreateEventArgs(clientMutationId, null == event ? null : EventInput.from( event ));
+    return new CreateEventArgs(clientMutationId, EventInput.maybeFrom( event ));
   }
 
   @Nullable

@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class ObservationsInput {
@@ -26,7 +27,12 @@ public final class ObservationsInput {
   public static ObservationsInput from(@Nonnull final Map<String, Object> args) {
     final String name = (String) args.get( "name" );
     final List<Map<String, Object>> type = (List<Map<String, Object>>) args.get( "type" );
-    return new ObservationsInput(name, type.stream().map( $e$ ->  ObservationInput.from( $e$ ) ).collect( Collectors.toList() ));
+    return new ObservationsInput(name, type.stream().map( ObservationInput::from ).collect( Collectors.toList() ));
+  }
+
+  @Nullable
+  public static ObservationsInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
   }
 
   @Nonnull

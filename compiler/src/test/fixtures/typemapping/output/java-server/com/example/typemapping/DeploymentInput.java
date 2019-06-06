@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class DeploymentInput {
@@ -25,6 +26,11 @@ public final class DeploymentInput {
     final Map<String, Object> event = (Map<String, Object>) args.get( "event" );
     final Map<String, Object> resource = (Map<String, Object>) args.get( "resource" );
     return new DeploymentInput(EventInput.from( event ), ResourceInput.from( resource ));
+  }
+
+  @Nullable
+  public static DeploymentInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
   }
 
   @Nonnull

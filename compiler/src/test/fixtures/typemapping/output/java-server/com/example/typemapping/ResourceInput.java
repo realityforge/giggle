@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class ResourceInput {
@@ -23,6 +24,11 @@ public final class ResourceInput {
     final String name = (String) args.get( "name" );
     final ResourceType type = (ResourceType) args.get( "type" );
     return new ResourceInput(name, type);
+  }
+
+  @Nullable
+  public static ResourceInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
   }
 
   @Nonnull

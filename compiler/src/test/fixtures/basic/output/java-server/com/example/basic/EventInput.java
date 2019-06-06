@@ -33,6 +33,11 @@ public final class EventInput {
     return new EventInput(name, startedAt, type);
   }
 
+  @Nullable
+  public static EventInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
+  }
+
   @Nonnull
   public String getName() {
     return name;

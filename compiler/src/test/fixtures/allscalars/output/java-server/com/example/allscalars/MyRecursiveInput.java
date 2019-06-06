@@ -23,7 +23,12 @@ public final class MyRecursiveInput {
   public static MyRecursiveInput from(@Nonnull final Map<String, Object> args) {
     final Map<String, Object> child = (Map<String, Object>) args.get( "child" );
     final String v = (String) args.get( "v" );
-    return new MyRecursiveInput(null == child ? null : MyRecursiveInput.from( child ), v);
+    return new MyRecursiveInput(MyRecursiveInput.maybeFrom( child ), v);
+  }
+
+  @Nullable
+  public static MyRecursiveInput maybeFrom(@Nullable final Map<String, Object> args) {
+    return null == args ? null : from( args );
   }
 
   @Nullable
