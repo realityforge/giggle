@@ -1,4 +1,5 @@
 def integration_tests(project)
+  desc 'Generate code required for integration tests'
   generate_task = project.task('generate')
   jar = project('compiler').package(:jar, :classifier => 'all')
   Dir["#{_('src/test/java/org/realityforge/giggle/integration/scenarios/*/schema.graphqls')}"].each do |file|
