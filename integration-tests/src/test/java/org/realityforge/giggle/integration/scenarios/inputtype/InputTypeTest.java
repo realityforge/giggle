@@ -13,7 +13,7 @@ public class InputTypeTest
   extends AbstractScenarioTest
 {
   @Test
-  public void scenario()
+  public void structure()
   {
     assertTrue( Modifier.isPublic( ObservationInput.class.getModifiers() ) );
     assertTrue( Modifier.isPublic( ObservationsInput.class.getModifiers() ) );
