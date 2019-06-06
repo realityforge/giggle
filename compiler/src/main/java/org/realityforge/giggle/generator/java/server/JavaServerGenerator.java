@@ -113,21 +113,21 @@ public class JavaServerGenerator
       argTypes.put( argument, JavaGenUtil.getJavaType( typeMap, argument.getType() ) );
     }
 
-    builder.addMethod( emitArgsFrom( name, arguments, argTypes ) );
-    builder.addMethod( emitArgsConstructor( arguments, argTypes ) );
+    builder.addMethod( buildArgsFrom( name, arguments, argTypes ) );
+    builder.addMethod( buildArgsConstructor( arguments, argTypes ) );
     for ( final GraphQLArgument argument : arguments )
     {
-      builder.addField( emitArgsField( argument, argTypes ) );
-      builder.addMethod( emitArgsFieldGetter( argument, argTypes ) );
+      builder.addField( buildArgsArgField( argument, argTypes ) );
+      builder.addMethod( buildArgsArgGetter( argument, argTypes ) );
     }
 
     JavaGenUtil.writeTopLevelType( context, builder );
   }
 
   @Nonnull
-  private MethodSpec emitArgsFrom( @Nonnull final String className,
-                                   @Nonnull final List<GraphQLArgument> arguments,
-                                   @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  private MethodSpec buildArgsFrom( @Nonnull final String className,
+                                    @Nonnull final List<GraphQLArgument> arguments,
+                                    @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
   {
     final MethodSpec.Builder method = MethodSpec.methodBuilder( "from" );
     method.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
@@ -136,8 +136,8 @@ public class JavaServerGenerator
     method.returns( self );
 
     method.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
-                         .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
-                         .build() );
+                           .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
+                           .build() );
 
     boolean suppressedUnchecked = false;
 
@@ -211,8 +211,8 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private MethodSpec emitArgsConstructor( @Nonnull final List<GraphQLArgument> arguments,
-                                          @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  private MethodSpec buildArgsConstructor( @Nonnull final List<GraphQLArgument> arguments,
+                                           @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
   {
     final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
     ctor.addModifiers( Modifier.PRIVATE );
@@ -239,8 +239,8 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private MethodSpec emitArgsFieldGetter( @Nonnull final GraphQLArgument argument,
-                                          @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  private MethodSpec buildArgsArgGetter( @Nonnull final GraphQLArgument argument,
+                                         @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
   {
     final String name = argument.getName();
     final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
@@ -262,8 +262,8 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private FieldSpec emitArgsField( @Nonnull final GraphQLArgument argument,
-                                   @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
+  private FieldSpec buildArgsArgField( @Nonnull final GraphQLArgument argument,
+                                       @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
   {
     final TypeName javaType = argTypes.get( argument );
     final FieldSpec.Builder builder =
@@ -299,20 +299,20 @@ public class JavaServerGenerator
       fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field.getType() ) );
     }
 
-    builder.addMethod( emitInputFrom( type, typeMap, fieldTypes ) );
-    builder.addMethod( emitInputMaybeFrom( type, typeMap ) );
-    builder.addMethod( emitInputConstructor( type, fieldTypes ) );
+    builder.addMethod( buildInputFrom( type, typeMap, fieldTypes ) );
+    builder.addMethod( buildInputMaybeFrom( type, typeMap ) );
+    builder.addMethod( buildInputConstructor( type, fieldTypes ) );
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
-      builder.addField( emitField( field, fieldTypes ) );
-      builder.addMethod( emitFieldGetter( field, fieldTypes ) );
+      builder.addField( buildInputFieldField( field, fieldTypes ) );
+      builder.addMethod( buildInputFieldGetter( field, fieldTypes ) );
     }
     JavaGenUtil.writeTopLevelType( context, builder );
   }
 
   @Nonnull
-  private MethodSpec emitInputMaybeFrom( @Nonnull final GraphQLInputObjectType type,
-                                         @Nonnull final Map<GraphQLType, String> typeMap )
+  private MethodSpec buildInputMaybeFrom( @Nonnull final GraphQLInputObjectType type,
+                                          @Nonnull final Map<GraphQLType, String> typeMap )
   {
     return MethodSpec.methodBuilder( "maybeFrom" )
       .addModifiers( Modifier.PUBLIC, Modifier.STATIC )
@@ -326,9 +326,9 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private MethodSpec emitInputFrom( @Nonnull final GraphQLInputObjectType type,
-                                    @Nonnull final Map<GraphQLType, String> typeMap,
-                                    @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  private MethodSpec buildInputFrom( @Nonnull final GraphQLInputObjectType type,
+                                     @Nonnull final Map<GraphQLType, String> typeMap,
+                                     @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final MethodSpec.Builder method = MethodSpec.methodBuilder( "from" );
     method.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
@@ -412,8 +412,8 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private MethodSpec emitInputConstructor( @Nonnull final GraphQLInputObjectType type,
-                                           @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  private MethodSpec buildInputConstructor( @Nonnull final GraphQLInputObjectType type,
+                                            @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
     ctor.addModifiers( Modifier.PRIVATE );
@@ -446,8 +446,8 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private MethodSpec emitFieldGetter( @Nonnull final GraphQLInputObjectField field,
-                                      @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  private MethodSpec buildInputFieldGetter( @Nonnull final GraphQLInputObjectField field,
+                                            @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final String name = field.getName();
     final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
@@ -475,8 +475,8 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private FieldSpec emitField( @Nonnull final GraphQLInputObjectField field,
-                               @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  private FieldSpec buildInputFieldField( @Nonnull final GraphQLInputObjectField field,
+                                          @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final TypeName javaType = fieldTypes.get( field );
     final FieldSpec.Builder builder =
