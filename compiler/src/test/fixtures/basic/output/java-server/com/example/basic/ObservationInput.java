@@ -10,10 +10,9 @@ public final class ObservationInput {
   @Nonnull
   private final String type;
 
-  @Nonnull
   private final int value;
 
-  public ObservationInput(@Nonnull final String type, @Nonnull final int value) {
+  public ObservationInput(@Nonnull final String type, final int value) {
     this.type = Objects.requireNonNull( type );
     this.value = Objects.requireNonNull( value );
   }
@@ -30,7 +29,6 @@ public final class ObservationInput {
     return type;
   }
 
-  @Nonnull
   public int getValue() {
     return value;
   }

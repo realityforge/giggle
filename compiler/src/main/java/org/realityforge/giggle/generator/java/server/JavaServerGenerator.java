@@ -183,10 +183,13 @@ public class JavaServerGenerator
     for ( final GraphQLArgument argument : arguments )
     {
       final GraphQLInputType fieldType = argument.getType();
-      ctor.addParameter( ParameterSpec
-                           .builder( argTypes.get( argument ), argument.getName(), Modifier.FINAL )
-                           .addAnnotation( getNullabilityAnnotation( fieldType ) )
-                           .build() );
+      final TypeName javaType = argTypes.get( argument );
+      final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, argument.getName(), Modifier.FINAL );
+      if ( !javaType.isPrimitive() )
+      {
+        parameter.addAnnotation( getNullabilityAnnotation( fieldType ) );
+      }
+      ctor.addParameter( parameter.build() );
       if ( GraphQLTypeUtil.isNonNull( fieldType ) )
       {
         ctor.addStatement( "this.$N = $T.requireNonNull( $N )", argument.getName(), Objects.class, argument.getName() );
@@ -206,8 +209,12 @@ public class JavaServerGenerator
     final String name = argument.getName();
     final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
     builder.addModifiers( Modifier.PUBLIC );
-    builder.returns( argTypes.get( argument ) );
-    builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+    final TypeName javaType = argTypes.get( argument );
+    builder.returns( javaType );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+    }
 
     final String description = argument.getDescription();
     if ( null != description )
@@ -222,9 +229,13 @@ public class JavaServerGenerator
   private FieldSpec emitArgsField( @Nonnull final GraphQLArgument argument,
                                    @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
   {
+    final TypeName javaType = argTypes.get( argument );
     final FieldSpec.Builder builder =
-      FieldSpec.builder( argTypes.get( argument ), argument.getName(), Modifier.PRIVATE, Modifier.FINAL );
-    builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+      FieldSpec.builder( javaType, argument.getName(), Modifier.PRIVATE, Modifier.FINAL );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+    }
 
     final String description = argument.getDescription();
     if ( null != description )
@@ -342,10 +353,13 @@ public class JavaServerGenerator
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
       final GraphQLInputType fieldType = field.getType();
-      ctor.addParameter( ParameterSpec
-                           .builder( fieldTypes.get( field ), field.getName(), Modifier.FINAL )
-                           .addAnnotation( getNullabilityAnnotation( fieldType ) )
-                           .build() );
+      final TypeName javaType = fieldTypes.get( field );
+      final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, field.getName(), Modifier.FINAL );
+      if ( !javaType.isPrimitive() )
+      {
+        parameter.addAnnotation( getNullabilityAnnotation( fieldType ) );
+      }
+      ctor.addParameter( parameter.build() );
       if ( GraphQLTypeUtil.isNonNull( fieldType ) )
       {
         ctor.addStatement( "this.$N = $T.requireNonNull( $N )", field.getName(), Objects.class, field.getName() );
@@ -371,8 +385,12 @@ public class JavaServerGenerator
     final String name = field.getName();
     final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
     builder.addModifiers( Modifier.PUBLIC );
-    builder.returns( fieldTypes.get( field ) );
-    builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
+    final TypeName javaType = fieldTypes.get( field );
+    builder.returns( javaType );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
+    }
 
     final String description = field.getDescription();
     if ( null != description )
@@ -393,9 +411,13 @@ public class JavaServerGenerator
   private FieldSpec emitField( @Nonnull final GraphQLInputObjectField field,
                                @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
+    final TypeName javaType = fieldTypes.get( field );
     final FieldSpec.Builder builder =
-      FieldSpec.builder( fieldTypes.get( field ), field.getName(), Modifier.PRIVATE, Modifier.FINAL );
-    builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
+      FieldSpec.builder( javaType, field.getName(), Modifier.PRIVATE, Modifier.FINAL );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
+    }
 
     final String description = field.getDescription();
     if ( null != description )
