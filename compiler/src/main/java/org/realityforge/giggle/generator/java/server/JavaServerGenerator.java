@@ -285,13 +285,13 @@ public class JavaServerGenerator
                                     @Nonnull final Map<GraphQLType, String> typeMap,
                                     @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
-    final MethodSpec.Builder ctor = MethodSpec.methodBuilder( "from" );
-    ctor.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
-    ctor.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
+    final MethodSpec.Builder method = MethodSpec.methodBuilder( "from" );
+    method.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
+    method.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
     final ClassName self = ClassName.bestGuess( typeMap.get( type ) );
-    ctor.returns( self );
+    method.returns( self );
 
-    ctor.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
+    method.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
                          .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
                          .build() );
 
@@ -310,14 +310,14 @@ public class JavaServerGenerator
       if ( ( isInputType || isListType ) && !suppressedUnchecked )
       {
         suppressedUnchecked = true;
-        ctor.addAnnotation( AnnotationSpec.builder( SuppressWarnings.class )
+        method.addAnnotation( AnnotationSpec.builder( SuppressWarnings.class )
                               .addMember( "value", "$S", "unchecked" )
                               .build() );
       }
 
       final TypeName javaType =
         isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) : isInputType ? VALUE_MAP : typeName;
-      ctor.addStatement( "final $T $N = ($T) args.get( $S )",
+      method.addStatement( "final $T $N = ($T) args.get( $S )",
                          javaType,
                          name,
                          javaType.isPrimitive() ? javaType.box() : javaType,
@@ -375,9 +375,9 @@ public class JavaServerGenerator
         args.add( name );
       }
     }
-    ctor.addStatement( "return new $T(" + String.join( ", ", params ) + ")", args.toArray() );
+    method.addStatement( "return new $T(" + String.join( ", ", params ) + ")", args.toArray() );
 
-    return ctor.build();
+    return method.build();
   }
 
   @Nonnull
