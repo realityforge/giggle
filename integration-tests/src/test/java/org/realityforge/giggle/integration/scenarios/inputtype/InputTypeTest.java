@@ -99,6 +99,7 @@ public class InputTypeTest
     assertEquals( input3.hashCode(), input3.hashCode() );
   }
 
+  @Test
   public void ObservationInputs_hashCode_And_Equals()
   {
     final HashMap<String, Object> input1Args = new HashMap<>();
