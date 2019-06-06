@@ -164,6 +164,19 @@ public class InputType2Test
     assertEquals( input.getRequiredEnumList(), Collections.singletonList( MyEnum.A_VALUE ) );
     assertEquals( input.getRequiredInputList().size(), 1 );
     assertEquals( input.getRequiredInputList().get( 0 ).getV(), "Blah" );
+
+    assertEquals( input.toString(),
+                  "AllTypesInput[optionalBoolean=null, optionalBooleanList=null, optionalEnum=null, optionalEnumList=null, optionalFloat=null, optionalFloatList=null, optionalID=null, optionalIDList=null, optionalInput=null, optionalInputList=null, optionalInt=null, optionalIntList=null, optionalString=null, optionalStringList=null, requiredBoolean=true, requiredBooleanList=[true], requiredBooleanListContainingNulls=[null], requiredEnum=A_VALUE, requiredEnumList=[A_VALUE], requiredEnumListContainingNulls=[null], requiredFloat=2.5, requiredFloatList=[2.5], requiredFloatListContainingNulls=[null], requiredID=MyID, requiredIDList=[MyID], requiredIDListContainingNulls=[null], requiredInput=MyInput[v=Blah], requiredInputList=[MyInput[v=Blah]], requiredInputListContainingNulls=[null], requiredInt=1, requiredIntList=[1], requiredIntListContainingNulls=[null], requiredString=MyString, requiredStringList=[MyString], requiredStringListContainingNulls=[null]]" );
+
+    final AllTypesInput input2 = AllTypesInput.from( args );
+    args.put( "optionalID", "XXXX" );
+    final AllTypesInput input3 = AllTypesInput.from( args );
+
+    assertEquals( input, input );
+    assertEquals( input, input2 );
+    assertNotEquals( input, input3 );
+    assertEquals( input.hashCode(), input2.hashCode() );
+    assertNotEquals( input.hashCode(), input3.hashCode() );
   }
 
   private void assertListFieldType( @Nonnull final String name, @Nonnull final Class<?> type )
