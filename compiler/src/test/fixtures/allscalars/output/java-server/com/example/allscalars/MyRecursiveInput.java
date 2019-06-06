@@ -21,9 +21,9 @@ public final class MyRecursiveInput {
   @Nonnull
   @SuppressWarnings("unchecked")
   public static MyRecursiveInput from(@Nonnull final Map<String, Object> args) {
-    final Map<String, Object> child = (Map<String, Object>) args.get( "child" );
-    final String v = (String) args.get( "v" );
-    return new MyRecursiveInput(MyRecursiveInput.maybeFrom( child ), v);
+    final Map<String, Object> $giggle$_child = (Map<String, Object>) args.get( "$giggle$_child" );
+    final String $giggle$_v = (String) args.get( "$giggle$_v" );
+    return new MyRecursiveInput(MyRecursiveInput.maybeFrom( $giggle$_child ), $giggle$_v);
   }
 
   @Nullable

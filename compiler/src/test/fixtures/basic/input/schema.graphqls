@@ -5,6 +5,9 @@ schema {
 
 type Query {
   event(id: ID!): Event
+
+  # Use a query arg named "args" that would clash with the generated name if it was not prefixed
+  eventByArgs(args: [String!]!): Event
 }
 
 type Mutation {

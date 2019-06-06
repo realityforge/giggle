@@ -25,9 +25,9 @@ public final class ObservationsInput {
   @Nonnull
   @SuppressWarnings("unchecked")
   public static ObservationsInput from(@Nonnull final Map<String, Object> args) {
-    final String name = (String) args.get( "name" );
-    final List<Map<String, Object>> type = (List<Map<String, Object>>) args.get( "type" );
-    return new ObservationsInput(name, type.stream().map( ObservationInput::from ).collect( Collectors.toList() ));
+    final String $giggle$_name = (String) args.get( "$giggle$_name" );
+    final List<Map<String, Object>> $giggle$_type = (List<Map<String, Object>>) args.get( "$giggle$_type" );
+    return new ObservationsInput($giggle$_name, $giggle$_type.stream().map( ObservationInput::from ).collect( Collectors.toList() ));
   }
 
   @Nullable

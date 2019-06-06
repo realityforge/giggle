@@ -21,9 +21,9 @@ public final class CreateEventArgs {
 
   @Nonnull
   public static CreateEventArgs from(@Nonnull final Map<String, Object> args) {
-    final String clientMutationId = (String) args.get( "clientMutationId" );
-    final Map<String, Object> event = (Map<String, Object>) args.get( "event" );
-    return new CreateEventArgs(clientMutationId, EventInput.maybeFrom( event ));
+    final String $giggle$_clientMutationId = (String) args.get( "$giggle$_clientMutationId" );
+    final Map<String, Object> $giggle$_event = (Map<String, Object>) args.get( "$giggle$_event" );
+    return new CreateEventArgs($giggle$_clientMutationId, EventInput.maybeFrom( $giggle$_event ));
   }
 
   @Nullable

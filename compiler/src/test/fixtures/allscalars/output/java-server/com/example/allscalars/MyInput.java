@@ -27,10 +27,10 @@ public final class MyInput {
   @Nonnull
   @SuppressWarnings("unchecked")
   public static MyInput from(@Nonnull final Map<String, Object> args) {
-    final Map<String, Object> data = (Map<String, Object>) args.get( "data" );
-    final Map<String, Object> other = (Map<String, Object>) args.get( "other" );
-    final String v = (String) args.get( "v" );
-    return new MyInput(MyRecursiveListInput.maybeFrom( data ), MyRecursiveInput.from( other ), v);
+    final Map<String, Object> $giggle$_data = (Map<String, Object>) args.get( "$giggle$_data" );
+    final Map<String, Object> $giggle$_other = (Map<String, Object>) args.get( "$giggle$_other" );
+    final String $giggle$_v = (String) args.get( "$giggle$_v" );
+    return new MyInput(MyRecursiveListInput.maybeFrom( $giggle$_data ), MyRecursiveInput.from( $giggle$_other ), $giggle$_v);
   }
 
   @Nullable

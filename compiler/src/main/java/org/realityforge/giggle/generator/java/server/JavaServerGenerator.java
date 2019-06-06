@@ -144,7 +144,7 @@ public class JavaServerGenerator
     args.add( self );
     for ( final GraphQLArgument argument : arguments )
     {
-      final String name = argument.getName();
+      final String name = VAR_PREFIX + argument.getName();
       final TypeName typeName = argTypes.get( argument );
       final boolean isInputType = GraphQLTypeUtil.unwrapAll( argument.getType() ) instanceof GraphQLInputObjectType;
 
@@ -309,7 +309,7 @@ public class JavaServerGenerator
     args.add( self );
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
-      final String name = field.getName();
+      final String name = VAR_PREFIX + field.getName();
       final TypeName typeName = fieldTypes.get( field );
       final boolean isInputType = GraphQLTypeUtil.unwrapAll( field.getType() ) instanceof GraphQLInputObjectType;
       final boolean isListType = JavaGenUtil.isList( field.getType() );
