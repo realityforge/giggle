@@ -115,7 +115,7 @@ public final class MyQueryArgs {
   @Nonnull
   private final List<String> requiredStringListContainingNulls;
 
-  public MyQueryArgs(@Nullable final Boolean optionalBoolean,
+  private MyQueryArgs(@Nullable final Boolean optionalBoolean,
       @Nullable final List<Boolean> optionalBooleanList, @Nullable final MyEnum optionalEnum,
       @Nullable final List<MyEnum> optionalEnumList, @Nullable final Float optionalFloat,
       @Nullable final List<Float> optionalFloatList, @Nullable final String optionalID,

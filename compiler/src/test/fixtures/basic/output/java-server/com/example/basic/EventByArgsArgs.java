@@ -11,7 +11,7 @@ public final class EventByArgsArgs {
   @Nonnull
   private final List<String> args;
 
-  public EventByArgsArgs(@Nonnull final List<String> args) {
+  private EventByArgsArgs(@Nonnull final List<String> args) {
     this.args = Objects.requireNonNull( args );
   }
 

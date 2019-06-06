@@ -10,7 +10,7 @@ public final class EventArgs {
   @Nonnull
   private final String id;
 
-  public EventArgs(@Nonnull final String id) {
+  private EventArgs(@Nonnull final String id) {
     this.id = Objects.requireNonNull( id );
   }
 

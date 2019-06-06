@@ -14,7 +14,8 @@ public final class CreateEventArgs {
   @Nonnull
   private final EventInput event;
 
-  public CreateEventArgs(@Nullable final String clientMutationId, @Nonnull final EventInput event) {
+  private CreateEventArgs(@Nullable final String clientMutationId,
+      @Nonnull final EventInput event) {
     this.clientMutationId = clientMutationId;
     this.event = Objects.requireNonNull( event );
   }

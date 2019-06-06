@@ -215,7 +215,7 @@ public class JavaServerGenerator
                                           @Nonnull final Map<GraphQLArgument, TypeName> argTypes )
   {
     final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
-    ctor.addModifiers( Modifier.PUBLIC );
+    ctor.addModifiers( Modifier.PRIVATE );
     for ( final GraphQLArgument argument : arguments )
     {
       final GraphQLInputType fieldType = argument.getType();
