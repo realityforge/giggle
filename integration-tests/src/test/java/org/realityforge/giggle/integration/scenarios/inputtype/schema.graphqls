@@ -1,0 +1,16 @@
+schema {
+  query: Query
+}
+
+type Query {
+}
+
+input ObservationInput {
+  type: String!
+  value: Int!
+}
+
+input ObservationsInput {
+  name: String!
+  observations: [ObservationInput!]!
+}
