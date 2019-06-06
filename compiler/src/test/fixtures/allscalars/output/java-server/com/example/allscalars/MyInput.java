@@ -69,4 +69,9 @@ public final class MyInput {
   public final int hashCode() {
     return Objects.hash( data, other, v );
   }
+
+  @Override
+  public final String toString() {
+    return "MyInput[data=" + data + ", other=" + other + ", v=" + v + "]";
+  }
 }

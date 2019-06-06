@@ -69,4 +69,9 @@ public final class EventInput {
   public final int hashCode() {
     return Objects.hash( name, startedAt, type );
   }
+
+  @Override
+  public final String toString() {
+    return "EventInput[name=" + name + ", startedAt=" + startedAt + ", type=" + type + "]";
+  }
 }

@@ -59,4 +59,9 @@ public final class DeploymentInput {
   public final int hashCode() {
     return Objects.hash( event, resource );
   }
+
+  @Override
+  public final String toString() {
+    return "DeploymentInput[event=" + event + ", resource=" + resource + "]";
+  }
 }

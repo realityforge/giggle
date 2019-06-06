@@ -55,4 +55,9 @@ public final class ObservationInput {
   public final int hashCode() {
     return Objects.hash( type, value );
   }
+
+  @Override
+  public final String toString() {
+    return "ObservationInput[type=" + type + ", value=" + value + "]";
+  }
 }

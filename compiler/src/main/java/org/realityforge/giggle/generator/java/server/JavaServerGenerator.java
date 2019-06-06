@@ -312,6 +312,7 @@ public class JavaServerGenerator
     }
     builder.addMethod( buildInputEquals( self, type ) );
     builder.addMethod( buildInputHashCode( type ) );
+    builder.addMethod( buildInputToString( type ) );
     JavaGenUtil.writeTopLevelType( context, builder );
   }
 
@@ -357,6 +358,24 @@ public class JavaServerGenerator
       .addStatement( "return $T.hash( " + fields + " )",
                      Stream.concat( Stream.of( Objects.class ),
                                     type.getFields().stream().map( GraphQLInputObjectField::getName ) ).toArray() )
+      .build();
+  }
+
+  @Nonnull
+  private MethodSpec buildInputToString( @Nonnull final GraphQLInputObjectType type )
+  {
+    final String fields =
+      type.getFields().stream().map( f -> "$N=\" + $N" ).collect( Collectors.joining( " + \", " ) );
+    return MethodSpec.methodBuilder( "toString" )
+      .addModifiers( Modifier.PUBLIC, Modifier.FINAL )
+      .addAnnotation( Override.class )
+      .returns( String.class )
+      .addStatement( "return \"$N[" + fields + " + \"]\"",
+                     Stream.concat( Stream.of( type.getName() ),
+                                    type.getFields()
+                                      .stream()
+                                      .flatMap( field -> Stream.of( field.getName(), field.getName() ) ) )
+                       .toArray() )
       .build();
   }
 

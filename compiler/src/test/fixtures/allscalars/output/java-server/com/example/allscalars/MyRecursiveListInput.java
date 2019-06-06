@@ -61,4 +61,9 @@ public final class MyRecursiveListInput {
   public final int hashCode() {
     return Objects.hash( child, v );
   }
+
+  @Override
+  public final String toString() {
+    return "MyRecursiveListInput[child=" + child + ", v=" + v + "]";
+  }
 }

@@ -57,4 +57,9 @@ public final class ResourceInput {
   public final int hashCode() {
     return Objects.hash( name, type );
   }
+
+  @Override
+  public final String toString() {
+    return "ResourceInput[name=" + name + ", type=" + type + "]";
+  }
 }

@@ -61,4 +61,9 @@ public final class ObservationsInput {
   public final int hashCode() {
     return Objects.hash( name, type );
   }
+
+  @Override
+  public final String toString() {
+    return "ObservationsInput[name=" + name + ", type=" + type + "]";
+  }
 }
