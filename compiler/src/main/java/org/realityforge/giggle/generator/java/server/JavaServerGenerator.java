@@ -148,10 +148,7 @@ public class JavaServerGenerator
       final TypeName typeName = argTypes.get( argument );
       final boolean isInputType = GraphQLTypeUtil.unwrapAll( argument.getType() ) instanceof GraphQLInputObjectType;
 
-      final TypeName javaType =
-        isInputType ?
-        VALUE_MAP :
-        typeName;
+      final TypeName javaType = isInputType ? VALUE_MAP : typeName;
       ctor.addStatement( "final $T $N = ($T) args.get( $S )",
                          javaType,
                          name,
