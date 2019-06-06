@@ -292,8 +292,8 @@ public class JavaServerGenerator
     method.returns( self );
 
     method.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
-                         .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
-                         .build() );
+                           .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
+                           .build() );
 
     boolean suppressedUnchecked = false;
 
@@ -311,17 +311,17 @@ public class JavaServerGenerator
       {
         suppressedUnchecked = true;
         method.addAnnotation( AnnotationSpec.builder( SuppressWarnings.class )
-                              .addMember( "value", "$S", "unchecked" )
-                              .build() );
+                                .addMember( "value", "$S", "unchecked" )
+                                .build() );
       }
 
       final TypeName javaType =
         isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) : isInputType ? VALUE_MAP : typeName;
       method.addStatement( "final $T $N = ($T) args.get( $S )",
-                         javaType,
-                         name,
-                         javaType.isPrimitive() ? javaType.box() : javaType,
-                         name );
+                           javaType,
+                           name,
+                           javaType.isPrimitive() ? javaType.box() : javaType,
+                           name );
       if ( isInputType )
       {
         if ( isListType )
