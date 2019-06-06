@@ -26,7 +26,7 @@ public final class MyRecursiveListInput {
   public static MyRecursiveListInput from(@Nonnull final Map<String, Object> args) {
     final List<Map<String, Object>> child = (List<Map<String, Object>>) args.get( "child" );
     final String v = (String) args.get( "v" );
-    return new MyRecursiveListInput(null == child ? null : child.stream().map( $element$ -> MyRecursiveInput.from( $element$ ) ).collect( Collectors.toList() ), v);
+    return new MyRecursiveListInput(null == child ? null : child.stream().map( $e$ -> null == $e$ ? null : MyRecursiveInput.from( $e$ ) ).collect( Collectors.toList() ), v);
   }
 
   @Nullable

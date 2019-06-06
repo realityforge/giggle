@@ -42,18 +42,25 @@ input AllTypesInput {
   optionalEnum: MyEnum
   requiredInput: MyInput!
   optionalInput: MyInput
-  requiredBooleanList: [Boolean]!
+  requiredBooleanList: [Boolean!]!
+  requiredBooleanListContainingNulls: [Boolean]!
   optionalBooleanList: [Boolean]
-  requiredIntList: [Int]!
+  requiredIntList: [Int!]!
+  requiredIntListContainingNulls: [Int]!
   optionalIntList: [Int]
-  requiredFloatList: [Float]!
+  requiredFloatList: [Float!]!
+  requiredFloatListContainingNulls: [Float]!
   optionalFloatList: [Float]
-  requiredStringList: [String]!
+  requiredStringList: [String!]!
+  requiredStringListContainingNulls: [String]!
   optionalStringList: [String]
-  requiredIDList: [ID]!
+  requiredIDList: [ID!]!
+  requiredIDListContainingNulls: [ID]!
   optionalIDList: [ID]
-  requiredEnumList: [MyEnum]!
+  requiredEnumList: [MyEnum!]!
+  requiredEnumListContainingNulls: [MyEnum]!
   optionalEnumList: [MyEnum]
-  requiredInputList: [MyInput]!
+  requiredInputList: [MyInput!]!
+  requiredInputListContainingNulls: [MyInput]!
   optionalInputList: [MyInput]
 }

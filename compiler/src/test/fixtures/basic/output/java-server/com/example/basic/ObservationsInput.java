@@ -26,7 +26,7 @@ public final class ObservationsInput {
   public static ObservationsInput from(@Nonnull final Map<String, Object> args) {
     final String name = (String) args.get( "name" );
     final List<Map<String, Object>> type = (List<Map<String, Object>>) args.get( "type" );
-    return new ObservationsInput(name, type.stream().map( $element$ -> ObservationInput.from( $element$ ) ).collect( Collectors.toList() ));
+    return new ObservationsInput(name, type.stream().map( $e$ ->  ObservationInput.from( $e$ ) ).collect( Collectors.toList() ));
   }
 
   @Nonnull

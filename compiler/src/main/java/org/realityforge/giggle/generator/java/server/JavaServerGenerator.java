@@ -336,11 +336,20 @@ public class JavaServerGenerator
             prefix = "null == $N ? null : ";
             args.add( name );
           }
-          params.add( prefix + "$N.stream().map( $N -> $T.from( $N ) ).collect( $T.toList() )" );
+          final boolean listMayContainNulls =
+            !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( field.getType() ) ) );
+
+          params.add( prefix + "$N.stream().map( $N -> " +
+                      ( listMayContainNulls ? "null == $N ? null :" : "" ) +
+                      " $T.from( $N ) ).collect( $T.toList() )" );
           args.add( name );
-          args.add( "$element$" );
+          args.add( "$e$" );
+          if ( listMayContainNulls )
+          {
+            args.add( "$e$" );
+          }
           args.add( ( (ParameterizedTypeName) typeName ).typeArguments.get( 0 ) );
-          args.add( "$element$" );
+          args.add( "$e$" );
           args.add( Collectors.class );
         }
         else
