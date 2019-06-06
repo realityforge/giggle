@@ -358,6 +358,7 @@ public class JavaServerGenerator
     return ctor.build();
   }
 
+  @Nonnull
   private ClassName getNullabilityAnnotation( @Nonnull final GraphQLType type )
   {
     return type instanceof GraphQLNonNull ? JavaGenUtil.NONNULL_CLASSNAME : JavaGenUtil.NULLABLE_CLASSNAME;
