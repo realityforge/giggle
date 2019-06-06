@@ -1,0 +1,51 @@
+schema {
+  query: Query
+}
+
+type Query {
+  myQuery(
+    requiredBoolean: Boolean!,
+    optionalBoolean: Boolean,
+    requiredInt: Int!,
+    optionalInt: Int,
+    requiredFloat: Float!,
+    optionalFloat: Float,
+    requiredString: String!,
+    optionalString: String,
+    requiredID: ID!,
+    optionalID: ID,
+    requiredEnum: MyEnum!,
+    optionalEnum: MyEnum,
+    requiredInput: MyInput!,
+    optionalInput: MyInput,
+    requiredBooleanList: [Boolean!]!,
+    requiredBooleanListContainingNulls: [Boolean]!,
+    optionalBooleanList: [Boolean],
+    requiredIntList: [Int!]!,
+    requiredIntListContainingNulls: [Int]!,
+    optionalIntList: [Int],
+    requiredFloatList: [Float!]!,
+    requiredFloatListContainingNulls: [Float]!,
+    optionalFloatList: [Float],
+    requiredStringList: [String!]!,
+    requiredStringListContainingNulls: [String]!,
+    optionalStringList: [String],
+    requiredIDList: [ID!]!,
+    requiredIDListContainingNulls: [ID]!,
+    optionalIDList: [ID],
+    requiredEnumList: [MyEnum!]!,
+    requiredEnumListContainingNulls: [MyEnum]!,
+    optionalEnumList: [MyEnum],
+    requiredInputList: [MyInput!]!,
+    requiredInputListContainingNulls: [MyInput]!,
+    optionalInputList: [MyInput]
+  ): MyEnum
+}
+
+enum MyEnum {
+  A_VALUE
+}
+
+input MyInput {
+  v: String
+}

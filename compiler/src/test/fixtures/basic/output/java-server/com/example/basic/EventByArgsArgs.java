@@ -16,8 +16,9 @@ public final class EventByArgsArgs {
   }
 
   @Nonnull
+  @SuppressWarnings("unchecked")
   public static EventByArgsArgs from(@Nonnull final Map<String, Object> args) {
-    final List<String> $giggle$_args = (List<String>) args.get( "$giggle$_args" );
+    final List<String> $giggle$_args = (List<String>) args.get( "args" );
     return new EventByArgsArgs($giggle$_args);
   }
 

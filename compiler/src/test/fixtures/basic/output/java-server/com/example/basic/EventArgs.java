@@ -16,7 +16,7 @@ public final class EventArgs {
 
   @Nonnull
   public static EventArgs from(@Nonnull final Map<String, Object> args) {
-    final String $giggle$_id = (String) args.get( "$giggle$_id" );
+    final String $giggle$_id = (String) args.get( "id" );
     return new EventArgs($giggle$_id);
   }
 
