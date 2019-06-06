@@ -18,7 +18,7 @@ public final class EventInput {
   @Nonnull
   private final EventType type;
 
-  public EventInput(@Nonnull final String name, @Nullable final Date startedAt,
+  private EventInput(@Nonnull final String name, @Nullable final Date startedAt,
       @Nonnull final EventType type) {
     this.name = Objects.requireNonNull( name );
     this.startedAt = startedAt;

@@ -12,7 +12,7 @@ public final class ObservationInput {
 
   private final int value;
 
-  public ObservationInput(@Nonnull final String type, final int value) {
+  private ObservationInput(@Nonnull final String type, final int value) {
     this.type = Objects.requireNonNull( type );
     this.value = Objects.requireNonNull( value );
   }

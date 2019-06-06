@@ -13,7 +13,7 @@ public final class ResourceInput {
   @Nonnull
   private final ResourceType type;
 
-  public ResourceInput(@Nonnull final String name, @Nonnull final ResourceType type) {
+  private ResourceInput(@Nonnull final String name, @Nonnull final ResourceType type) {
     this.name = Objects.requireNonNull( name );
     this.type = Objects.requireNonNull( type );
   }

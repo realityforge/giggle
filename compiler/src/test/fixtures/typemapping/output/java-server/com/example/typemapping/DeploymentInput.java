@@ -14,7 +14,7 @@ public final class DeploymentInput {
   @Nonnull
   private final ResourceInput resource;
 
-  public DeploymentInput(@Nonnull final EventInput event, @Nonnull final ResourceInput resource) {
+  private DeploymentInput(@Nonnull final EventInput event, @Nonnull final ResourceInput resource) {
     this.event = Objects.requireNonNull( event );
     this.resource = Objects.requireNonNull( resource );
   }

@@ -15,7 +15,7 @@ public final class MyRecursiveListInput {
   @Nullable
   private final String v;
 
-  public MyRecursiveListInput(@Nullable final List<MyRecursiveInput> child,
+  private MyRecursiveListInput(@Nullable final List<MyRecursiveInput> child,
       @Nullable final String v) {
     this.child = child;
     this.v = v;

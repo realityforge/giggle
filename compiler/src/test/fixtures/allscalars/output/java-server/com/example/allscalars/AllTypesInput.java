@@ -97,7 +97,7 @@ public final class AllTypesInput {
   @Nonnull
   private final List<String> requiredStringList;
 
-  public AllTypesInput(@Nullable final Boolean optionalBoolean,
+  private AllTypesInput(@Nullable final Boolean optionalBoolean,
       @Nullable final List<Boolean> optionalBooleanList, @Nullable final MyEnum optionalEnum,
       @Nullable final List<MyEnum> optionalEnumList, @Nullable final Float optionalFloat,
       @Nullable final List<Float> optionalFloatList, @Nullable final String optionalID,

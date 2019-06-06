@@ -17,7 +17,7 @@ public final class MyInput {
   @Nullable
   private final String v;
 
-  public MyInput(@Nullable final MyRecursiveListInput data, @Nonnull final MyRecursiveInput other,
+  private MyInput(@Nullable final MyRecursiveListInput data, @Nonnull final MyRecursiveInput other,
       @Nullable final String v) {
     this.data = data;
     this.other = Objects.requireNonNull( other );

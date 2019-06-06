@@ -13,7 +13,7 @@ public final class MyRecursiveInput {
   @Nullable
   private final String v;
 
-  public MyRecursiveInput(@Nullable final MyRecursiveInput child, @Nullable final String v) {
+  private MyRecursiveInput(@Nullable final MyRecursiveInput child, @Nullable final String v) {
     this.child = child;
     this.v = v;
   }

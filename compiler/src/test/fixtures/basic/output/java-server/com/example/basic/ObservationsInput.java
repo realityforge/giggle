@@ -15,7 +15,8 @@ public final class ObservationsInput {
   @Nonnull
   private final List<ObservationInput> type;
 
-  public ObservationsInput(@Nonnull final String name, @Nonnull final List<ObservationInput> type) {
+  private ObservationsInput(@Nonnull final String name,
+      @Nonnull final List<ObservationInput> type) {
     this.name = Objects.requireNonNull( name );
     this.type = Objects.requireNonNull( type );
   }

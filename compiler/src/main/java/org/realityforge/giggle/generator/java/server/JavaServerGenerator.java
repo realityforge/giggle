@@ -376,7 +376,7 @@ public class JavaServerGenerator
                                            @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
-    ctor.addModifiers( Modifier.PUBLIC );
+    ctor.addModifiers( Modifier.PRIVATE );
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
       final GraphQLInputType fieldType = field.getType();
