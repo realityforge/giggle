@@ -20,8 +20,8 @@ public final class ObservationInput {
 
   @Nonnull
   public static ObservationInput from(@Nonnull final Map<String, Object> args) {
-    final String $giggle$_type = (String) args.get( "$giggle$_type" );
-    final int $giggle$_value = (Integer) args.get( "$giggle$_value" );
+    final String $giggle$_type = (String) args.get( "type" );
+    final int $giggle$_value = (Integer) args.get( "value" );
     return new ObservationInput($giggle$_type, $giggle$_value);
   }
 

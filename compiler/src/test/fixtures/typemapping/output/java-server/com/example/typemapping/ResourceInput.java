@@ -21,8 +21,8 @@ public final class ResourceInput {
 
   @Nonnull
   public static ResourceInput from(@Nonnull final Map<String, Object> args) {
-    final String $giggle$_name = (String) args.get( "$giggle$_name" );
-    final ResourceType $giggle$_type = (ResourceType) args.get( "$giggle$_type" );
+    final String $giggle$_name = (String) args.get( "name" );
+    final ResourceType $giggle$_type = (ResourceType) args.get( "type" );
     return new ResourceInput($giggle$_name, $giggle$_type);
   }
 

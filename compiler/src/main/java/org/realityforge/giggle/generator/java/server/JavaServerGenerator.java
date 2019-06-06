@@ -349,8 +349,10 @@ public class JavaServerGenerator
     {
       final String name = VAR_PREFIX + field.getName();
       final TypeName typeName = fieldTypes.get( field );
-      final boolean isInputType = GraphQLTypeUtil.unwrapAll( field.getType() ) instanceof GraphQLInputObjectType;
-      final boolean isListType = JavaGenUtil.isList( field.getType() );
+      final GraphQLType graphQLType = field.getType();
+
+      final boolean isInputType = GraphQLTypeUtil.unwrapAll( graphQLType ) instanceof GraphQLInputObjectType;
+      final boolean isListType = JavaGenUtil.isList( graphQLType );
 
       if ( ( isInputType || isListType ) && !suppressedUnchecked )
       {
@@ -366,13 +368,13 @@ public class JavaServerGenerator
                            javaType,
                            name,
                            javaType.isPrimitive() ? javaType.box() : javaType,
-                           name );
+                           field.getName() );
       if ( isInputType )
       {
         if ( isListType )
         {
           final String prefix;
-          if ( GraphQLTypeUtil.isNonNull( field.getType() ) )
+          if ( GraphQLTypeUtil.isNonNull( graphQLType ) )
           {
             prefix = "";
           }
@@ -382,7 +384,7 @@ public class JavaServerGenerator
             args.add( name );
           }
           final boolean listMayContainNulls =
-            !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( field.getType() ) ) );
+            !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( graphQLType ) ) );
 
           params.add( prefix + "$N.stream().map( $T::$N ).collect( $T.toList() )" );
           args.add( name );
@@ -394,7 +396,7 @@ public class JavaServerGenerator
         {
           params.add( "$T.$N( $N )" );
           args.add( typeName );
-          args.add( GraphQLTypeUtil.isNonNull( field.getType() ) ? "from" : "maybeFrom" );
+          args.add( GraphQLTypeUtil.isNonNull( graphQLType ) ? "from" : "maybeFrom" );
           args.add( name );
         }
       }

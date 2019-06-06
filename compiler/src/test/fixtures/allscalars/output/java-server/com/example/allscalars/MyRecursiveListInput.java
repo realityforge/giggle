@@ -24,8 +24,8 @@ public final class MyRecursiveListInput {
   @Nonnull
   @SuppressWarnings("unchecked")
   public static MyRecursiveListInput from(@Nonnull final Map<String, Object> args) {
-    final List<Map<String, Object>> $giggle$_child = (List<Map<String, Object>>) args.get( "$giggle$_child" );
-    final String $giggle$_v = (String) args.get( "$giggle$_v" );
+    final List<Map<String, Object>> $giggle$_child = (List<Map<String, Object>>) args.get( "child" );
+    final String $giggle$_v = (String) args.get( "v" );
     return new MyRecursiveListInput(null == $giggle$_child ? null : $giggle$_child.stream().map( MyRecursiveInput::maybeFrom ).collect( Collectors.toList() ), $giggle$_v);
   }
 

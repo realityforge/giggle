@@ -27,9 +27,9 @@ public final class EventInput {
 
   @Nonnull
   public static EventInput from(@Nonnull final Map<String, Object> args) {
-    final String $giggle$_name = (String) args.get( "$giggle$_name" );
-    final Date $giggle$_startedAt = (Date) args.get( "$giggle$_startedAt" );
-    final EventType $giggle$_type = (EventType) args.get( "$giggle$_type" );
+    final String $giggle$_name = (String) args.get( "name" );
+    final Date $giggle$_startedAt = (Date) args.get( "startedAt" );
+    final EventType $giggle$_type = (EventType) args.get( "type" );
     return new EventInput($giggle$_name, $giggle$_startedAt, $giggle$_type);
   }
 
