@@ -64,4 +64,9 @@ public final class EventInput {
       return Objects.equals( name, that.name ) && Objects.equals( startedAt, that.startedAt ) && Objects.equals( type, that.type );
     }
   }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash( name, startedAt, type );
+  }
 }

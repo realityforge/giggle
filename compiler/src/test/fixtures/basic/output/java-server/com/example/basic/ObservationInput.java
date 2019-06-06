@@ -50,4 +50,9 @@ public final class ObservationInput {
       return Objects.equals( type, that.type ) && Objects.equals( value, that.value );
     }
   }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash( type, value );
+  }
 }

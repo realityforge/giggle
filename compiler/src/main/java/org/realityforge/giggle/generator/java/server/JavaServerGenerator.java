@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import org.realityforge.giggle.generator.Generator;
@@ -310,6 +311,7 @@ public class JavaServerGenerator
       builder.addMethod( buildInputFieldGetter( field, fieldTypes ) );
     }
     builder.addMethod( buildInputEquals( self, type ) );
+    builder.addMethod( buildInputHashCode( type ) );
     JavaGenUtil.writeTopLevelType( context, builder );
   }
 
@@ -342,6 +344,20 @@ public class JavaServerGenerator
     codeBlock.endControlFlow();
     method.addCode( codeBlock.build() );
     return method.build();
+  }
+
+  @Nonnull
+  private MethodSpec buildInputHashCode( @Nonnull final GraphQLInputObjectType type )
+  {
+    final String fields = type.getFields().stream().map( f -> "$N" ).collect( Collectors.joining( ", " ) );
+    return MethodSpec.methodBuilder( "hashCode" )
+      .addModifiers( Modifier.PUBLIC, Modifier.FINAL )
+      .addAnnotation( Override.class )
+      .returns( TypeName.INT )
+      .addStatement( "return $T.hash( " + fields + " )",
+                     Stream.concat( Stream.of( Objects.class ),
+                                    type.getFields().stream().map( GraphQLInputObjectField::getName ) ).toArray() )
+      .build();
   }
 
   @Nonnull

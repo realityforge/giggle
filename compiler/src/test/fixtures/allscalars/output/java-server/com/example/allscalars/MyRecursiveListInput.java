@@ -56,4 +56,9 @@ public final class MyRecursiveListInput {
       return Objects.equals( child, that.child ) && Objects.equals( v, that.v );
     }
   }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash( child, v );
+  }
 }

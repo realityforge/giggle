@@ -54,4 +54,9 @@ public final class DeploymentInput {
       return Objects.equals( event, that.event ) && Objects.equals( resource, that.resource );
     }
   }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash( event, resource );
+  }
 }

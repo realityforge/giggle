@@ -64,4 +64,9 @@ public final class MyInput {
       return Objects.equals( data, that.data ) && Objects.equals( other, that.other ) && Objects.equals( v, that.v );
     }
   }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash( data, other, v );
+  }
 }

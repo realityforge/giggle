@@ -56,4 +56,9 @@ public final class ObservationsInput {
       return Objects.equals( name, that.name ) && Objects.equals( type, that.type );
     }
   }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash( name, type );
+  }
 }
