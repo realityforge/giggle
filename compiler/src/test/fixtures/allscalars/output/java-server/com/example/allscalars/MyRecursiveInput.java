@@ -1,6 +1,7 @@
 package com.example.allscalars;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,5 +40,20 @@ public final class MyRecursiveInput {
   @Nullable
   public String getV() {
     return v;
+  }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if ( !( o instanceof MyRecursiveInput ) ) {
+      return false;
+    }
+    final MyRecursiveInput that = (MyRecursiveInput) o;
+    if ( !Objects.equals( child, that.child ) ) {
+      return false;
+    }
+    if ( !Objects.equals( v, that.v ) ) {
+      return false;
+    }
+    return true;
   }
 }

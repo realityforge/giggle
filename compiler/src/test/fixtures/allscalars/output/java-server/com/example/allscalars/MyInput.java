@@ -52,4 +52,22 @@ public final class MyInput {
   public String getV() {
     return v;
   }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if ( !( o instanceof MyInput ) ) {
+      return false;
+    }
+    final MyInput that = (MyInput) o;
+    if ( !Objects.equals( data, that.data ) ) {
+      return false;
+    }
+    if ( !Objects.equals( other, that.other ) ) {
+      return false;
+    }
+    if ( !Objects.equals( v, that.v ) ) {
+      return false;
+    }
+    return true;
+  }
 }

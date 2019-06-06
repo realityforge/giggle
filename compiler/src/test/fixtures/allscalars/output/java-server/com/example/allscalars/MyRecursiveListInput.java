@@ -2,6 +2,7 @@ package com.example.allscalars;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
@@ -42,5 +43,20 @@ public final class MyRecursiveListInput {
   @Nullable
   public String getV() {
     return v;
+  }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if ( !( o instanceof MyRecursiveListInput ) ) {
+      return false;
+    }
+    final MyRecursiveListInput that = (MyRecursiveListInput) o;
+    if ( !Objects.equals( child, that.child ) ) {
+      return false;
+    }
+    if ( !Objects.equals( v, that.v ) ) {
+      return false;
+    }
+    return true;
   }
 }

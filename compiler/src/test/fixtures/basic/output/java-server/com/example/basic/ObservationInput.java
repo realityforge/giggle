@@ -38,4 +38,19 @@ public final class ObservationInput {
   public int getValue() {
     return value;
   }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if ( !( o instanceof ObservationInput ) ) {
+      return false;
+    }
+    final ObservationInput that = (ObservationInput) o;
+    if ( !Objects.equals( type, that.type ) ) {
+      return false;
+    }
+    if ( !Objects.equals( value, that.value ) ) {
+      return false;
+    }
+    return true;
+  }
 }

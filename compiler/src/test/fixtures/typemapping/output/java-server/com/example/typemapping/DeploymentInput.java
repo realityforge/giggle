@@ -42,4 +42,19 @@ public final class DeploymentInput {
   public ResourceInput getResource() {
     return resource;
   }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if ( !( o instanceof DeploymentInput ) ) {
+      return false;
+    }
+    final DeploymentInput that = (DeploymentInput) o;
+    if ( !Objects.equals( event, that.event ) ) {
+      return false;
+    }
+    if ( !Objects.equals( resource, that.resource ) ) {
+      return false;
+    }
+    return true;
+  }
 }

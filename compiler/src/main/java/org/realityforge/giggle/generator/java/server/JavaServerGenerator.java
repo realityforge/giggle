@@ -2,6 +2,7 @@ package org.realityforge.giggle.generator.java.server;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
@@ -286,6 +287,7 @@ public class JavaServerGenerator
                           @Nonnull final GraphQLInputObjectType type )
     throws IOException
   {
+    final ClassName self = ClassName.bestGuess( typeMap.get( type ) );
     final TypeSpec.Builder builder = TypeSpec.classBuilder( type.getName() );
     builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
     final String description = type.getDescription();
@@ -307,7 +309,42 @@ public class JavaServerGenerator
       builder.addField( buildInputFieldField( field, fieldTypes ) );
       builder.addMethod( buildInputFieldGetter( field, fieldTypes ) );
     }
+    builder.addMethod( buildInputEquals( self, type ) );
     JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  @Nonnull
+  private MethodSpec buildInputEquals( @Nonnull final ClassName self, @Nonnull final GraphQLInputObjectType type )
+  {
+    final MethodSpec.Builder method =
+      MethodSpec.methodBuilder( "equals" ).
+        addModifiers( Modifier.PUBLIC, Modifier.FINAL ).
+        addAnnotation( Override.class ).
+        addParameter( Object.class, "o", Modifier.FINAL ).
+        returns( TypeName.BOOLEAN );
+
+    final CodeBlock.Builder codeBlock = CodeBlock.builder();
+    codeBlock.beginControlFlow( "if ( !( o instanceof $T ) )", self );
+    codeBlock.addStatement( "return false" );
+    codeBlock.endControlFlow();
+    method.addCode( codeBlock.build() );
+
+    method.addStatement( "final $T that = ($T) o", self, self );
+
+    for ( final GraphQLInputObjectField field : type.getFields() )
+    {
+      final CodeBlock.Builder block = CodeBlock.builder();
+      block.beginControlFlow( "if ( !$T.equals( $N, that.$N ) )",
+                              Objects.class,
+                              field.getName(),
+                              field.getName() );
+      block.addStatement( "return false" );
+      block.endControlFlow();
+      method.addCode( block.build() );
+
+    }
+    method.addStatement( "return true" );
+    return method.build();
   }
 
   @Nonnull

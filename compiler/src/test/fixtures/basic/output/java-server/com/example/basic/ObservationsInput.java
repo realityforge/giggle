@@ -44,4 +44,19 @@ public final class ObservationsInput {
   public List<ObservationInput> getType() {
     return type;
   }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if ( !( o instanceof ObservationsInput ) ) {
+      return false;
+    }
+    final ObservationsInput that = (ObservationsInput) o;
+    if ( !Objects.equals( name, that.name ) ) {
+      return false;
+    }
+    if ( !Objects.equals( type, that.type ) ) {
+      return false;
+    }
+    return true;
+  }
 }
