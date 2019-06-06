@@ -21,6 +21,8 @@ complete as there is too much un-said.
 
 * Add configuration files to control shape of output files.
 
+* inputs should have equals and hashCode implemented and possibly toString
+
 ## Actions
 
 Each Action takes in
