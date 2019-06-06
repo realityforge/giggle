@@ -1,0 +1,59 @@
+schema {
+  query: Query
+}
+
+type Query {
+}
+
+enum MyEnum {
+  A_VALUE
+}
+
+input MyRecursiveInput {
+  v: String
+  child: MyRecursiveInput
+}
+
+input MyRecursiveListInput {
+  v: String
+  child: [MyRecursiveInput]
+}
+
+input MyInput {
+  v: String
+  other: MyRecursiveInput!
+  data: MyRecursiveListInput
+}
+
+"""An input type with most field types"""
+input AllTypesInput {
+  """A boolean that is required ... duh!"""
+  requiredBoolean: Boolean!
+  optionalBoolean: Boolean
+  requiredInt: Int!
+  optionalInt: Int
+  requiredFloat: Float!
+  optionalFloat: Float
+  requiredString: String!
+  optionalString: String
+  requiredID: ID!
+  optionalID: ID
+  requiredEnum: MyEnum!
+  optionalEnum: MyEnum
+  requiredInput: MyInput!
+  optionalInput: MyInput
+  requiredBooleanList: [Boolean]!
+  optionalBooleanList: [Boolean]
+  requiredIntList: [Int]!
+  optionalIntList: [Int]
+  requiredFloatList: [Float]!
+  optionalFloatList: [Float]
+  requiredStringList: [String]!
+  optionalStringList: [String]
+  requiredIDList: [ID]!
+  optionalIDList: [ID]
+  requiredEnumList: [MyEnum]!
+  optionalEnumList: [MyEnum]
+  requiredInputList: [MyInput]!
+  optionalInputList: [MyInput]
+}

@@ -1,0 +1,5 @@
+AllTypesInput=com.example.allscalars.AllTypesInput
+MyEnum=com.example.allscalars.MyEnum
+MyInput=com.example.allscalars.MyInput
+MyRecursiveInput=com.example.allscalars.MyRecursiveInput
+MyRecursiveListInput=com.example.allscalars.MyRecursiveListInput
