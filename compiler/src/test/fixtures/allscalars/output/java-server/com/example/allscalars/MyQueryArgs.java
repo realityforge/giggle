@@ -1,5 +1,6 @@
 package com.example.allscalars;
 
+import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -176,7 +177,8 @@ public final class MyQueryArgs {
 
   @Nonnull
   @SuppressWarnings("unchecked")
-  public static MyQueryArgs from(@Nonnull final Map<String, Object> args) {
+  public static MyQueryArgs from(@Nonnull final DataFetchingEnvironment environment) {
+    final Map<String, Object> args = environment.getArguments();
     final Boolean $giggle$_optionalBoolean = (Boolean) args.get( "optionalBoolean" );
     final List<Boolean> $giggle$_optionalBooleanList = (List<Boolean>) args.get( "optionalBooleanList" );
     final MyEnum $giggle$_optionalEnum = (MyEnum) args.get( "optionalEnum" );

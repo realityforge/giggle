@@ -137,9 +137,11 @@ public class JavaServerGenerator
     final ClassName self = ClassName.bestGuess( className );
     method.returns( self );
 
-    method.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
-                           .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
+    method.addParameter( ParameterSpec.builder( DataFetchingEnvironment.class, "environment", Modifier.FINAL )
+                           .addAnnotation( Nonnull.class )
                            .build() );
+
+    method.addStatement( "final $T args = environment.getArguments()", VALUE_MAP );
 
     boolean suppressedUnchecked = false;
 

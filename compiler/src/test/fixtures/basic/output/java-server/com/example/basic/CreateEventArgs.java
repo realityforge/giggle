@@ -1,5 +1,6 @@
 package com.example.basic;
 
+import graphql.schema.DataFetchingEnvironment;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Generated;
@@ -22,7 +23,8 @@ public final class CreateEventArgs {
 
   @Nonnull
   @SuppressWarnings("unchecked")
-  public static CreateEventArgs from(@Nonnull final Map<String, Object> args) {
+  public static CreateEventArgs from(@Nonnull final DataFetchingEnvironment environment) {
+    final Map<String, Object> args = environment.getArguments();
     final String $giggle$_clientMutationId = (String) args.get( "clientMutationId" );
     final Map<String, Object> $giggle$_event = (Map<String, Object>) args.get( "event" );
     return new CreateEventArgs($giggle$_clientMutationId, EventInput.from( $giggle$_event ));

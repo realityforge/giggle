@@ -1,5 +1,6 @@
 package com.example.basic;
 
+import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +18,8 @@ public final class EventByArgsArgs {
 
   @Nonnull
   @SuppressWarnings("unchecked")
-  public static EventByArgsArgs from(@Nonnull final Map<String, Object> args) {
+  public static EventByArgsArgs from(@Nonnull final DataFetchingEnvironment environment) {
+    final Map<String, Object> args = environment.getArguments();
     final List<String> $giggle$_args = (List<String>) args.get( "args" );
     return new EventByArgsArgs($giggle$_args);
   }

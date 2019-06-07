@@ -1,5 +1,6 @@
 package com.example.basic;
 
+import graphql.schema.DataFetchingEnvironment;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Generated;
@@ -15,7 +16,8 @@ public final class EventArgs {
   }
 
   @Nonnull
-  public static EventArgs from(@Nonnull final Map<String, Object> args) {
+  public static EventArgs from(@Nonnull final DataFetchingEnvironment environment) {
+    final Map<String, Object> args = environment.getArguments();
     final String $giggle$_id = (String) args.get( "id" );
     return new EventArgs($giggle$_id);
   }

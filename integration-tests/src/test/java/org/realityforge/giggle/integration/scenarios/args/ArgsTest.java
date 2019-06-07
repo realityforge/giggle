@@ -1,5 +1,6 @@
 package org.realityforge.giggle.integration.scenarios.args;
 
+import graphql.schema.DataFetchingEnvironmentImpl;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -132,7 +133,9 @@ public class ArgsTest
     args.put( "requiredEnumListContainingNulls", Collections.singletonList( null ) );
     args.put( "requiredInputList", Collections.singletonList( inputArgs ) );
     args.put( "requiredInputListContainingNulls", Collections.singletonList( null ) );
-    final MyQueryArgs input = MyQueryArgs.from( args );
+
+    final MyQueryArgs input =
+      MyQueryArgs.from( DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments( args ).build() );
 
     assertNull( input.getOptionalBoolean() );
     assertNull( input.getOptionalInt() );
