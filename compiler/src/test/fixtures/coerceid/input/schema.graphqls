@@ -1,0 +1,46 @@
+"""Marks an ID input as numeric"""
+directive @numeric on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+schema {
+  query: Query
+}
+
+type Query {
+  query1(requiredID: ID!): MyEnum
+  query2(optionalID: ID): MyEnum
+  query3(requiredCoercedID: ID! @numeric): MyEnum
+  query4(optionalCoercedID: ID @numeric): MyEnum
+
+  query5(requiredIDList: [ID!]!): MyEnum
+  query6(requiredIDListContainingNulls: [ID]!): MyEnum
+  query7(optionalIDList: [ID]): MyEnum
+  query8(requiredCoercedIDList: [ID!]! @numeric): MyEnum
+  query9(requiredCoercedIDListContainingNulls: [ID]! @numeric): MyEnum
+  query10(optionalCoercedIDList: [ID] @numeric): MyEnum
+
+  query11(requiredInput: MyInput!): MyEnum
+  query12(optionalInput: MyInput): MyEnum
+  query13(requiredCoercedInput: MyCoercableInput!): MyEnum
+  query14(optionalCoercedInput: MyCoercableInput): MyEnum
+
+  query15(requiredInputList: [MyInput!]!): MyEnum
+  query16(requiredInputListContainingNulls: [MyInput]!): MyEnum
+  query17(optionalInputList: [MyInput]): MyEnum
+  query18(requiredCoercedInputList: [MyCoercableInput!]!): MyEnum
+  query19(requiredCoercedInputListContainingNulls: [MyCoercableInput]!): MyEnum
+  query20(optionalCoercedInputList: [MyCoercableInput]): MyEnum
+}
+
+enum MyEnum {
+  A_VALUE
+}
+
+input MyInput {
+  id: ID!
+  otherId: ID
+}
+
+input MyCoercableInput {
+  id: ID! @numeric
+  otherId: ID  @numeric
+}

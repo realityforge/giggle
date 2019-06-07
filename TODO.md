@@ -21,8 +21,6 @@ complete as there is too much un-said.
 
 * Add configuration files to control shape of output files.
 
-* We should be able to mark `ID` arguments/fields as integers and throw a `CoercingParseLiteralException` if they turn out not to be.
-
 * A good place to look for how to structure our services is:
   - [AWS Amplify](https://aws-amplify.github.io/docs/cli/graphql)
 

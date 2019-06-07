@@ -7,6 +7,9 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import graphql.Scalars;
+import graphql.schema.GraphQLArgument;
+import graphql.schema.GraphQLDirectiveContainer;
+import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import java.io.IOException;
@@ -64,11 +67,15 @@ public final class JavaGenUtil
 
   @Nonnull
   public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
-                                      @Nonnull final GraphQLType graphQLType )
+                                      @Nonnull final GraphQLDirectiveContainer container )
   {
-    final boolean isList = isList( graphQLType );
-    final boolean isNonnull = GraphQLTypeUtil.isNonNull( graphQLType );
-    final GraphQLType type = GraphQLTypeUtil.unwrapAll( graphQLType );
+    final GraphQLType valueType =
+      container instanceof GraphQLInputObjectField ? ( (GraphQLInputObjectField) container ).getType() :
+      container instanceof GraphQLArgument ? ( (GraphQLArgument) container ).getType() :
+      container;
+    final boolean isList = isList( valueType );
+    final boolean isNonnull = GraphQLTypeUtil.isNonNull( valueType );
+    final GraphQLType type = GraphQLTypeUtil.unwrapAll( valueType );
     final String typeName = typeMap.get( type );
     if ( null != typeName )
     {
@@ -106,7 +113,14 @@ public final class JavaGenUtil
       }
       else if ( Scalars.GraphQLID.equals( type ) )
       {
-        return wrap( isList, ClassName.get( String.class ) );
+        if ( hasNumericDirective( container ) )
+        {
+          return wrapPrimitive( isList, isNonnull, TypeName.INT );
+        }
+        else
+        {
+          return wrap( isList, ClassName.get( String.class ) );
+        }
       }
       else if ( Scalars.GraphQLString.equals( type ) )
       {
@@ -154,5 +168,10 @@ public final class JavaGenUtil
   {
     return GraphQLTypeUtil.isList( type ) ||
            ( GraphQLTypeUtil.isWrapped( type ) && isList( GraphQLTypeUtil.unwrapOne( type ) ) );
+  }
+
+  public static boolean hasNumericDirective( @Nonnull final GraphQLDirectiveContainer type )
+  {
+    return null != type.getDirective( "numeric" );
   }
 }

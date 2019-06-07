@@ -1,0 +1,20 @@
+directive @numeric on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+schema {
+  query: Query
+}
+
+type Query {
+}
+
+input ObservationInput {
+  oid: ID! @numeric
+  type: String!
+  value: Int!
+}
+
+input ObservationsInput {
+  id: ID! @numeric
+  name: String!
+  observations: [ObservationInput!]!
+}

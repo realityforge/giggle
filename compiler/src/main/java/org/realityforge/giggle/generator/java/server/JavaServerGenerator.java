@@ -9,8 +9,13 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
+import graphql.Scalars;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLDirective;
+import graphql.schema.GraphQLDirectiveContainer;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
 import graphql.schema.GraphQLFieldDefinition;
@@ -22,15 +27,20 @@ import graphql.schema.GraphQLNonNull;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
+import graphql.schema.GraphQLUnmodifiedType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
@@ -112,10 +122,11 @@ public class JavaServerGenerator
     final Map<GraphQLArgument, TypeName> argTypes = new HashMap<>();
     for ( final GraphQLArgument argument : arguments )
     {
-      argTypes.put( argument, JavaGenUtil.getJavaType( typeMap, argument.getType() ) );
+      argTypes.put( argument, JavaGenUtil.getJavaType( typeMap, argument ) );
     }
 
     builder.addMethod( buildArgsFrom( name, arguments, argTypes ) );
+    buildArgsCoerceMethods( arguments, builder );
     builder.addMethod( buildArgsConstructor( arguments, argTypes ) );
     for ( final GraphQLArgument argument : arguments )
     {
@@ -124,6 +135,167 @@ public class JavaServerGenerator
     }
 
     JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  private void buildArgsCoerceMethods( @Nonnull final List<GraphQLArgument> arguments,
+                                       final TypeSpec.Builder builder )
+  {
+    boolean coerceTrapRequired = false;
+    boolean coerceForID = false;
+    boolean maybeCoerceForID = false;
+    for ( final GraphQLArgument argument : arguments )
+    {
+      final GraphQLUnmodifiedType inputType = GraphQLTypeUtil.unwrapAll( argument.getType() );
+      if ( isNumericIDType( argument, inputType ) )
+      {
+        coerceForID = true;
+        coerceTrapRequired = true;
+        final boolean isListType = JavaGenUtil.isList( argument.getType() );
+        final boolean nonNull = GraphQLTypeUtil.isNonNull( argument.getType() );
+        final boolean listMayContainNulls =
+          isListType &&
+          !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( inputType ) ) );
+        if ( listMayContainNulls || ( !isListType && !nonNull ) )
+        {
+          maybeCoerceForID = true;
+        }
+      }
+      else if ( isCoerceTrapRequired( argument ) )
+      {
+        coerceTrapRequired = true;
+      }
+    }
+    if ( coerceTrapRequired )
+    {
+      builder.addMethod( buildArgsCoerceTrap() );
+      if ( coerceForID )
+      {
+        builder.addMethod( buildCoerceID( "argument" ) );
+        if ( maybeCoerceForID )
+        {
+          builder.addMethod( buildMaybeCoerceID() );
+        }
+      }
+    }
+  }
+
+  private boolean isCoerceTrapRequired( @Nonnull final GraphQLArgument type )
+  {
+    final GraphQLUnmodifiedType inputType = GraphQLTypeUtil.unwrapAll( type.getType() );
+    return isNumericIDType( type, inputType ) ||
+           ( inputType instanceof GraphQLInputObjectType &&
+             ( (GraphQLInputObjectType) inputType ).getFields()
+               .stream()
+               .anyMatch( this::isCoerceTrapRequired ) );
+  }
+
+  private boolean isNumericIDType( @Nonnull final GraphQLDirectiveContainer container,
+                                   @Nonnull final GraphQLType inputType )
+  {
+    return Scalars.GraphQLID.getName().equals( inputType.getName() ) &&
+           JavaGenUtil.hasNumericDirective( container );
+  }
+
+  private boolean isCoerceTrapRequired( @Nonnull final GraphQLInputObjectField type )
+  {
+    return isCoerceTrapRequired( type, new HashSet<>() );
+  }
+
+  private boolean isCoerceTrapRequired( @Nonnull final GraphQLInputObjectField type,
+                                        @Nonnull final Set<String> typesProcessed )
+  {
+    final GraphQLUnmodifiedType inputType = GraphQLTypeUtil.unwrapAll( type.getType() );
+    if ( isNumericIDType( type, inputType ) )
+    {
+      return true;
+    }
+    else
+    {
+      final String name = inputType.getName();
+      if ( inputType instanceof GraphQLInputObjectType && !typesProcessed.contains( name ) )
+      {
+        typesProcessed.add( name );
+        final List<GraphQLInputObjectField> fields = ( (GraphQLInputObjectType) inputType ).getFields();
+        return fields.stream().anyMatch( f -> isCoerceTrapRequired( f, typesProcessed ) );
+      }
+      else
+      {
+        return false;
+      }
+    }
+  }
+
+  @Nonnull
+  private MethodSpec buildArgsCoerceTrap()
+  {
+    final MethodSpec.Builder method = MethodSpec.methodBuilder( "coerceTrap" );
+    method.addModifiers( Modifier.PRIVATE, Modifier.STATIC );
+    method.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
+    final TypeVariableName type = TypeVariableName.get( "T" );
+    method.addTypeVariable( type );
+    method.returns( type );
+    method.addParameter( ParameterSpec.builder( DataFetchingEnvironment.class, "environment", Modifier.FINAL )
+                           .addAnnotation( Nonnull.class )
+                           .build() );
+    method.addParameter( ParameterSpec.builder( ParameterizedTypeName.get( ClassName.get( Supplier.class ), type ),
+                                                "supplier",
+                                                Modifier.FINAL )
+                           .addAnnotation( Nonnull.class )
+                           .build() );
+    final CodeBlock.Builder block = CodeBlock.builder();
+    block.beginControlFlow( "try" );
+    block.addStatement( "return supplier.get()" );
+    block.nextControlFlow( "catch ( final $T e )", CoercingParseValueException.class );
+    block.addStatement(
+      "throw new $T( e.getMessage(), e.getCause(), environment.getMergedField().getSingleField().getSourceLocation() )",
+      CoercingParseValueException.class );
+    block.endControlFlow();
+    method.addCode( block.build() );
+    return method.build();
+  }
+
+  @Nonnull
+  private MethodSpec buildCoerceID( @Nonnull final String type )
+  {
+    final CodeBlock.Builder code = CodeBlock.builder();
+    code.beginControlFlow( "try" );
+    code.addStatement( "return $T.decode( value )", Integer.class );
+    code.nextControlFlow( "catch ( final $T e )", NumberFormatException.class );
+    code.addStatement(
+      "throw new $T( \"Failed to parse $N \" + name + \" that was expected to be a numeric ID type. Actual value = '\" + value + \"'\" )",
+      CoercingParseValueException.class,
+      type );
+    code.endControlFlow();
+
+    return MethodSpec.methodBuilder( "coerceID" )
+      .addModifiers( Modifier.PRIVATE, Modifier.STATIC )
+      .addParameter( ParameterSpec.builder( String.class, "name", Modifier.FINAL )
+                       .addAnnotation( Nonnull.class )
+                       .build() )
+      .addParameter( ParameterSpec.builder( String.class, "value", Modifier.FINAL )
+                       .addAnnotation( Nonnull.class )
+                       .build() )
+      .addAnnotation( Nonnull.class )
+      .returns( Integer.class )
+      .addCode( code.build() )
+      .build();
+  }
+
+  @Nonnull
+  private MethodSpec buildMaybeCoerceID()
+  {
+    return MethodSpec.methodBuilder( "maybeCoerceID" )
+      .addModifiers( Modifier.PRIVATE, Modifier.STATIC )
+      .addParameter( ParameterSpec.builder( String.class, "name", Modifier.FINAL )
+                       .addAnnotation( Nonnull.class )
+                       .build() )
+      .addParameter( ParameterSpec.builder( String.class, "value", Modifier.FINAL )
+                       .addAnnotation( Nullable.class )
+                       .build() )
+      .addAnnotation( Nullable.class )
+      .returns( Integer.class )
+      .addStatement( "return null == value ? null : coerceID( name, value )" )
+      .build();
   }
 
   @Nonnull
@@ -144,6 +316,7 @@ public class JavaServerGenerator
     method.addStatement( "final $T args = environment.getArguments()", VALUE_MAP );
 
     boolean suppressedUnchecked = false;
+    boolean coerceTrapRequired = false;
 
     final List<String> params = new ArrayList<>();
     final List<Object> args = new ArrayList<>();
@@ -154,8 +327,19 @@ public class JavaServerGenerator
       final TypeName typeName = argTypes.get( argument );
       final GraphQLType graphQLType = argument.getType();
 
-      final boolean isInputType = GraphQLTypeUtil.unwrapAll( graphQLType ) instanceof GraphQLInputObjectType;
+      final GraphQLUnmodifiedType unwrappedType = GraphQLTypeUtil.unwrapAll( graphQLType );
+      final boolean isInputType = unwrappedType instanceof GraphQLInputObjectType;
+      final boolean coerceRequired = isCoerceTrapRequired( argument );
       final boolean isListType = JavaGenUtil.isList( graphQLType );
+      final boolean nonNull = GraphQLTypeUtil.isNonNull( graphQLType );
+      final boolean listMayContainNulls =
+        isListType &&
+        !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( graphQLType ) ) );
+
+      if ( coerceRequired )
+      {
+        coerceTrapRequired = true;
+      }
 
       if ( ( isInputType || isListType ) && !suppressedUnchecked )
       {
@@ -166,7 +350,11 @@ public class JavaServerGenerator
       }
 
       final TypeName javaType =
-        isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) : isInputType ? VALUE_MAP : typeName;
+        isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) :
+        isInputType ? VALUE_MAP :
+        isListType && coerceRequired ? JavaGenUtil.listOf( ClassName.get( String.class ) ) :
+        coerceRequired ? ClassName.get( String.class ) :
+        typeName;
       method.addStatement( "final $T $N = ($T) args.get( $S )",
                            javaType,
                            name,
@@ -177,7 +365,7 @@ public class JavaServerGenerator
         if ( isListType )
         {
           final String prefix;
-          if ( GraphQLTypeUtil.isNonNull( graphQLType ) )
+          if ( nonNull )
           {
             prefix = "";
           }
@@ -186,8 +374,6 @@ public class JavaServerGenerator
             prefix = "null == $N ? null : ";
             args.add( name );
           }
-          final boolean listMayContainNulls =
-            !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( graphQLType ) ) );
 
           params.add( prefix + "$N.stream().map( $T::$N ).collect( $T.toList() )" );
           args.add( name );
@@ -199,17 +385,52 @@ public class JavaServerGenerator
         {
           params.add( "$T.$N( $N )" );
           args.add( typeName );
-          args.add( GraphQLTypeUtil.isNonNull( graphQLType ) ? "from" : "maybeFrom" );
+          args.add( nonNull ? "from" : "maybeFrom" );
           args.add( name );
         }
       }
+      else if ( coerceRequired && isListType )
+      {
+        final String prefix;
+        if ( nonNull )
+        {
+          prefix = "";
+        }
+        else
+        {
+          prefix = "null == $N ? null : ";
+          args.add( name );
+        }
+        params.add( prefix + "$N.stream().map( v -> $N( $S, v ) ).collect( $T.toList() )" );
+        args.add( name );
+        args.add( listMayContainNulls ? "maybeCoerceID" : "coerceID" );
+        args.add( name );
+        args.add( Collectors.class );
+      }
+      else if ( coerceRequired )
+      {
+        // The only non-input type that requires coercing is an ID that coerced to an integer
+        params.add( "$N( $S, $N )" );
+        args.add( nonNull ? "coerceID" : "maybeCoerceID" );
+        args.add( name );
+        args.add( name );
+      }
       else
       {
+        // The only non-input type that requires coercing is an ID that coerced to an integer
         params.add( "$N" );
         args.add( name );
       }
     }
-    method.addStatement( "return new $T(" + String.join( ", ", params ) + ")", args.toArray() );
+    if ( coerceTrapRequired )
+    {
+      method.addStatement( "return coerceTrap( environment, () -> new $T(" + String.join( ", ", params ) + ") )",
+                           args.toArray() );
+    }
+    else
+    {
+      method.addStatement( "return new $T(" + String.join( ", ", params ) + ")", args.toArray() );
+    }
 
     return method.build();
   }
@@ -230,7 +451,7 @@ public class JavaServerGenerator
         parameter.addAnnotation( getNullabilityAnnotation( fieldType ) );
       }
       ctor.addParameter( parameter.build() );
-      if ( GraphQLTypeUtil.isNonNull( fieldType ) )
+      if ( GraphQLTypeUtil.isNonNull( fieldType ) && !javaType.isPrimitive() )
       {
         ctor.addStatement( "this.$N = $T.requireNonNull( $N )", argument.getName(), Objects.class, argument.getName() );
       }
@@ -301,11 +522,12 @@ public class JavaServerGenerator
     final Map<GraphQLInputObjectField, TypeName> fieldTypes = new HashMap<>();
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
-      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field.getType() ) );
+      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field ) );
     }
 
     builder.addMethod( buildInputFrom( type, typeMap, fieldTypes ) );
     builder.addMethod( buildInputMaybeFrom( type, typeMap ) );
+    buildInputCoerceMethods( type.getFields(), builder );
     builder.addMethod( buildInputConstructor( type, fieldTypes ) );
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
@@ -316,6 +538,38 @@ public class JavaServerGenerator
     builder.addMethod( buildInputHashCode( type ) );
     builder.addMethod( buildInputToString( type ) );
     JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  private void buildInputCoerceMethods( @Nonnull final List<GraphQLInputObjectField> fields,
+                                        @Nonnull final TypeSpec.Builder builder )
+  {
+    boolean coerceForID = false;
+    boolean maybeCoerceForID = false;
+    for ( final GraphQLInputObjectField field : fields )
+    {
+      final GraphQLUnmodifiedType inputType = GraphQLTypeUtil.unwrapAll( field.getType() );
+      if ( isNumericIDType( field, inputType ) )
+      {
+        coerceForID = true;
+        final boolean isListType = JavaGenUtil.isList( field.getType() );
+        final boolean nonNull = GraphQLTypeUtil.isNonNull( field.getType() );
+        final boolean listMayContainNulls =
+          isListType &&
+          !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( inputType ) ) );
+        if ( listMayContainNulls || ( !isListType && !nonNull ) )
+        {
+          maybeCoerceForID = true;
+        }
+      }
+    }
+    if ( coerceForID )
+    {
+      builder.addMethod( buildCoerceID( "input field" ) );
+      if ( maybeCoerceForID )
+      {
+        builder.addMethod( buildMaybeCoerceID() );
+      }
+    }
   }
 
   @Nonnull
@@ -422,8 +676,14 @@ public class JavaServerGenerator
       final TypeName typeName = fieldTypes.get( field );
       final GraphQLType graphQLType = field.getType();
 
-      final boolean isInputType = GraphQLTypeUtil.unwrapAll( graphQLType ) instanceof GraphQLInputObjectType;
+      final GraphQLUnmodifiedType unwrappedType = GraphQLTypeUtil.unwrapAll( graphQLType );
+      final boolean isInputType = unwrappedType instanceof GraphQLInputObjectType;
+      final boolean coerceRequired = isNumericIDType( field, unwrappedType );
       final boolean isListType = JavaGenUtil.isList( graphQLType );
+      final boolean nonNull = GraphQLTypeUtil.isNonNull( graphQLType );
+      final boolean listMayContainNulls =
+        isListType &&
+        !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( graphQLType ) ) );
 
       if ( ( isInputType || isListType ) && !suppressedUnchecked )
       {
@@ -434,7 +694,11 @@ public class JavaServerGenerator
       }
 
       final TypeName javaType =
-        isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) : isInputType ? VALUE_MAP : typeName;
+        isInputType && isListType ? JavaGenUtil.listOf( VALUE_MAP ) :
+        isInputType ? VALUE_MAP :
+        isListType && coerceRequired ? JavaGenUtil.listOf( ClassName.get( String.class ) ) :
+        coerceRequired ? ClassName.get( String.class ) :
+        typeName;
       method.addStatement( "final $T $N = ($T) args.get( $S )",
                            javaType,
                            name,
@@ -445,7 +709,7 @@ public class JavaServerGenerator
         if ( isListType )
         {
           final String prefix;
-          if ( GraphQLTypeUtil.isNonNull( graphQLType ) )
+          if ( nonNull )
           {
             prefix = "";
           }
@@ -454,8 +718,6 @@ public class JavaServerGenerator
             prefix = "null == $N ? null : ";
             args.add( name );
           }
-          final boolean listMayContainNulls =
-            !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( graphQLType ) ) );
 
           params.add( prefix + "$N.stream().map( $T::$N ).collect( $T.toList() )" );
           args.add( name );
@@ -467,9 +729,35 @@ public class JavaServerGenerator
         {
           params.add( "$T.$N( $N )" );
           args.add( typeName );
-          args.add( GraphQLTypeUtil.isNonNull( graphQLType ) ? "from" : "maybeFrom" );
+          args.add( nonNull ? "from" : "maybeFrom" );
           args.add( name );
         }
+      }
+      else if ( coerceRequired && isListType )
+      {
+        final String prefix;
+        if ( nonNull )
+        {
+          prefix = "";
+        }
+        else
+        {
+          prefix = "null == $N ? null : ";
+          args.add( name );
+        }
+        params.add( prefix + "$N.stream().map( v -> $N( $S, v ) ).collect( $T.toList() )" );
+        args.add( name );
+        args.add( listMayContainNulls ? "maybeCoerceID" : "coerceID" );
+        args.add( name );
+        args.add( Collectors.class );
+      }
+      else if ( coerceRequired )
+      {
+        // The only non-input type that requires coercing is an ID that coerced to an integer
+        params.add( "$N( $S, $N )" );
+        args.add( nonNull ? "coerceID" : "maybeCoerceID" );
+        args.add( name );
+        args.add( name );
       }
       else
       {

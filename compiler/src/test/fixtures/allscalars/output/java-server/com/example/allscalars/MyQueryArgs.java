@@ -152,13 +152,13 @@ public final class MyQueryArgs {
     this.optionalIntList = optionalIntList;
     this.optionalString = optionalString;
     this.optionalStringList = optionalStringList;
-    this.requiredBoolean = Objects.requireNonNull( requiredBoolean );
+    this.requiredBoolean = requiredBoolean;
     this.requiredBooleanList = Objects.requireNonNull( requiredBooleanList );
     this.requiredBooleanListContainingNulls = Objects.requireNonNull( requiredBooleanListContainingNulls );
     this.requiredEnum = Objects.requireNonNull( requiredEnum );
     this.requiredEnumList = Objects.requireNonNull( requiredEnumList );
     this.requiredEnumListContainingNulls = Objects.requireNonNull( requiredEnumListContainingNulls );
-    this.requiredFloat = Objects.requireNonNull( requiredFloat );
+    this.requiredFloat = requiredFloat;
     this.requiredFloatList = Objects.requireNonNull( requiredFloatList );
     this.requiredFloatListContainingNulls = Objects.requireNonNull( requiredFloatListContainingNulls );
     this.requiredID = Objects.requireNonNull( requiredID );
@@ -167,7 +167,7 @@ public final class MyQueryArgs {
     this.requiredInput = Objects.requireNonNull( requiredInput );
     this.requiredInputList = Objects.requireNonNull( requiredInputList );
     this.requiredInputListContainingNulls = Objects.requireNonNull( requiredInputListContainingNulls );
-    this.requiredInt = Objects.requireNonNull( requiredInt );
+    this.requiredInt = requiredInt;
     this.requiredIntList = Objects.requireNonNull( requiredIntList );
     this.requiredIntListContainingNulls = Objects.requireNonNull( requiredIntListContainingNulls );
     this.requiredString = Objects.requireNonNull( requiredString );
