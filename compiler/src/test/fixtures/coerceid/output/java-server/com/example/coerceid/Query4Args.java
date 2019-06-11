@@ -21,7 +21,7 @@ public final class Query4Args {
   public static Query4Args from(@Nonnull final DataFetchingEnvironment environment) {
     final Map<String, Object> args = environment.getArguments();
     final String $giggle$_optionalCoercedID = (String) args.get( "optionalCoercedID" );
-    return coerceTrap( environment, () -> new Query4Args(maybeCoerceID( "$giggle$_optionalCoercedID", $giggle$_optionalCoercedID )) );
+    return coerceTrap( environment, () -> new Query4Args(maybeCoerceID( "optionalCoercedID", $giggle$_optionalCoercedID )) );
   }
 
   @Nonnull

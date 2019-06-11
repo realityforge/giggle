@@ -19,7 +19,7 @@ public final class Query3Args {
   public static Query3Args from(@Nonnull final DataFetchingEnvironment environment) {
     final Map<String, Object> args = environment.getArguments();
     final String $giggle$_requiredCoercedID = (String) args.get( "requiredCoercedID" );
-    return coerceTrap( environment, () -> new Query3Args(coerceID( "$giggle$_requiredCoercedID", $giggle$_requiredCoercedID )) );
+    return coerceTrap( environment, () -> new Query3Args(coerceID( "requiredCoercedID", $giggle$_requiredCoercedID )) );
   }
 
   @Nonnull

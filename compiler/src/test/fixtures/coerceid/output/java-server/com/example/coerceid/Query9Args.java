@@ -25,7 +25,7 @@ public final class Query9Args {
   public static Query9Args from(@Nonnull final DataFetchingEnvironment environment) {
     final Map<String, Object> args = environment.getArguments();
     final List<String> $giggle$_requiredCoercedIDListContainingNulls = (List<String>) args.get( "requiredCoercedIDListContainingNulls" );
-    return coerceTrap( environment, () -> new Query9Args($giggle$_requiredCoercedIDListContainingNulls.stream().map( v -> maybeCoerceID( "$giggle$_requiredCoercedIDListContainingNulls", v ) ).collect( Collectors.toList() )) );
+    return coerceTrap( environment, () -> new Query9Args($giggle$_requiredCoercedIDListContainingNulls.stream().map( v -> maybeCoerceID( "requiredCoercedIDListContainingNulls", v ) ).collect( Collectors.toList() )) );
   }
 
   @Nonnull

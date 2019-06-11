@@ -323,7 +323,8 @@ public class JavaServerGenerator
     args.add( self );
     for ( final GraphQLArgument argument : arguments )
     {
-      final String name = VAR_PREFIX + argument.getName();
+      final String argName = argument.getName();
+      final String name = VAR_PREFIX + argName;
       final TypeName typeName = argTypes.get( argument );
       final GraphQLType graphQLType = argument.getType();
 
@@ -359,7 +360,7 @@ public class JavaServerGenerator
                            javaType,
                            name,
                            javaType.isPrimitive() ? javaType.box() : javaType,
-                           argument.getName() );
+                           argName );
       if ( isInputType )
       {
         if ( isListType )
@@ -404,7 +405,7 @@ public class JavaServerGenerator
         params.add( prefix + "$N.stream().map( v -> $N( $S, v ) ).collect( $T.toList() )" );
         args.add( name );
         args.add( listMayContainNulls ? "maybeCoerceID" : "coerceID" );
-        args.add( name );
+        args.add( argName );
         args.add( Collectors.class );
       }
       else if ( coerceRequired )
@@ -412,7 +413,7 @@ public class JavaServerGenerator
         // The only non-input type that requires coercing is an ID that coerced to an integer
         params.add( "$N( $S, $N )" );
         args.add( nonNull ? "coerceID" : "maybeCoerceID" );
-        args.add( name );
+        args.add( argName );
         args.add( name );
       }
       else

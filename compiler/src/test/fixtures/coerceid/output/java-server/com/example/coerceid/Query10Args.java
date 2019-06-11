@@ -24,7 +24,7 @@ public final class Query10Args {
   public static Query10Args from(@Nonnull final DataFetchingEnvironment environment) {
     final Map<String, Object> args = environment.getArguments();
     final List<String> $giggle$_optionalCoercedIDList = (List<String>) args.get( "optionalCoercedIDList" );
-    return coerceTrap( environment, () -> new Query10Args(null == $giggle$_optionalCoercedIDList ? null : $giggle$_optionalCoercedIDList.stream().map( v -> maybeCoerceID( "$giggle$_optionalCoercedIDList", v ) ).collect( Collectors.toList() )) );
+    return coerceTrap( environment, () -> new Query10Args(null == $giggle$_optionalCoercedIDList ? null : $giggle$_optionalCoercedIDList.stream().map( v -> maybeCoerceID( "optionalCoercedIDList", v ) ).collect( Collectors.toList() )) );
   }
 
   @Nonnull

@@ -25,7 +25,7 @@ public final class Query8Args {
   public static Query8Args from(@Nonnull final DataFetchingEnvironment environment) {
     final Map<String, Object> args = environment.getArguments();
     final List<String> $giggle$_requiredCoercedIDList = (List<String>) args.get( "requiredCoercedIDList" );
-    return coerceTrap( environment, () -> new Query8Args($giggle$_requiredCoercedIDList.stream().map( v -> coerceID( "$giggle$_requiredCoercedIDList", v ) ).collect( Collectors.toList() )) );
+    return coerceTrap( environment, () -> new Query8Args($giggle$_requiredCoercedIDList.stream().map( v -> coerceID( "requiredCoercedIDList", v ) ).collect( Collectors.toList() )) );
   }
 
   @Nonnull
