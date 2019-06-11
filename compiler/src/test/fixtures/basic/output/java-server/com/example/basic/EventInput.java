@@ -54,7 +54,7 @@ public final class EventInput {
   }
 
   @Override
-  public final boolean equals(final Object o) {
+  public boolean equals(final Object o) {
     if ( this == o ) {
       return true;
     } else if ( !( o instanceof EventInput ) ) {
@@ -66,12 +66,12 @@ public final class EventInput {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return Objects.hash( name, startedAt, type );
   }
 
   @Override
-  public final String toString() {
+  public String toString() {
     return "EventInput[name=" + name + ", startedAt=" + startedAt + ", type=" + type + "]";
   }
 }

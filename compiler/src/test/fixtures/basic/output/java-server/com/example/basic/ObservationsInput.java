@@ -46,7 +46,7 @@ public final class ObservationsInput {
   }
 
   @Override
-  public final boolean equals(final Object o) {
+  public boolean equals(final Object o) {
     if ( this == o ) {
       return true;
     } else if ( !( o instanceof ObservationsInput ) ) {
@@ -58,12 +58,12 @@ public final class ObservationsInput {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return Objects.hash( name, type );
   }
 
   @Override
-  public final String toString() {
+  public String toString() {
     return "ObservationsInput[name=" + name + ", type=" + type + "]";
   }
 }

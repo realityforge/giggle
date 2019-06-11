@@ -54,7 +54,7 @@ public final class MyInput {
   }
 
   @Override
-  public final boolean equals(final Object o) {
+  public boolean equals(final Object o) {
     if ( this == o ) {
       return true;
     } else if ( !( o instanceof MyInput ) ) {
@@ -66,12 +66,12 @@ public final class MyInput {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return Objects.hash( data, other, v );
   }
 
   @Override
-  public final String toString() {
+  public String toString() {
     return "MyInput[data=" + data + ", other=" + other + ", v=" + v + "]";
   }
 }

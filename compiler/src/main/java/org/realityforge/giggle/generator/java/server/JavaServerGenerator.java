@@ -578,7 +578,7 @@ public class JavaServerGenerator
   {
     final MethodSpec.Builder method =
       MethodSpec.methodBuilder( "equals" ).
-        addModifiers( Modifier.PUBLIC, Modifier.FINAL ).
+        addModifiers( Modifier.PUBLIC ).
         addAnnotation( Override.class ).
         addParameter( Object.class, "o", Modifier.FINAL ).
         returns( TypeName.BOOLEAN );
@@ -609,7 +609,7 @@ public class JavaServerGenerator
   {
     final String fields = type.getFields().stream().map( f -> "$N" ).collect( Collectors.joining( ", " ) );
     return MethodSpec.methodBuilder( "hashCode" )
-      .addModifiers( Modifier.PUBLIC, Modifier.FINAL )
+      .addModifiers( Modifier.PUBLIC )
       .addAnnotation( Override.class )
       .returns( TypeName.INT )
       .addStatement( "return $T.hash( " + fields + " )",
@@ -624,7 +624,7 @@ public class JavaServerGenerator
     final String fields =
       type.getFields().stream().map( f -> "$N=\" + $N" ).collect( Collectors.joining( " + \", " ) );
     return MethodSpec.methodBuilder( "toString" )
-      .addModifiers( Modifier.PUBLIC, Modifier.FINAL )
+      .addModifiers( Modifier.PUBLIC )
       .addAnnotation( Override.class )
       .returns( String.class )
       .addStatement( "return \"$N[" + fields + " + \"]\"",

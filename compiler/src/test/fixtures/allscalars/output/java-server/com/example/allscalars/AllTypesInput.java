@@ -399,7 +399,7 @@ public final class AllTypesInput {
   }
 
   @Override
-  public final boolean equals(final Object o) {
+  public boolean equals(final Object o) {
     if ( this == o ) {
       return true;
     } else if ( !( o instanceof AllTypesInput ) ) {
@@ -411,12 +411,12 @@ public final class AllTypesInput {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return Objects.hash( optionalBoolean, optionalBooleanList, optionalEnum, optionalEnumList, optionalFloat, optionalFloatList, optionalID, optionalIDList, optionalInput, optionalInputList, optionalInt, optionalIntList, optionalString, optionalStringList, requiredBoolean, requiredBooleanList, requiredBooleanListContainingNulls, requiredEnum, requiredEnumList, requiredEnumListContainingNulls, requiredFloat, requiredFloatList, requiredFloatListContainingNulls, requiredID, requiredIDList, requiredIDListContainingNulls, requiredInput, requiredInputList, requiredInputListContainingNulls, requiredInt, requiredIntList, requiredIntListContainingNulls, requiredString, requiredStringList, requiredStringListContainingNulls );
   }
 
   @Override
-  public final String toString() {
+  public String toString() {
     return "AllTypesInput[optionalBoolean=" + optionalBoolean + ", optionalBooleanList=" + optionalBooleanList + ", optionalEnum=" + optionalEnum + ", optionalEnumList=" + optionalEnumList + ", optionalFloat=" + optionalFloat + ", optionalFloatList=" + optionalFloatList + ", optionalID=" + optionalID + ", optionalIDList=" + optionalIDList + ", optionalInput=" + optionalInput + ", optionalInputList=" + optionalInputList + ", optionalInt=" + optionalInt + ", optionalIntList=" + optionalIntList + ", optionalString=" + optionalString + ", optionalStringList=" + optionalStringList + ", requiredBoolean=" + requiredBoolean + ", requiredBooleanList=" + requiredBooleanList + ", requiredBooleanListContainingNulls=" + requiredBooleanListContainingNulls + ", requiredEnum=" + requiredEnum + ", requiredEnumList=" + requiredEnumList + ", requiredEnumListContainingNulls=" + requiredEnumListContainingNulls + ", requiredFloat=" + requiredFloat + ", requiredFloatList=" + requiredFloatList + ", requiredFloatListContainingNulls=" + requiredFloatListContainingNulls + ", requiredID=" + requiredID + ", requiredIDList=" + requiredIDList + ", requiredIDListContainingNulls=" + requiredIDListContainingNulls + ", requiredInput=" + requiredInput + ", requiredInputList=" + requiredInputList + ", requiredInputListContainingNulls=" + requiredInputListContainingNulls + ", requiredInt=" + requiredInt + ", requiredIntList=" + requiredIntList + ", requiredIntListContainingNulls=" + requiredIntListContainingNulls + ", requiredString=" + requiredString + ", requiredStringList=" + requiredStringList + ", requiredStringListContainingNulls=" + requiredStringListContainingNulls + "]";
   }
 }

@@ -44,7 +44,7 @@ public final class DeploymentInput {
   }
 
   @Override
-  public final boolean equals(final Object o) {
+  public boolean equals(final Object o) {
     if ( this == o ) {
       return true;
     } else if ( !( o instanceof DeploymentInput ) ) {
@@ -56,12 +56,12 @@ public final class DeploymentInput {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return Objects.hash( event, resource );
   }
 
   @Override
-  public final String toString() {
+  public String toString() {
     return "DeploymentInput[event=" + event + ", resource=" + resource + "]";
   }
 }
