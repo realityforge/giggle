@@ -1,14 +1,8 @@
 package org.realityforge.giggle.integration.scenarios.inputtype2;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.realityforge.giggle.integration.scenarios.AbstractScenarioTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -26,82 +20,82 @@ public class InputType2Test
   public void fieldTypes()
     throws Exception
   {
-    assertFieldType( "requiredBoolean", boolean.class );
-    assertFieldType( "optionalBoolean", Boolean.class );
-    assertListFieldType( "requiredBooleanList", Boolean.class );
-    assertListFieldType( "requiredBooleanListContainingNulls", Boolean.class );
-    assertListFieldType( "optionalBooleanList", Boolean.class );
-    assertFieldType( "requiredInt", int.class );
-    assertFieldType( "optionalInt", Integer.class );
-    assertListFieldType( "requiredIntList", Integer.class );
-    assertListFieldType( "requiredIntListContainingNulls", Integer.class );
-    assertListFieldType( "optionalIntList", Integer.class );
-    assertFieldType( "requiredFloat", float.class );
-    assertFieldType( "optionalFloat", Float.class );
-    assertListFieldType( "requiredFloatList", Float.class );
-    assertListFieldType( "requiredFloatListContainingNulls", Float.class );
-    assertListFieldType( "optionalFloatList", Float.class );
-    assertFieldType( "requiredString", String.class );
-    assertFieldType( "optionalString", String.class );
-    assertListFieldType( "requiredStringList", String.class );
-    assertListFieldType( "requiredStringListContainingNulls", String.class );
-    assertListFieldType( "optionalStringList", String.class );
-    assertFieldType( "requiredID", String.class );
-    assertFieldType( "optionalID", String.class );
-    assertListFieldType( "requiredIDList", String.class );
-    assertListFieldType( "requiredIDListContainingNulls", String.class );
-    assertListFieldType( "optionalIDList", String.class );
-    assertFieldType( "requiredEnum", MyEnum.class );
-    assertFieldType( "optionalEnum", MyEnum.class );
-    assertListFieldType( "requiredEnumList", MyEnum.class );
-    assertListFieldType( "requiredEnumListContainingNulls", MyEnum.class );
-    assertListFieldType( "optionalEnumList", MyEnum.class );
-    assertFieldType( "requiredInput", MyInput.class );
-    assertFieldType( "optionalInput", MyInput.class );
-    assertListFieldType( "requiredInputList", MyInput.class );
-    assertListFieldType( "requiredInputListContainingNulls", MyInput.class );
-    assertListFieldType( "optionalInputList", MyInput.class );
+    assertFieldType( AllTypesInput.class, "requiredBoolean", boolean.class );
+    assertFieldType( AllTypesInput.class, "optionalBoolean", Boolean.class );
+    assertListFieldType( AllTypesInput.class, "requiredBooleanList", Boolean.class );
+    assertListFieldType( AllTypesInput.class, "requiredBooleanListContainingNulls", Boolean.class );
+    assertListFieldType( AllTypesInput.class, "optionalBooleanList", Boolean.class );
+    assertFieldType( AllTypesInput.class, "requiredInt", int.class );
+    assertFieldType( AllTypesInput.class, "optionalInt", Integer.class );
+    assertListFieldType( AllTypesInput.class, "requiredIntList", Integer.class );
+    assertListFieldType( AllTypesInput.class, "requiredIntListContainingNulls", Integer.class );
+    assertListFieldType( AllTypesInput.class, "optionalIntList", Integer.class );
+    assertFieldType( AllTypesInput.class, "requiredFloat", float.class );
+    assertFieldType( AllTypesInput.class, "optionalFloat", Float.class );
+    assertListFieldType( AllTypesInput.class, "requiredFloatList", Float.class );
+    assertListFieldType( AllTypesInput.class, "requiredFloatListContainingNulls", Float.class );
+    assertListFieldType( AllTypesInput.class, "optionalFloatList", Float.class );
+    assertFieldType( AllTypesInput.class, "requiredString", String.class );
+    assertFieldType( AllTypesInput.class, "optionalString", String.class );
+    assertListFieldType( AllTypesInput.class, "requiredStringList", String.class );
+    assertListFieldType( AllTypesInput.class, "requiredStringListContainingNulls", String.class );
+    assertListFieldType( AllTypesInput.class, "optionalStringList", String.class );
+    assertFieldType( AllTypesInput.class, "requiredID", String.class );
+    assertFieldType( AllTypesInput.class, "optionalID", String.class );
+    assertListFieldType( AllTypesInput.class, "requiredIDList", String.class );
+    assertListFieldType( AllTypesInput.class, "requiredIDListContainingNulls", String.class );
+    assertListFieldType( AllTypesInput.class, "optionalIDList", String.class );
+    assertFieldType( AllTypesInput.class, "requiredEnum", MyEnum.class );
+    assertFieldType( AllTypesInput.class, "optionalEnum", MyEnum.class );
+    assertListFieldType( AllTypesInput.class, "requiredEnumList", MyEnum.class );
+    assertListFieldType( AllTypesInput.class, "requiredEnumListContainingNulls", MyEnum.class );
+    assertListFieldType( AllTypesInput.class, "optionalEnumList", MyEnum.class );
+    assertFieldType( AllTypesInput.class, "requiredInput", MyInput.class );
+    assertFieldType( AllTypesInput.class, "optionalInput", MyInput.class );
+    assertListFieldType( AllTypesInput.class, "requiredInputList", MyInput.class );
+    assertListFieldType( AllTypesInput.class, "requiredInputListContainingNulls", MyInput.class );
+    assertListFieldType( AllTypesInput.class, "optionalInputList", MyInput.class );
   }
 
   @Test
   public void nullability()
     throws Exception
   {
-    assertNeitherNullableNorNonnull( "requiredBoolean" );
-    assertNullable( "optionalBoolean" );
-    assertNonnull( "requiredBooleanList" );
-    assertNonnull( "requiredBooleanListContainingNulls" );
-    assertNullable( "optionalBooleanList" );
-    assertNeitherNullableNorNonnull( "requiredInt" );
-    assertNullable( "optionalInt" );
-    assertNonnull( "requiredIntList" );
-    assertNonnull( "requiredIntListContainingNulls" );
-    assertNullable( "optionalIntList" );
-    assertNeitherNullableNorNonnull( "requiredFloat" );
-    assertNullable( "optionalFloat" );
-    assertNonnull( "requiredFloatList" );
-    assertNonnull( "requiredFloatListContainingNulls" );
-    assertNullable( "optionalFloatList" );
-    assertNonnull( "requiredString" );
-    assertNullable( "optionalString" );
-    assertNonnull( "requiredStringList" );
-    assertNonnull( "requiredStringListContainingNulls" );
-    assertNullable( "optionalStringList" );
-    assertNonnull( "requiredID" );
-    assertNullable( "optionalID" );
-    assertNonnull( "requiredIDList" );
-    assertNonnull( "requiredIDListContainingNulls" );
-    assertNullable( "optionalIDList" );
-    assertNonnull( "requiredEnum" );
-    assertNullable( "optionalEnum" );
-    assertNonnull( "requiredEnumList" );
-    assertNonnull( "requiredEnumListContainingNulls" );
-    assertNullable( "optionalEnumList" );
-    assertNonnull( "requiredInput" );
-    assertNullable( "optionalInput" );
-    assertNonnull( "requiredInputList" );
-    assertNonnull( "requiredInputListContainingNulls" );
-    assertNullable( "optionalInputList" );
+    assertNeitherNullableNorNonnull( AllTypesInput.class, "requiredBoolean" );
+    assertNullable( AllTypesInput.class, "optionalBoolean" );
+    assertNonnull( AllTypesInput.class, "requiredBooleanList" );
+    assertNonnull( AllTypesInput.class, "requiredBooleanListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalBooleanList" );
+    assertNeitherNullableNorNonnull( AllTypesInput.class, "requiredInt" );
+    assertNullable( AllTypesInput.class, "optionalInt" );
+    assertNonnull( AllTypesInput.class, "requiredIntList" );
+    assertNonnull( AllTypesInput.class, "requiredIntListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalIntList" );
+    assertNeitherNullableNorNonnull( AllTypesInput.class, "requiredFloat" );
+    assertNullable( AllTypesInput.class, "optionalFloat" );
+    assertNonnull( AllTypesInput.class, "requiredFloatList" );
+    assertNonnull( AllTypesInput.class, "requiredFloatListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalFloatList" );
+    assertNonnull( AllTypesInput.class, "requiredString" );
+    assertNullable( AllTypesInput.class, "optionalString" );
+    assertNonnull( AllTypesInput.class, "requiredStringList" );
+    assertNonnull( AllTypesInput.class, "requiredStringListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalStringList" );
+    assertNonnull( AllTypesInput.class, "requiredID" );
+    assertNullable( AllTypesInput.class, "optionalID" );
+    assertNonnull( AllTypesInput.class, "requiredIDList" );
+    assertNonnull( AllTypesInput.class, "requiredIDListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalIDList" );
+    assertNonnull( AllTypesInput.class, "requiredEnum" );
+    assertNullable( AllTypesInput.class, "optionalEnum" );
+    assertNonnull( AllTypesInput.class, "requiredEnumList" );
+    assertNonnull( AllTypesInput.class, "requiredEnumListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalEnumList" );
+    assertNonnull( AllTypesInput.class, "requiredInput" );
+    assertNullable( AllTypesInput.class, "optionalInput" );
+    assertNonnull( AllTypesInput.class, "requiredInputList" );
+    assertNonnull( AllTypesInput.class, "requiredInputListContainingNulls" );
+    assertNullable( AllTypesInput.class, "optionalInputList" );
   }
 
   @Test
@@ -177,43 +171,5 @@ public class InputType2Test
     assertNotEquals( input, input3 );
     assertEquals( input.hashCode(), input2.hashCode() );
     assertNotEquals( input.hashCode(), input3.hashCode() );
-  }
-
-  private void assertListFieldType( @Nonnull final String name, @Nonnull final Class<?> type )
-    throws Exception
-  {
-    final Field field = AllTypesInput.class.getDeclaredField( name );
-    final Type fieldType = field.getGenericType();
-    assertTrue( fieldType instanceof ParameterizedType );
-    final ParameterizedType genericType = (ParameterizedType) fieldType;
-    assertEquals( genericType.getRawType(), List.class );
-    assertEquals( genericType.getActualTypeArguments()[ 0 ], type );
-  }
-
-  private void assertFieldType( @Nonnull final String name, @Nonnull final Class<?> type )
-    throws Exception
-  {
-    assertEquals( AllTypesInput.class.getDeclaredField( name ).getType(), type );
-  }
-
-  private void assertNullable( @Nonnull final String name )
-    throws Exception
-  {
-    assertNotNull( AllTypesInput.class.getDeclaredField( name ).getAnnotation( Nullable.class ) );
-    assertNull( AllTypesInput.class.getDeclaredField( name ).getAnnotation( Nonnull.class ) );
-  }
-
-  private void assertNonnull( @Nonnull final String name )
-    throws Exception
-  {
-    assertNotNull( AllTypesInput.class.getDeclaredField( name ).getAnnotation( Nonnull.class ) );
-    assertNull( AllTypesInput.class.getDeclaredField( name ).getAnnotation( Nullable.class ) );
-  }
-
-  private void assertNeitherNullableNorNonnull( @Nonnull final String name )
-    throws Exception
-  {
-    assertNull( AllTypesInput.class.getDeclaredField( name ).getAnnotation( Nonnull.class ) );
-    assertNull( AllTypesInput.class.getDeclaredField( name ).getAnnotation( Nullable.class ) );
   }
 }
