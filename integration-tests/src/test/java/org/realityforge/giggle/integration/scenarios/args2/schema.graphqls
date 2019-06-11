@@ -1,0 +1,24 @@
+directive @numeric on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION | FIELD_DEFINITION
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+}
+
+type Mutation {
+  createObservation(oid: ID! @numeric, type: String!, value: Int!, error: ErrorRateInput): Observation
+}
+
+input ErrorRateInput {
+  oid: ID! @numeric
+  value: Float!
+}
+
+type Observation {
+  oid: ID! @numeric
+  type: String!
+  value: Int!
+}
