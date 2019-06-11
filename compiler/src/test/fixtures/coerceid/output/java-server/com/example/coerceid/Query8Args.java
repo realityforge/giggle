@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class Query8Args {
@@ -45,11 +44,6 @@ public final class Query8Args {
     } catch ( final NumberFormatException e ) {
       throw new CoercingParseValueException( "Failed to parse argument '" + name + "' that was expected to be a numeric ID type. Actual value = '" + value + "'" );
     }
-  }
-
-  @Nullable
-  private static Integer maybeCoerceID(@Nonnull final String name, @Nullable final String value) {
-    return null == value ? null : coerceID( name, value );
   }
 
   @Nonnull

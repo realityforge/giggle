@@ -154,7 +154,7 @@ public class JavaServerGenerator
         final boolean nonNull = GraphQLTypeUtil.isNonNull( argument.getType() );
         final boolean listMayContainNulls =
           isListType &&
-          !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( inputType ) ) );
+          !GraphQLTypeUtil.isNonNull( GraphQLTypeUtil.unwrapOne( GraphQLTypeUtil.unwrapNonNull( argument.getType() ) ) );
         if ( listMayContainNulls || ( !isListType && !nonNull ) )
         {
           maybeCoerceForID = true;
