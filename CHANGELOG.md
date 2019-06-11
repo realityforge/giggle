@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+#### java-server generator
+
 * Remove final qualifier on `toString()`, `hashCode()` and `equals(Object)` methods in generated input classes.
   The final qualifier is unnecessary as the class is final.
 * Fix bug where the private method `maybeCoerceID(...)` was generated on `*Args` type but was not used. This
