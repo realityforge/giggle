@@ -4,6 +4,16 @@ This document is essentially a list of shorthand notes describing work yet to co
 Unfortunately it is not complete enough for other people to pick work off the list and
 complete as there is too much un-said.
 
+* Add additional validation that operations must not be anonymous. This makes it easy to
+  generate the appropriate code and is considered a "best" practice, even if it adds extra
+  weight to the network call.
+
+* Generate server-side client APIs as a combination of jackson annotated beans and fragment
+  interfaces combined with jaxrs client endpoints.
+
+* Generate interfaces for fragments or at least those fragments that have types (some fragments
+  only have directives).
+
 * If the project gets established consider attempting to acquire the abandoned `giggle`
   Github account: https://github.com/giggle
 
