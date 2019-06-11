@@ -24,19 +24,6 @@ complete as there is too much un-said.
 * A good place to look for how to structure our services is:
   - [AWS Amplify](https://aws-amplify.github.io/docs/cli/graphql)
 
-## Actions
-
-Each Action takes in
-+ schema files
-+ document files
-+ name mapping files that map a GraphQL symbol to an existing type. i.e.
-  - jpa entities for types on server side
-  - fragment interfaces defined by an earlier run of tool or manually written
-  - input types defined by an earlier run of tool or manually written
-+ An expectation on whether an ID is an integer for a particular symbol
-+ output directory.
-+ A filter file or regex that determines which symbols will be processed in this action.
-
 ### Additional Notes
 
 The following notes were extracted from the original issue that motivated the creation of this project.
