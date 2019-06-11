@@ -23,7 +23,7 @@ public final class MyCoercableInput {
   public static MyCoercableInput from(@Nonnull final Map<String, Object> args) {
     final String $giggle$_id = (String) args.get( "id" );
     final String $giggle$_otherId = (String) args.get( "otherId" );
-    return new MyCoercableInput(coerceID( "$giggle$_id", $giggle$_id ), maybeCoerceID( "$giggle$_otherId", $giggle$_otherId ));
+    return new MyCoercableInput(coerceID( "id", $giggle$_id ), maybeCoerceID( "otherId", $giggle$_otherId ));
   }
 
   @Nullable
@@ -36,7 +36,7 @@ public final class MyCoercableInput {
     try {
       return Integer.decode( value );
     } catch ( final NumberFormatException e ) {
-      throw new CoercingParseValueException( "Failed to parse input field " + name + " that was expected to be a numeric ID type. Actual value = '" + value + "'" );
+      throw new CoercingParseValueException( "Failed to parse input field '" + name + "' that was expected to be a numeric ID type. Actual value = '" + value + "'" );
     }
   }
 

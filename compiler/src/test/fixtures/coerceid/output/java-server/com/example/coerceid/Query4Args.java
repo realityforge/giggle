@@ -39,7 +39,7 @@ public final class Query4Args {
     try {
       return Integer.decode( value );
     } catch ( final NumberFormatException e ) {
-      throw new CoercingParseValueException( "Failed to parse argument " + name + " that was expected to be a numeric ID type. Actual value = '" + value + "'" );
+      throw new CoercingParseValueException( "Failed to parse argument '" + name + "' that was expected to be a numeric ID type. Actual value = '" + value + "'" );
     }
   }
 

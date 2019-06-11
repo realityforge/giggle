@@ -262,7 +262,7 @@ public class JavaServerGenerator
     code.addStatement( "return $T.decode( value )", Integer.class );
     code.nextControlFlow( "catch ( final $T e )", NumberFormatException.class );
     code.addStatement(
-      "throw new $T( \"Failed to parse $N \" + name + \" that was expected to be a numeric ID type. Actual value = '\" + value + \"'\" )",
+      "throw new $T( \"Failed to parse $N '\" + name + \"' that was expected to be a numeric ID type. Actual value = '\" + value + \"'\" )",
       CoercingParseValueException.class,
       type );
     code.endControlFlow();
@@ -673,7 +673,8 @@ public class JavaServerGenerator
     args.add( self );
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
-      final String name = VAR_PREFIX + field.getName();
+      final String fieldName = field.getName();
+      final String name = VAR_PREFIX + fieldName;
       final TypeName typeName = fieldTypes.get( field );
       final GraphQLType graphQLType = field.getType();
 
@@ -704,7 +705,7 @@ public class JavaServerGenerator
                            javaType,
                            name,
                            javaType.isPrimitive() ? javaType.box() : javaType,
-                           field.getName() );
+                           fieldName );
       if ( isInputType )
       {
         if ( isListType )
@@ -749,7 +750,7 @@ public class JavaServerGenerator
         params.add( prefix + "$N.stream().map( v -> $N( $S, v ) ).collect( $T.toList() )" );
         args.add( name );
         args.add( listMayContainNulls ? "maybeCoerceID" : "coerceID" );
-        args.add( name );
+        args.add( fieldName );
         args.add( Collectors.class );
       }
       else if ( coerceRequired )
@@ -757,7 +758,7 @@ public class JavaServerGenerator
         // The only non-input type that requires coercing is an ID that coerced to an integer
         params.add( "$N( $S, $N )" );
         args.add( nonNull ? "coerceID" : "maybeCoerceID" );
-        args.add( name );
+        args.add( fieldName );
         args.add( name );
       }
       else
