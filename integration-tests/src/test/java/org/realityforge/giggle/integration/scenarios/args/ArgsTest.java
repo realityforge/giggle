@@ -1,15 +1,9 @@
 package org.realityforge.giggle.integration.scenarios.args;
 
 import graphql.schema.DataFetchingEnvironmentImpl;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.realityforge.giggle.integration.scenarios.AbstractScenarioTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -27,82 +21,82 @@ public class ArgsTest
   public void fieldTypes()
     throws Exception
   {
-    assertFieldType( "requiredBoolean", boolean.class );
-    assertFieldType( "optionalBoolean", Boolean.class );
-    assertListFieldType( "requiredBooleanList", Boolean.class );
-    assertListFieldType( "requiredBooleanListContainingNulls", Boolean.class );
-    assertListFieldType( "optionalBooleanList", Boolean.class );
-    assertFieldType( "requiredInt", int.class );
-    assertFieldType( "optionalInt", Integer.class );
-    assertListFieldType( "requiredIntList", Integer.class );
-    assertListFieldType( "requiredIntListContainingNulls", Integer.class );
-    assertListFieldType( "optionalIntList", Integer.class );
-    assertFieldType( "requiredFloat", float.class );
-    assertFieldType( "optionalFloat", Float.class );
-    assertListFieldType( "requiredFloatList", Float.class );
-    assertListFieldType( "requiredFloatListContainingNulls", Float.class );
-    assertListFieldType( "optionalFloatList", Float.class );
-    assertFieldType( "requiredString", String.class );
-    assertFieldType( "optionalString", String.class );
-    assertListFieldType( "requiredStringList", String.class );
-    assertListFieldType( "requiredStringListContainingNulls", String.class );
-    assertListFieldType( "optionalStringList", String.class );
-    assertFieldType( "requiredID", String.class );
-    assertFieldType( "optionalID", String.class );
-    assertListFieldType( "requiredIDList", String.class );
-    assertListFieldType( "requiredIDListContainingNulls", String.class );
-    assertListFieldType( "optionalIDList", String.class );
-    assertFieldType( "requiredEnum", MyEnum.class );
-    assertFieldType( "optionalEnum", MyEnum.class );
-    assertListFieldType( "requiredEnumList", MyEnum.class );
-    assertListFieldType( "requiredEnumListContainingNulls", MyEnum.class );
-    assertListFieldType( "optionalEnumList", MyEnum.class );
-    assertFieldType( "requiredInput", MyInput.class );
-    assertFieldType( "optionalInput", MyInput.class );
-    assertListFieldType( "requiredInputList", MyInput.class );
-    assertListFieldType( "requiredInputListContainingNulls", MyInput.class );
-    assertListFieldType( "optionalInputList", MyInput.class );
+    assertFieldType( MyQueryArgs.class, "requiredBoolean", boolean.class );
+    assertFieldType( MyQueryArgs.class, "optionalBoolean", Boolean.class );
+    assertListFieldType( MyQueryArgs.class, "requiredBooleanList", Boolean.class );
+    assertListFieldType( MyQueryArgs.class, "requiredBooleanListContainingNulls", Boolean.class );
+    assertListFieldType( MyQueryArgs.class, "optionalBooleanList", Boolean.class );
+    assertFieldType( MyQueryArgs.class, "requiredInt", int.class );
+    assertFieldType( MyQueryArgs.class, "optionalInt", Integer.class );
+    assertListFieldType( MyQueryArgs.class, "requiredIntList", Integer.class );
+    assertListFieldType( MyQueryArgs.class, "requiredIntListContainingNulls", Integer.class );
+    assertListFieldType( MyQueryArgs.class, "optionalIntList", Integer.class );
+    assertFieldType( MyQueryArgs.class, "requiredFloat", float.class );
+    assertFieldType( MyQueryArgs.class, "optionalFloat", Float.class );
+    assertListFieldType( MyQueryArgs.class, "requiredFloatList", Float.class );
+    assertListFieldType( MyQueryArgs.class, "requiredFloatListContainingNulls", Float.class );
+    assertListFieldType( MyQueryArgs.class, "optionalFloatList", Float.class );
+    assertFieldType( MyQueryArgs.class, "requiredString", String.class );
+    assertFieldType( MyQueryArgs.class, "optionalString", String.class );
+    assertListFieldType( MyQueryArgs.class, "requiredStringList", String.class );
+    assertListFieldType( MyQueryArgs.class, "requiredStringListContainingNulls", String.class );
+    assertListFieldType( MyQueryArgs.class, "optionalStringList", String.class );
+    assertFieldType( MyQueryArgs.class, "requiredID", String.class );
+    assertFieldType( MyQueryArgs.class, "optionalID", String.class );
+    assertListFieldType( MyQueryArgs.class, "requiredIDList", String.class );
+    assertListFieldType( MyQueryArgs.class, "requiredIDListContainingNulls", String.class );
+    assertListFieldType( MyQueryArgs.class, "optionalIDList", String.class );
+    assertFieldType( MyQueryArgs.class, "requiredEnum", MyEnum.class );
+    assertFieldType( MyQueryArgs.class, "optionalEnum", MyEnum.class );
+    assertListFieldType( MyQueryArgs.class, "requiredEnumList", MyEnum.class );
+    assertListFieldType( MyQueryArgs.class, "requiredEnumListContainingNulls", MyEnum.class );
+    assertListFieldType( MyQueryArgs.class, "optionalEnumList", MyEnum.class );
+    assertFieldType( MyQueryArgs.class, "requiredInput", MyInput.class );
+    assertFieldType( MyQueryArgs.class, "optionalInput", MyInput.class );
+    assertListFieldType( MyQueryArgs.class, "requiredInputList", MyInput.class );
+    assertListFieldType( MyQueryArgs.class, "requiredInputListContainingNulls", MyInput.class );
+    assertListFieldType( MyQueryArgs.class, "optionalInputList", MyInput.class );
   }
 
   @Test
   public void nullability()
     throws Exception
   {
-    assertNeitherNullableNorNonnull( "requiredBoolean" );
-    assertNullable( "optionalBoolean" );
-    assertNonnull( "requiredBooleanList" );
-    assertNonnull( "requiredBooleanListContainingNulls" );
-    assertNullable( "optionalBooleanList" );
-    assertNeitherNullableNorNonnull( "requiredInt" );
-    assertNullable( "optionalInt" );
-    assertNonnull( "requiredIntList" );
-    assertNonnull( "requiredIntListContainingNulls" );
-    assertNullable( "optionalIntList" );
-    assertNeitherNullableNorNonnull( "requiredFloat" );
-    assertNullable( "optionalFloat" );
-    assertNonnull( "requiredFloatList" );
-    assertNonnull( "requiredFloatListContainingNulls" );
-    assertNullable( "optionalFloatList" );
-    assertNonnull( "requiredString" );
-    assertNullable( "optionalString" );
-    assertNonnull( "requiredStringList" );
-    assertNonnull( "requiredStringListContainingNulls" );
-    assertNullable( "optionalStringList" );
-    assertNonnull( "requiredID" );
-    assertNullable( "optionalID" );
-    assertNonnull( "requiredIDList" );
-    assertNonnull( "requiredIDListContainingNulls" );
-    assertNullable( "optionalIDList" );
-    assertNonnull( "requiredEnum" );
-    assertNullable( "optionalEnum" );
-    assertNonnull( "requiredEnumList" );
-    assertNonnull( "requiredEnumListContainingNulls" );
-    assertNullable( "optionalEnumList" );
-    assertNonnull( "requiredInput" );
-    assertNullable( "optionalInput" );
-    assertNonnull( "requiredInputList" );
-    assertNonnull( "requiredInputListContainingNulls" );
-    assertNullable( "optionalInputList" );
+    assertNeitherNullableNorNonnull( MyQueryArgs.class, "requiredBoolean" );
+    assertNullable( MyQueryArgs.class, "optionalBoolean" );
+    assertNonnull( MyQueryArgs.class, "requiredBooleanList" );
+    assertNonnull( MyQueryArgs.class, "requiredBooleanListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalBooleanList" );
+    assertNeitherNullableNorNonnull( MyQueryArgs.class, "requiredInt" );
+    assertNullable( MyQueryArgs.class, "optionalInt" );
+    assertNonnull( MyQueryArgs.class, "requiredIntList" );
+    assertNonnull( MyQueryArgs.class, "requiredIntListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalIntList" );
+    assertNeitherNullableNorNonnull( MyQueryArgs.class, "requiredFloat" );
+    assertNullable( MyQueryArgs.class, "optionalFloat" );
+    assertNonnull( MyQueryArgs.class, "requiredFloatList" );
+    assertNonnull( MyQueryArgs.class, "requiredFloatListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalFloatList" );
+    assertNonnull( MyQueryArgs.class, "requiredString" );
+    assertNullable( MyQueryArgs.class, "optionalString" );
+    assertNonnull( MyQueryArgs.class, "requiredStringList" );
+    assertNonnull( MyQueryArgs.class, "requiredStringListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalStringList" );
+    assertNonnull( MyQueryArgs.class, "requiredID" );
+    assertNullable( MyQueryArgs.class, "optionalID" );
+    assertNonnull( MyQueryArgs.class, "requiredIDList" );
+    assertNonnull( MyQueryArgs.class, "requiredIDListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalIDList" );
+    assertNonnull( MyQueryArgs.class, "requiredEnum" );
+    assertNullable( MyQueryArgs.class, "optionalEnum" );
+    assertNonnull( MyQueryArgs.class, "requiredEnumList" );
+    assertNonnull( MyQueryArgs.class, "requiredEnumListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalEnumList" );
+    assertNonnull( MyQueryArgs.class, "requiredInput" );
+    assertNullable( MyQueryArgs.class, "optionalInput" );
+    assertNonnull( MyQueryArgs.class, "requiredInputList" );
+    assertNonnull( MyQueryArgs.class, "requiredInputListContainingNulls" );
+    assertNullable( MyQueryArgs.class, "optionalInputList" );
   }
 
   @Test
@@ -167,43 +161,5 @@ public class ArgsTest
     assertEquals( input.getRequiredEnumList(), Collections.singletonList( MyEnum.A_VALUE ) );
     assertEquals( input.getRequiredInputList().size(), 1 );
     assertEquals( input.getRequiredInputList().get( 0 ).getV(), "Blah" );
-  }
-
-  private void assertListFieldType( @Nonnull final String name, @Nonnull final Class<?> type )
-    throws Exception
-  {
-    final Field field = MyQueryArgs.class.getDeclaredField( name );
-    final Type fieldType = field.getGenericType();
-    assertTrue( fieldType instanceof ParameterizedType );
-    final ParameterizedType genericType = (ParameterizedType) fieldType;
-    assertEquals( genericType.getRawType(), List.class );
-    assertEquals( genericType.getActualTypeArguments()[ 0 ], type );
-  }
-
-  private void assertFieldType( @Nonnull final String name, @Nonnull final Class<?> type )
-    throws Exception
-  {
-    assertEquals( MyQueryArgs.class.getDeclaredField( name ).getType(), type );
-  }
-
-  private void assertNullable( @Nonnull final String name )
-    throws Exception
-  {
-    assertNotNull( MyQueryArgs.class.getDeclaredField( name ).getAnnotation( Nullable.class ) );
-    assertNull( MyQueryArgs.class.getDeclaredField( name ).getAnnotation( Nonnull.class ) );
-  }
-
-  private void assertNonnull( @Nonnull final String name )
-    throws Exception
-  {
-    assertNotNull( MyQueryArgs.class.getDeclaredField( name ).getAnnotation( Nonnull.class ) );
-    assertNull( MyQueryArgs.class.getDeclaredField( name ).getAnnotation( Nullable.class ) );
-  }
-
-  private void assertNeitherNullableNorNonnull( @Nonnull final String name )
-    throws Exception
-  {
-    assertNull( MyQueryArgs.class.getDeclaredField( name ).getAnnotation( Nonnull.class ) );
-    assertNull( MyQueryArgs.class.getDeclaredField( name ).getAnnotation( Nullable.class ) );
   }
 }
