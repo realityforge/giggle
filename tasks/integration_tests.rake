@@ -18,4 +18,5 @@ def integration_tests(project)
     project.test.compile.from(generated_dir)
     project.test.resources.from(generated_dir)
   end
+  project.test.resources.from(project._('src/test/java'))
 end

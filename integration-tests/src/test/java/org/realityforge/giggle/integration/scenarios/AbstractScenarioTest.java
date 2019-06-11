@@ -1,20 +1,48 @@
 package org.realityforge.giggle.integration.scenarios;
 
+import gir.Gir;
+import gir.Task;
+import gir.io.FileUtil;
+import gir.io.IoUtil;
+import graphql.schema.GraphQLSchema;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
 
 public abstract class AbstractScenarioTest
 {
+  protected final void inIsolatedDirectory( @Nonnull final Task task )
+    throws Exception
+  {
+    Gir.go( () -> FileUtil.inTempDir( task ) );
+  }
+
+  @Nonnull
+  protected final GraphQLSchema loadSchema()
+    throws IOException
+  {
+    final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphqls" );
+    final String resourceName =
+      getClass().getName().replaceAll( "\\.[^.]+$", "" ).replace( ".", "/" ) + "/schema.graphqls";
+    final InputStream inputStream = getClass().getResourceAsStream( "/" + resourceName );
+    assertNotNull( inputStream, "Missing resource " + resourceName );
+    IoUtil.copy( inputStream, new FileOutputStream( schemaFile.toFile() ) );
+    return new SchemaRepository().getSchema( Collections.singletonList( schemaFile ) );
+  }
+
   @SuppressWarnings( "unchecked" )
   protected final void assertTypeMapping( final Map<String, String> expectedTypeMapping )
     throws IOException
