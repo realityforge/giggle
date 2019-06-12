@@ -9,6 +9,7 @@ import com.squareup.javapoet.TypeSpec;
 import graphql.Scalars;
 import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLDirectiveContainer;
+import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
@@ -70,79 +71,93 @@ public final class JavaGenUtil
                                       @Nonnull final GraphQLDirectiveContainer container )
   {
     final GraphQLType valueType =
-      container instanceof GraphQLInputObjectField ? ( (GraphQLInputObjectField) container ).getType() :
-      container instanceof GraphQLArgument ? ( (GraphQLArgument) container ).getType() :
-      container;
-    final boolean isList = isList( valueType );
-    final boolean isNonnull = GraphQLTypeUtil.isNonNull( valueType );
+      getValueType( container );
     final GraphQLType type = GraphQLTypeUtil.unwrapAll( valueType );
     final String typeName = typeMap.get( type );
     if ( null != typeName )
     {
-      return wrap( isList, ClassName.bestGuess( typeName ) );
+      return wrap( isList( valueType ), ClassName.bestGuess( typeName ) );
     }
     else
     {
-      if ( Scalars.GraphQLInt.equals( type ) )
+      return getScalarJavaType( container, isList( valueType ), GraphQLTypeUtil.isNonNull( valueType ), type );
+    }
+  }
+
+  @Nonnull
+  private static GraphQLType getValueType( @Nonnull final GraphQLDirectiveContainer type )
+  {
+    return type instanceof GraphQLInputObjectField ? ( (GraphQLInputObjectField) type ).getType() :
+           type instanceof GraphQLArgument ? ( (GraphQLArgument) type ).getType() :
+           type instanceof GraphQLFieldDefinition ? ( (GraphQLFieldDefinition) type ).getType() :
+           type;
+  }
+
+  @Nonnull
+  private static TypeName getScalarJavaType( @Nonnull final GraphQLDirectiveContainer container,
+                                             final boolean isList,
+                                             final boolean isNonnull,
+                                             @Nonnull final GraphQLType type )
+  {
+    if ( Scalars.GraphQLInt.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.INT );
+    }
+    else if ( Scalars.GraphQLBoolean.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.BOOLEAN );
+    }
+    else if ( Scalars.GraphQLByte.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.BYTE );
+    }
+    else if ( Scalars.GraphQLShort.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.SHORT );
+    }
+    else if ( Scalars.GraphQLLong.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.LONG );
+    }
+    else if ( Scalars.GraphQLChar.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.CHAR );
+    }
+    else if ( Scalars.GraphQLFloat.equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.FLOAT );
+    }
+    else if ( Scalars.GraphQLID.equals( type ) )
+    {
+      if ( hasNumericDirective( container ) )
       {
         return wrapPrimitive( isList, isNonnull, TypeName.INT );
       }
-      else if ( Scalars.GraphQLBoolean.equals( type ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.BOOLEAN );
-      }
-      else if ( Scalars.GraphQLByte.equals( type ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.BYTE );
-      }
-      else if ( Scalars.GraphQLShort.equals( type ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.SHORT );
-      }
-      else if ( Scalars.GraphQLLong.equals( type ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.LONG );
-      }
-      else if ( Scalars.GraphQLChar.equals( type ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.CHAR );
-      }
-      else if ( Scalars.GraphQLFloat.equals( type ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.FLOAT );
-      }
-      else if ( Scalars.GraphQLID.equals( type ) )
-      {
-        if ( hasNumericDirective( container ) )
-        {
-          return wrapPrimitive( isList, isNonnull, TypeName.INT );
-        }
-        else
-        {
-          return wrap( isList, ClassName.get( String.class ) );
-        }
-      }
-      else if ( Scalars.GraphQLString.equals( type ) )
+      else
       {
         return wrap( isList, ClassName.get( String.class ) );
       }
-      else if ( Scalars.GraphQLBigDecimal.equals( type ) )
-      {
-        return wrap( isList, ClassName.get( BigDecimal.class ) );
-      }
-      else if ( Scalars.GraphQLBigInteger.equals( type ) )
-      {
-        return wrap( isList, ClassName.get( BigInteger.class ) );
-      }
-      else if ( type.getName().equals( "Date" ) || type.getName().equals( "DateTime" ) )
-      {
-        //TODO: Support other scalars through some sort of mapping configuration
-        return wrap( isList, ClassName.get( Date.class ) );
-      }
-      else
-      {
-        throw new IllegalStateException( "Unknown type " + type.getName() );
-      }
+    }
+    else if ( Scalars.GraphQLString.equals( type ) )
+    {
+      return wrap( isList, ClassName.get( String.class ) );
+    }
+    else if ( Scalars.GraphQLBigDecimal.equals( type ) )
+    {
+      return wrap( isList, ClassName.get( BigDecimal.class ) );
+    }
+    else if ( Scalars.GraphQLBigInteger.equals( type ) )
+    {
+      return wrap( isList, ClassName.get( BigInteger.class ) );
+    }
+    else if ( type.getName().equals( "Date" ) || type.getName().equals( "DateTime" ) )
+    {
+      //TODO: Support other scalars through some sort of mapping configuration
+      return wrap( isList, ClassName.get( Date.class ) );
+    }
+    else
+    {
+      throw new IllegalStateException( "Unknown type " + type.getName() );
     }
   }
 
