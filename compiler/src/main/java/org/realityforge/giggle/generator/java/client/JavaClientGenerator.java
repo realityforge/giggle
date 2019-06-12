@@ -6,14 +6,13 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import graphql.execution.MergedField;
+import graphql.execution.MergedSelectionSet;
 import graphql.language.Comment;
 import graphql.language.Definition;
 import graphql.language.Field;
 import graphql.language.FragmentDefinition;
-import graphql.language.FragmentSpread;
-import graphql.language.InlineFragment;
 import graphql.language.OperationDefinition;
-import graphql.language.Selection;
 import graphql.language.SelectionSetContainer;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLFieldDefinition;
@@ -70,17 +69,26 @@ public class JavaClientGenerator
         emitEnum( context, (GraphQLEnumType) type );
       }
     }
+    final Map<String, FragmentDefinition> fragmentsByName = context.getDocument()
+      .getDefinitions()
+      .stream()
+      .filter( definition -> definition instanceof FragmentDefinition )
+      .map( definition -> (FragmentDefinition) definition )
+      .collect( Collectors.toMap( FragmentDefinition::getName, v -> v, ( a, b ) -> b ) );
+    final FieldCollector collector = new FieldCollector( fragmentsByName );
+
     for ( final Definition definition : context.getDocument().getDefinitions() )
     {
       if ( definition instanceof OperationDefinition )
       {
-        emitOperation( context, fullTypeMap, (OperationDefinition) definition );
+        emitOperation( context, collector, fullTypeMap, (OperationDefinition) definition );
       }
     }
     writeTypeMappingFile( context, generatedTypeMap );
   }
 
   private void emitOperation( @Nonnull final GeneratorContext context,
+                              @Nonnull final FieldCollector collector,
                               @Nonnull final Map<GraphQLType, String> typeMap,
                               @Nonnull final OperationDefinition operation )
     throws IOException
@@ -105,49 +113,42 @@ public class JavaClientGenerator
       OperationDefinition.Operation.QUERY == operationType ? schema.getQueryType() :
       OperationDefinition.Operation.MUTATION == operationType ? schema.getMutationType() :
       schema.getSubscriptionType();
-    JavaGenUtil.writeTopLevelType( context, buildType( operation, typeMap, typeName, fieldsContainer ) );
+    JavaGenUtil.writeTopLevelType( context, buildType( collector, operation, typeMap, typeName, fieldsContainer ) );
   }
 
   @Nonnull
-  private TypeSpec.Builder buildType( @Nonnull final SelectionSetContainer container,
+  private TypeSpec.Builder buildType( @Nonnull final FieldCollector collector,
+                                      @Nonnull final SelectionSetContainer container,
                                       @Nonnull final Map<GraphQLType, String> typeMap,
                                       @Nonnull final String typeName,
                                       @Nonnull final GraphQLFieldsContainer fieldsContainer )
   {
     final TypeSpec.Builder builder = TypeSpec.classBuilder( typeName );
     builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
-    buildSelectedValues( typeMap, fieldsContainer, container, builder );
+    buildSelectedValues( collector, typeMap, fieldsContainer, container, builder );
     return builder;
   }
 
-  private void buildSelectedValues( @Nonnull final Map<GraphQLType, String> typeMap,
+  private void buildSelectedValues( @Nonnull final FieldCollector collector,
+                                    @Nonnull final Map<GraphQLType, String> typeMap,
                                     @Nonnull final GraphQLFieldsContainer fieldsContainer,
                                     @Nonnull final SelectionSetContainer selectionSetContainer,
                                     @Nonnull final TypeSpec.Builder builder )
   {
-    for ( final Selection selection : selectionSetContainer.getSelectionSet().getSelections() )
+    final MergedSelectionSet selectionSet = collector.collectFields( selectionSetContainer.getSelectionSet() );
+    for ( final MergedField field : selectionSet.getSubFields().values() )
     {
-      if ( selection instanceof Field )
-      {
-        buildFieldSelection( typeMap, fieldsContainer, builder, (Field) selection );
-      }
-      else if ( selection instanceof FragmentSpread )
-      {
-        final FragmentSpread fragmentSpread = (FragmentSpread) selection;
-      }
-      else
-      {
-        assert selection instanceof InlineFragment;
-        final InlineFragment inlineFragment = (InlineFragment) selection;
-      }
+      buildFieldSelection( collector, typeMap, fieldsContainer, builder, field );
     }
   }
 
-  private void buildFieldSelection( @Nonnull final Map<GraphQLType, String> typeMap,
+  private void buildFieldSelection( @Nonnull final FieldCollector collector,
+                                    @Nonnull final Map<GraphQLType, String> typeMap,
                                     @Nonnull final GraphQLFieldsContainer fieldsContainer,
                                     @Nonnull final TypeSpec.Builder builder,
-                                    @Nonnull final Field selection )
+                                    @Nonnull final MergedField mergedField )
   {
+    final Field selection = mergedField.getSingleField();
     final String alias = selection.getAlias();
     final String name = null == alias ? selection.getName() : alias;
 
@@ -164,7 +165,7 @@ public class JavaClientGenerator
       final GraphQLObjectType type = (GraphQLObjectType) GraphQLTypeUtil.unwrapAll( fieldDefinition.getType() );
       final String typeName = NamingUtil.uppercaseFirstCharacter( name );
       final TypeSpec.Builder subType =
-        buildType( selection, typeMap, typeName, type );
+        buildType( collector, selection, typeMap, typeName, type );
       subType.addModifiers( Modifier.STATIC );
       builder.addType( subType.build() );
       final boolean isList = JavaGenUtil.isList( fieldDefinition.getType() );

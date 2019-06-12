@@ -1,0 +1,18 @@
+schema {
+  query: Query
+}
+
+type Query {
+  event(id: ID!): Event
+}
+
+enum EventType {
+  Wildfire
+  Burn
+}
+
+type Event {
+  id: ID!
+  name: String
+  type: EventType
+}
