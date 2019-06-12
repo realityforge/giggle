@@ -66,6 +66,11 @@ public abstract class AbstractScenarioTest
     assertEquals( new HashMap<>( (Map) properties ), expectedTypeMapping );
   }
 
+  protected final <T> T fromJson( @Nonnull final String jsonData, @Nonnull final Class<T> type )
+  {
+    return JsonbBuilder.create().fromJson( jsonData, type );
+  }
+
   protected final <T> T fromJsonResource( @Nonnull final String resourceName, @Nonnull final Class<T> type )
   {
     return JsonbBuilder.create().fromJson( getResourceAsStream( resourceName ), type );
