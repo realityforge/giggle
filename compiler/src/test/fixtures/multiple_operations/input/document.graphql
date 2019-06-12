@@ -1,0 +1,27 @@
+fragment EventName1 on Event {
+  name
+}
+query specificEvent {
+  event(id: 1) {
+    id
+    ...EventName1
+  }
+}
+
+fragment EventName2 on Event {
+  name
+}
+
+fragment EventDesignator on Event {
+  id
+  name
+  type
+}
+
+query otherEvent {
+  event(id: 2) {
+    id
+    ...EventName2
+    ...EventDesignator
+  }
+}
