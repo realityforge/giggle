@@ -57,7 +57,7 @@ final class FieldCollector
       else
       {
         assert selection instanceof FragmentSpread;
-        final String name = ((FragmentSpread) selection).getName();
+        final String name = ( (FragmentSpread) selection ).getName();
         if ( !visitedFragments.contains( name ) )
         {
           visitedFragments.add( name );
