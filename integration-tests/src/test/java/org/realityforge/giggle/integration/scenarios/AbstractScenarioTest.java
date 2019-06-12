@@ -44,7 +44,7 @@ public abstract class AbstractScenarioTest
   }
 
   @SuppressWarnings( "unchecked" )
-  protected final void assertTypeMapping( final Map<String, String> expectedTypeMapping )
+  protected final void assertTypeMapping( @Nonnull final Map<String, String> expectedTypeMapping )
     throws IOException
   {
     final InputStream types = getClass().getResourceAsStream( "types.mapping" );
