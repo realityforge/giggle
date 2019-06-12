@@ -1,0 +1,24 @@
+# This document has several fragments
+
+fragment EventName on Event {
+  name
+}
+
+fragment EventType on Event {
+  type
+}
+
+query specificEvent {
+  event(id: 1) {
+    id
+    ...EventName
+  }
+}
+
+query otherEvent {
+  event(id: 2) {
+    id
+    ...EventName
+    ...EventType
+  }
+}
