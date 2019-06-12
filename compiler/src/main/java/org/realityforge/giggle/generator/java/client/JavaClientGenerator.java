@@ -16,6 +16,7 @@ import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.generator.java.AbstractJavaGenerator;
 
+@SuppressWarnings( "Duplicates" )
 @Generator.MetaData( name = "java-client" )
 public class JavaClientGenerator
   extends AbstractJavaGenerator
