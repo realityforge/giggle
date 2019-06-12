@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,23 +35,33 @@ public abstract class AbstractScenarioTest
   protected final GraphQLSchema loadSchema()
     throws IOException
   {
-    final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphqls" );
-    final String resourceName =
-      getClass().getName().replaceAll( "\\.[^.]+$", "" ).replace( ".", "/" ) + "/schema.graphqls";
-    final InputStream inputStream = getClass().getResourceAsStream( "/" + resourceName );
-    assertNotNull( inputStream, "Missing resource " + resourceName );
-    IoUtil.copy( inputStream, new FileOutputStream( schemaFile.toFile() ) );
-    return new SchemaRepository().getSchema( Collections.singletonList( schemaFile ) );
+    return new SchemaRepository().getSchema( Collections.singletonList( getResourceAsFile( "schema.graphqls" ) ) );
+  }
+
+  @Nonnull
+  protected final Path getResourceAsFile( @Nonnull final String name )
+    throws IOException
+  {
+    final Path file = Files.createTempFile( FileUtil.createTempDir(), "", name );
+    final InputStream inputStream = getResourceAsStream( name );
+    IoUtil.copy( inputStream, new FileOutputStream( file.toFile() ) );
+    return file;
+  }
+
+  @Nonnull
+  protected final InputStream getResourceAsStream( @Nonnull final String name )
+  {
+    final InputStream inputStream = getClass().getResourceAsStream( name );
+    assertNotNull( inputStream, "Missing resource " + name + " (relative to " + getClass().getName() + ")" );
+    return inputStream;
   }
 
   @SuppressWarnings( "unchecked" )
   protected final void assertTypeMapping( @Nonnull final Map<String, String> expectedTypeMapping )
     throws IOException
   {
-    final InputStream types = getClass().getResourceAsStream( "types.mapping" );
-    assertNotNull( types );
     final Properties properties = new Properties();
-    properties.load( types );
+    properties.load( getResourceAsStream( "types.mapping" ) );
     assertEquals( new HashMap<>( (Map) properties ), expectedTypeMapping );
   }
 
