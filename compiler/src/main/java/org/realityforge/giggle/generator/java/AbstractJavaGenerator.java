@@ -93,8 +93,8 @@ public abstract class AbstractJavaGenerator
     JavaGenUtil.writeTopLevelType( context, builder );
   }
 
-  protected final void emitEnumValue( @Nonnull final TypeSpec.Builder enumBuilder,
-                                      @Nonnull final GraphQLEnumValueDefinition value )
+  private void emitEnumValue( @Nonnull final TypeSpec.Builder enumBuilder,
+                              @Nonnull final GraphQLEnumValueDefinition value )
   {
     final TypeSpec.Builder builder = TypeSpec.anonymousClassBuilder( "" );
     final String description = value.getDescription();
