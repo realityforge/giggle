@@ -55,7 +55,8 @@ define 'giggle' do
     test.options[:java_args] = %w(-ea)
 
     test.using :testng
-    test.compile.with :gir, :guiceyloops,
+    test.compile.with :gir,
+                      :guiceyloops,
                       JSONB_LIBS,
                       project('compiler').package(:jar),
                       project('compiler').compile.dependencies
