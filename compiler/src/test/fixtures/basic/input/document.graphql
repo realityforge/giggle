@@ -1,4 +1,5 @@
 query specificEvent {
+  # Comment
   event(id: 1) {
     id
     name
