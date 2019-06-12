@@ -14,6 +14,8 @@ PACKAGED_DEPS =
     :antlr4_runtime
   ]
 
+JSONB_LIBS = [:yasson, :jakarta_json, :jakarta_json_api, :jakarta_json_bind]
+
 desc 'giggle: Generate source code and artifacts from a GraphQL schema and operations'
 define 'giggle' do
   project.group = 'org.realityforge.giggle'
@@ -54,6 +56,7 @@ define 'giggle' do
 
     test.using :testng
     test.compile.with :gir, :guiceyloops,
+                      JSONB_LIBS,
                       project('compiler').package(:jar),
                       project('compiler').compile.dependencies
 

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.json.bind.JsonbBuilder;
 import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
 
@@ -63,6 +64,11 @@ public abstract class AbstractScenarioTest
     final Properties properties = new Properties();
     properties.load( getResourceAsStream( "types.mapping" ) );
     assertEquals( new HashMap<>( (Map) properties ), expectedTypeMapping );
+  }
+
+  protected final <T> T fromJsonResource( @Nonnull final String resourceName, @Nonnull final Class<T> type )
+  {
+    return JsonbBuilder.create().fromJson( getResourceAsStream( resourceName ), type );
   }
 
   protected final void assertListFieldType( @Nonnull final Class<?> clazz,
