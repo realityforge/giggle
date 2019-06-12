@@ -7,14 +7,11 @@ import graphql.language.FragmentDefinition;
 import graphql.language.OperationDefinition;
 import graphql.schema.GraphQLSchema;
 import graphql.validation.ValidationError;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
 import org.realityforge.giggle.AbstractTest;
-import org.realityforge.giggle.schema.SchemaRepository;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -34,16 +31,14 @@ public class DocumentRepositoryTest
                             "  person: Person" +
                             "}\n" );
 
-      final Path documentFile =
-        writeContent( "document.graphql",
-                      "query myQuery {\n" +
-                      "  person {\n" +
-                      "    name\n" +
-                      "  }\n" +
-                      "}\n" );
-
       final Document document =
-        new DocumentRepository().getDocument( schema, Collections.singletonList( documentFile ) );
+        buildDocument( schema,
+                       "query myQuery {\n" +
+                       "  person {\n" +
+                       "    name\n" +
+                       "  }\n" +
+                       "}\n" );
+
       final List<Definition> definitions = document.getDefinitions();
       assertEquals( definitions.size(), 1 );
       final Definition definition2 = definitions.get( 0 );
@@ -66,19 +61,15 @@ public class DocumentRepositoryTest
                             "  person: Person" +
                             "}\n" );
 
-      final Path documentFile =
-        writeContent( "document.graphql",
-                      "fragment NameParts on Person {\n" +
-                      "  name\n" +
-                      "}\n" +
-                      "query myQuery {\n" +
-                      "  person {\n" +
-                      "    ...NameParts\n" +
-                      "  }\n" +
-                      "}\n" );
-
       final Document document =
-        new DocumentRepository().getDocument( schema, Collections.singletonList( documentFile ) );
+        buildDocument( schema, "fragment NameParts on Person {\n" +
+                               "  name\n" +
+                               "}\n" +
+                               "query myQuery {\n" +
+                               "  person {\n" +
+                               "    ...NameParts\n" +
+                               "  }\n" +
+                               "}\n" );
       final List<Definition> definitions = document.getDefinitions();
       assertEquals( definitions.size(), 2 );
       final Definition definition = definitions.get( 0 );

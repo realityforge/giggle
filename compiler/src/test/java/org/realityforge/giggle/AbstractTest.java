@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
@@ -81,5 +82,14 @@ public abstract class AbstractTest
                     schemaExtension );
 
     return new SchemaRepository().getSchema( Collections.singletonList( schemaFile ) );
+  }
+
+  @Nonnull
+  protected final Document buildDocument( @Nonnull final GraphQLSchema schema, @Nonnull final String content )
+    throws IOException
+  {
+    final Path file = writeContent( "document.graphql", content );
+
+    return new DocumentRepository().getDocument( schema, Collections.singletonList( file ) );
   }
 }
