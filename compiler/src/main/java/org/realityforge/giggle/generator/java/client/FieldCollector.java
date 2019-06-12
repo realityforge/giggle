@@ -2,6 +2,7 @@ package org.realityforge.giggle.generator.java.client;
 
 import graphql.execution.MergedField;
 import graphql.execution.MergedSelectionSet;
+import graphql.language.Document;
 import graphql.language.Field;
 import graphql.language.FragmentDefinition;
 import graphql.language.FragmentSpread;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import static graphql.execution.MergedSelectionSet.*;
 
@@ -21,9 +22,14 @@ final class FieldCollector
   @Nonnull
   private final Map<String, FragmentDefinition> _fragmentsByName;
 
-  FieldCollector( @Nonnull final Map<String, FragmentDefinition> fragmentsByName )
+  FieldCollector( @Nonnull final Document document )
   {
-    _fragmentsByName = Objects.requireNonNull( fragmentsByName );
+    _fragmentsByName = document
+      .getDefinitions()
+      .stream()
+      .filter( definition -> definition instanceof FragmentDefinition )
+      .map( definition -> (FragmentDefinition) definition )
+      .collect( Collectors.toMap( FragmentDefinition::getName, v -> v, ( a, b ) -> b ) );
   }
 
   MergedSelectionSet collectFields( @Nonnull final SelectionSet selectionSet )

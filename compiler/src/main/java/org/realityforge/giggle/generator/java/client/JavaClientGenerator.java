@@ -11,7 +11,6 @@ import graphql.execution.MergedSelectionSet;
 import graphql.language.Comment;
 import graphql.language.Definition;
 import graphql.language.Field;
-import graphql.language.FragmentDefinition;
 import graphql.language.OperationDefinition;
 import graphql.language.SelectionSetContainer;
 import graphql.schema.GraphQLEnumType;
@@ -69,13 +68,7 @@ public class JavaClientGenerator
         emitEnum( context, (GraphQLEnumType) type );
       }
     }
-    final Map<String, FragmentDefinition> fragmentsByName = context.getDocument()
-      .getDefinitions()
-      .stream()
-      .filter( definition -> definition instanceof FragmentDefinition )
-      .map( definition -> (FragmentDefinition) definition )
-      .collect( Collectors.toMap( FragmentDefinition::getName, v -> v, ( a, b ) -> b ) );
-    final FieldCollector collector = new FieldCollector( fragmentsByName );
+    final FieldCollector collector = new FieldCollector( context.getDocument() );
 
     for ( final Definition definition : context.getDocument().getDefinitions() )
     {
