@@ -17,7 +17,6 @@ import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLDirective;
 import graphql.schema.GraphQLDirectiveContainer;
 import graphql.schema.GraphQLEnumType;
-import graphql.schema.GraphQLEnumValueDefinition;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
@@ -859,37 +858,5 @@ public class JavaServerGenerator
       builder.addAnnotation( AnnotationSpec.builder( Deprecated.class ).build() );
     }
     return builder.build();
-  }
-
-  private void emitEnum( @Nonnull final GeneratorContext context, @Nonnull final GraphQLEnumType type )
-    throws IOException
-  {
-    final TypeSpec.Builder builder = TypeSpec.enumBuilder( type.getName() );
-    builder.addModifiers( Modifier.PUBLIC );
-    final String description = type.getDescription();
-    if ( null != description )
-    {
-      builder.addJavadoc( asJavadoc( description ) );
-    }
-    type.getValues().forEach( value -> emitEnumValue( builder, value ) );
-    JavaGenUtil.writeTopLevelType( context, builder );
-  }
-
-  private void emitEnumValue( @Nonnull final TypeSpec.Builder enumBuilder,
-                              @Nonnull final GraphQLEnumValueDefinition value )
-  {
-    final TypeSpec.Builder builder = TypeSpec.anonymousClassBuilder( "" );
-    final String description = value.getDescription();
-    if ( null != description )
-    {
-      builder.addJavadoc( asJavadoc( description ) );
-    }
-    final String deprecationReason = value.getDeprecationReason();
-    if ( null != deprecationReason )
-    {
-      builder.addJavadoc( "@deprecated " + deprecationReason + "\n" );
-      builder.addAnnotation( AnnotationSpec.builder( Deprecated.class ).build() );
-    }
-    enumBuilder.addEnumConstant( value.getName(), builder.build() );
   }
 }

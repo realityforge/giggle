@@ -1,5 +1,9 @@
 package org.realityforge.giggle.generator.java;
 
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.TypeSpec;
+import graphql.schema.GraphQLEnumType;
+import graphql.schema.GraphQLEnumValueDefinition;
 import graphql.schema.GraphQLType;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.lang.model.element.Modifier;
 import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
 
@@ -72,5 +77,37 @@ public abstract class AbstractJavaGenerator
     final Map<GraphQLType, String> typeMap = new HashMap<>();
     context.getTypeMapping().forEach( ( key, value ) -> typeMap.put( context.getSchema().getType( key ), value ) );
     return typeMap;
+  }
+
+  protected final void emitEnum( @Nonnull final GeneratorContext context, @Nonnull final GraphQLEnumType type )
+    throws IOException
+  {
+    final TypeSpec.Builder builder = TypeSpec.enumBuilder( type.getName() );
+    builder.addModifiers( Modifier.PUBLIC );
+    final String description = type.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    type.getValues().forEach( value -> emitEnumValue( builder, value ) );
+    JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  protected final void emitEnumValue( @Nonnull final TypeSpec.Builder enumBuilder,
+                                      @Nonnull final GraphQLEnumValueDefinition value )
+  {
+    final TypeSpec.Builder builder = TypeSpec.anonymousClassBuilder( "" );
+    final String description = value.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    final String deprecationReason = value.getDeprecationReason();
+    if ( null != deprecationReason )
+    {
+      builder.addJavadoc( "@deprecated " + deprecationReason + "\n" );
+      builder.addAnnotation( AnnotationSpec.builder( Deprecated.class ).build() );
+    }
+    enumBuilder.addEnumConstant( value.getName(), builder.build() );
   }
 }
