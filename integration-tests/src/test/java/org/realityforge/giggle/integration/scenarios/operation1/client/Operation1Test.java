@@ -17,6 +17,13 @@ public class Operation1Test
   }
 
   @Test
+  public void operationDocument()
+    throws Exception
+  {
+    assertEquals( getResourceAsString( "specificEvent.graphql" ), "query specificEvent {event(id:1) {id name type}}" );
+  }
+
+  @Test
   public void decodeFullResponse()
   {
     final String json =

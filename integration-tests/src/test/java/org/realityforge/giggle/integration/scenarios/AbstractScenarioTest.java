@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -47,6 +48,16 @@ public abstract class AbstractScenarioTest
     final InputStream inputStream = getResourceAsStream( name );
     IoUtil.copy( inputStream, new FileOutputStream( file.toFile() ) );
     return file;
+  }
+
+  @Nonnull
+  protected final String getResourceAsString( @Nonnull final String name )
+    throws IOException
+  {
+    final InputStream stream = getResourceAsStream( name );
+    final byte[] data = new byte[ stream.available() ];
+    assertEquals( stream.read( data ), data.length );
+    return new String( data, StandardCharsets.US_ASCII );
   }
 
   @Nonnull

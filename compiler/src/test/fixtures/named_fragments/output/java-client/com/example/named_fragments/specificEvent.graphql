@@ -1,0 +1,1 @@
+query specificEvent {event(id:1) {id ...EventName}} fragment EventName on Event {name}

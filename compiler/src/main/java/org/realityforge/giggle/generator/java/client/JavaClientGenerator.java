@@ -8,8 +8,10 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import graphql.execution.MergedField;
 import graphql.execution.MergedSelectionSet;
+import graphql.language.AstPrinter;
 import graphql.language.Comment;
 import graphql.language.Definition;
+import graphql.language.Document;
 import graphql.language.Field;
 import graphql.language.OperationDefinition;
 import graphql.language.SelectionSetContainer;
@@ -21,6 +23,7 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,15 +72,31 @@ public class JavaClientGenerator
       }
     }
     final FieldCollector collector = new FieldCollector( context.getDocument() );
+    final FragmentCollector fragmentCollector = new FragmentCollector( context.getDocument() );
 
     for ( final Definition definition : context.getDocument().getDefinitions() )
     {
       if ( definition instanceof OperationDefinition )
       {
-        emitOperation( context, collector, fullTypeMap, (OperationDefinition) definition );
+        final OperationDefinition operation = (OperationDefinition) definition;
+        emitOperation( context, collector, fullTypeMap, operation );
+        emitOperationDocument( context, fragmentCollector, operation );
       }
     }
     writeTypeMappingFile( context, generatedTypeMap );
+  }
+
+  private void emitOperationDocument( @Nonnull final GeneratorContext context,
+                                      @Nonnull final FragmentCollector collector,
+                                      @Nonnull final OperationDefinition operation )
+    throws IOException
+  {
+    final ArrayList<Definition> definitions = new ArrayList<>();
+    definitions.add( operation );
+    definitions.addAll( collector.collectFragments( operation.getSelectionSet() ) );
+    final Document document = context.getDocument().transform( b -> b.definitions( definitions ) );
+    writeFile( getPackageOutputDirectory( context ).resolve( operation.getName() + ".graphql" ),
+               AstPrinter.printAstCompact( document ) );
   }
 
   private void emitOperation( @Nonnull final GeneratorContext context,
