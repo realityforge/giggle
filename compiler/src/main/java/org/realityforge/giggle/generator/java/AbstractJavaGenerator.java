@@ -54,21 +54,36 @@ public abstract class AbstractJavaGenerator
                                              @Nonnull final Map<GraphQLType, String> typeMap )
     throws IOException
   {
-    final Path typeMappingFile = context.getOutputDirectory()
-      .resolve( context.getPackageName().replaceAll( "\\.", File.separator ) )
-      .resolve( "types.mapping" );
     final String typeMappingContent =
       typeMap.keySet()
         .stream()
         .map( type -> type.getName() + "=" + typeMap.get( type ) )
         .sorted()
         .collect( Collectors.joining( "\n" ) ) + "\n";
-    final Path dir = typeMappingFile.getParent();
+    writeFile( getPackageOutputDirectory( context ).resolve( "types.mapping" ), typeMappingContent );
+  }
+
+  @Nonnull
+  protected final Path getPackageOutputDirectory( @Nonnull final GeneratorContext context )
+  {
+    return context.getOutputDirectory().resolve( context.getPackageName().replaceAll( "\\.", File.separator ) );
+  }
+
+  protected final void writeFile( @Nonnull final Path file, @Nonnull final String content )
+    throws IOException
+  {
+    writeFile( file, content.getBytes( StandardCharsets.US_ASCII ) );
+  }
+
+  protected final void writeFile( @Nonnull final Path file, @Nonnull final byte[] bytes )
+    throws IOException
+  {
+    final Path dir = file.getParent();
     if ( !Files.exists( dir ) )
     {
       Files.createDirectories( dir );
     }
-    Files.write( typeMappingFile, typeMappingContent.getBytes( StandardCharsets.US_ASCII ) );
+    Files.write( file, bytes );
   }
 
   @Nonnull
