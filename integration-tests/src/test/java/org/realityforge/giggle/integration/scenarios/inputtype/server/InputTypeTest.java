@@ -1,4 +1,4 @@
-package org.realityforge.giggle.integration.scenarios.inputtype;
+package org.realityforge.giggle.integration.scenarios.inputtype.server;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;

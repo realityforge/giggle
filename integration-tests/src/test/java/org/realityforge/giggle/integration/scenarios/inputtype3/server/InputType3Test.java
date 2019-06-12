@@ -1,4 +1,4 @@
-package org.realityforge.giggle.integration.scenarios.inputtype3;
+package org.realityforge.giggle.integration.scenarios.inputtype3.server;
 
 import graphql.schema.CoercingParseValueException;
 import java.util.Arrays;
@@ -35,7 +35,8 @@ public class InputType3Test
     args.put( "value", 23 );
     final CoercingParseValueException exception =
       expectThrows( CoercingParseValueException.class, () -> ObservationInput.from( args ) );
-    assertEquals( exception.getMessage(), "Failed to parse input field 'oid' that was expected to be a numeric ID type. Actual value = 'abc'" );
+    assertEquals( exception.getMessage(),
+                  "Failed to parse input field 'oid' that was expected to be a numeric ID type. Actual value = 'abc'" );
   }
 
   @Test

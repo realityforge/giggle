@@ -1,4 +1,4 @@
-package org.realityforge.giggle.integration.scenarios.enumtype;
+package org.realityforge.giggle.integration.scenarios.enumtype.server;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;

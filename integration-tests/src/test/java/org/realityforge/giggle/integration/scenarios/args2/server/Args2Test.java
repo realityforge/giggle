@@ -1,4 +1,4 @@
-package org.realityforge.giggle.integration.scenarios.args2;
+package org.realityforge.giggle.integration.scenarios.args2.server;
 
 import graphql.ErrorType;
 import graphql.execution.MergedField;

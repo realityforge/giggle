@@ -1,4 +1,4 @@
-package org.realityforge.giggle.integration.scenarios.args;
+package org.realityforge.giggle.integration.scenarios.args.server;
 
 import graphql.schema.DataFetchingEnvironmentImpl;
 import java.lang.reflect.Modifier;

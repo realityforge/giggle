@@ -7,16 +7,37 @@ def integration_tests(project)
   project.iml.test_resource_directories
   Dir["#{_('src/test/java/org/realityforge/giggle/integration/scenarios/*/schema.graphqls')}"].each do |file|
     name = File.basename(File.dirname(file))
-    generated_dir = project._(:target, :generated, name, :test, :java)
-    project.iml.test_source_directories << generated_dir
-    t = project.task(generated_dir) do
-      jar.invoke
-      Java::Commands.java %W(-jar #{jar} --package org.realityforge.giggle.integration.scenarios.#{name} --schema #{file} --output-directory #{generated_dir} --generator java-server)
+    document_file = "#{File.dirname(file)}/document.graphql"
+    gentasks = []
+    gentasks << %W(#{name}-server java-server server)
+    gentasks << %W(#{name}-client java-client client) if File.exist?(document_file)
+    gentasks.each do |dirname, generator, package_suffix|
+      generated_dir = project._(:target, :generated, dirname, :test, :java)
+      project.iml.test_source_directories << generated_dir
+      t = project.task(generated_dir) do
+        jar.invoke
+        args = []
+        args << '-jar'
+        args << jar.to_s
+        args << '--package'
+        args << "org.realityforge.giggle.integration.scenarios.#{name}.#{package_suffix}"
+        args << '--schema'
+        args << file.to_s
+        if File.exist?(document_file)
+          args << '--document'
+          args << document_file.to_s
+        end
+        args << '--output-directory'
+        args << generated_dir.to_s
+        args << '--generator'
+        args << generator
+        Java::Commands.java args
+      end
+      generate_task.enhance([t.name])
+      project.test.compile.enhance([t.name])
+      project.test.compile.from(generated_dir)
+      project.test.resources.from(generated_dir)
     end
-    generate_task.enhance([t.name])
-    project.test.compile.enhance([t.name])
-    project.test.compile.from(generated_dir)
-    project.test.resources.from(generated_dir)
   end
   project.test.resources.from(project._('src/test/java'))
 end
