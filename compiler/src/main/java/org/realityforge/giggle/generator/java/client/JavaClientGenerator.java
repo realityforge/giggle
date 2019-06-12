@@ -72,22 +72,12 @@ public class JavaClientGenerator
     }
     for ( final Definition definition : context.getDocument().getDefinitions() )
     {
-      if ( definition instanceof FragmentDefinition )
+      if ( definition instanceof OperationDefinition )
       {
-        emitFragment( context, (FragmentDefinition) definition );
-      }
-      else
-      {
-        assert definition instanceof OperationDefinition;
         emitOperation( context, fullTypeMap, (OperationDefinition) definition );
       }
     }
     writeTypeMappingFile( context, generatedTypeMap );
-  }
-
-  private void emitFragment( @Nonnull final GeneratorContext context, @Nonnull final FragmentDefinition fragment )
-    throws IOException
-  {
   }
 
   private void emitOperation( @Nonnull final GeneratorContext context,
