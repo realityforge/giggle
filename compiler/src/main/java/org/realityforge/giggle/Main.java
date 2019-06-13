@@ -96,11 +96,15 @@ public class Main
 
   public static void main( final String[] args )
   {
+    System.exit( run( args ) );
+  }
+
+  private static int run( @Nonnull final String[] args )
+  {
     setupLogger();
     if ( !processOptions( c_environment, args ) )
     {
-      System.exit( ExitCodes.ERROR_PARSING_ARGS_EXIT_CODE );
-      return;
+      return ExitCodes.ERROR_PARSING_ARGS_EXIT_CODE;
     }
 
     final Logger logger = c_environment.logger();
@@ -141,17 +145,17 @@ public class Main
       logger.log( Level.WARNING,
                   "Error: Failed generating artifacts using generator named " + ge.getName(),
                   ge.getCause() );
-      System.exit( ExitCodes.UNKNOWN_GENERATOR_EXIT_CODE );
+      return ExitCodes.UNKNOWN_GENERATOR_EXIT_CODE;
     }
     catch ( final NoSuchGeneratorException nsge )
     {
       logger.log( Level.WARNING, "Error: Unable to locate generator named " + nsge.getName() );
-      System.exit( ExitCodes.UNKNOWN_GENERATOR_EXIT_CODE );
+      return ExitCodes.UNKNOWN_GENERATOR_EXIT_CODE;
     }
     catch ( final DocumentReadException dre )
     {
       logger.log( Level.WARNING, dre.getMessage() );
-      System.exit( ExitCodes.ERROR_READING_DOCUMENT_EXIT_CODE );
+      return ExitCodes.ERROR_READING_DOCUMENT_EXIT_CODE;
     }
     catch ( final DocumentValidateException dve )
     {
@@ -168,12 +172,12 @@ public class Main
                                    ( locations.isEmpty() ? "" : " @ " + locations ) );
       }
 
-      System.exit( ExitCodes.ERROR_PARSING_DOCUMENT_EXIT_CODE );
+      return ExitCodes.ERROR_PARSING_DOCUMENT_EXIT_CODE;
     }
     catch ( final SchemaReadException sre )
     {
       logger.log( Level.WARNING, sre.getMessage() );
-      System.exit( ExitCodes.ERROR_READING_SCHEMA_EXIT_CODE );
+      return ExitCodes.ERROR_READING_SCHEMA_EXIT_CODE;
     }
     catch ( final SchemaProblem sp )
     {
@@ -190,7 +194,7 @@ public class Main
                                    ( locations.isEmpty() ? "" : " @ " + locations ) );
       }
 
-      System.exit( ExitCodes.ERROR_PARSING_SCHEMA_EXIT_CODE );
+      return ExitCodes.ERROR_PARSING_SCHEMA_EXIT_CODE;
     }
     catch ( final TerminalStateException tse )
     {
@@ -211,15 +215,15 @@ public class Main
           }
         }
       }
-      System.exit( tse.getExitCode() );
+      return tse.getExitCode();
     }
     catch ( final Throwable t )
     {
       logger.log( Level.WARNING, t.toString(), t );
-      System.exit( ExitCodes.ERROR_EXIT_CODE );
+      return ExitCodes.ERROR_EXIT_CODE;
     }
 
-    System.exit( ExitCodes.SUCCESS_EXIT_CODE );
+    return ExitCodes.SUCCESS_EXIT_CODE;
   }
 
   static void verifyTypeMapping( @Nonnull final GeneratorContext context )
