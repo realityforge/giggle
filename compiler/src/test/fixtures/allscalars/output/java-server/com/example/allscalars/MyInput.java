@@ -9,28 +9,28 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class MyInput {
   @Nullable
-  private final MyRecursiveListInput data;
+  private final String v;
 
   @Nonnull
   private final MyRecursiveInput other;
 
   @Nullable
-  private final String v;
+  private final MyRecursiveListInput data;
 
-  private MyInput(@Nullable final MyRecursiveListInput data, @Nonnull final MyRecursiveInput other,
-      @Nullable final String v) {
-    this.data = data;
-    this.other = Objects.requireNonNull( other );
+  private MyInput(@Nullable final String v, @Nonnull final MyRecursiveInput other,
+      @Nullable final MyRecursiveListInput data) {
     this.v = v;
+    this.other = Objects.requireNonNull( other );
+    this.data = data;
   }
 
   @Nonnull
   @SuppressWarnings("unchecked")
   public static MyInput from(@Nonnull final Map<String, Object> args) {
-    final Map<String, Object> $giggle$_data = (Map<String, Object>) args.get( "data" );
-    final Map<String, Object> $giggle$_other = (Map<String, Object>) args.get( "other" );
     final String $giggle$_v = (String) args.get( "v" );
-    return new MyInput(MyRecursiveListInput.maybeFrom( $giggle$_data ), MyRecursiveInput.from( $giggle$_other ), $giggle$_v);
+    final Map<String, Object> $giggle$_other = (Map<String, Object>) args.get( "other" );
+    final Map<String, Object> $giggle$_data = (Map<String, Object>) args.get( "data" );
+    return new MyInput($giggle$_v, MyRecursiveInput.from( $giggle$_other ), MyRecursiveListInput.maybeFrom( $giggle$_data ));
   }
 
   @Nullable
@@ -39,8 +39,8 @@ public final class MyInput {
   }
 
   @Nullable
-  public MyRecursiveListInput getData() {
-    return data;
+  public String getV() {
+    return v;
   }
 
   @Nonnull
@@ -49,8 +49,8 @@ public final class MyInput {
   }
 
   @Nullable
-  public String getV() {
-    return v;
+  public MyRecursiveListInput getData() {
+    return data;
   }
 
   @Override
@@ -61,17 +61,17 @@ public final class MyInput {
       return false;
     } else {
       final MyInput that = (MyInput) o;
-      return Objects.equals( data, that.data ) && Objects.equals( other, that.other ) && Objects.equals( v, that.v );
+      return Objects.equals( v, that.v ) && Objects.equals( other, that.other ) && Objects.equals( data, that.data );
     }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash( data, other, v );
+    return Objects.hash( v, other, data );
   }
 
   @Override
   public String toString() {
-    return "MyInput[data=" + data + ", other=" + other + ", v=" + v + "]";
+    return "MyInput[v=" + v + ", other=" + other + ", data=" + data + "]";
   }
 }

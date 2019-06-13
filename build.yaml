@@ -15,7 +15,7 @@ artifacts:
 
   guiceyloops: org.realityforge.guiceyloops:guiceyloops:jar:0.98
 
-  graphql_java: com.graphql-java:graphql-java:jar:12.0
+  graphql_java: com.graphql-java:graphql-java:jar:13.0
 
   slf4j_api: org.slf4j:slf4j-api:jar:1.7.25
   slf4j_jdk14: org.slf4j:slf4j-jdk14:jar:1.7.25

@@ -4,7 +4,7 @@ import javax.annotation.Generated;
 
 @Generated("org.realityforge.giggle.Main")
 public enum EventType {
-  Burn,
+  Wildfire,
 
-  Wildfire
+  Burn
 }

@@ -7,6 +7,8 @@ import javax.annotation.Generated;
  */
 @Generated("org.realityforge.giggle.Main")
 public enum EventType {
+  Wildfire,
+
   /**
    * A wildfire set intentionally for purposes of forest management, farming, prairie restoration or greenhouse gas abatement.
    */
@@ -21,7 +23,5 @@ public enum EventType {
    * @deprecated Use `Burn`.
    */
   @Deprecated
-  RegenBurn,
-
-  Wildfire
+  RegenBurn
 }

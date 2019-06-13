@@ -9,22 +9,22 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class MyRecursiveInput {
   @Nullable
-  private final MyRecursiveInput child;
-
-  @Nullable
   private final String v;
 
-  private MyRecursiveInput(@Nullable final MyRecursiveInput child, @Nullable final String v) {
-    this.child = child;
+  @Nullable
+  private final MyRecursiveInput child;
+
+  private MyRecursiveInput(@Nullable final String v, @Nullable final MyRecursiveInput child) {
     this.v = v;
+    this.child = child;
   }
 
   @Nonnull
   @SuppressWarnings("unchecked")
   public static MyRecursiveInput from(@Nonnull final Map<String, Object> args) {
-    final Map<String, Object> $giggle$_child = (Map<String, Object>) args.get( "child" );
     final String $giggle$_v = (String) args.get( "v" );
-    return new MyRecursiveInput(MyRecursiveInput.maybeFrom( $giggle$_child ), $giggle$_v);
+    final Map<String, Object> $giggle$_child = (Map<String, Object>) args.get( "child" );
+    return new MyRecursiveInput($giggle$_v, MyRecursiveInput.maybeFrom( $giggle$_child ));
   }
 
   @Nullable
@@ -33,13 +33,13 @@ public final class MyRecursiveInput {
   }
 
   @Nullable
-  public MyRecursiveInput getChild() {
-    return child;
+  public String getV() {
+    return v;
   }
 
   @Nullable
-  public String getV() {
-    return v;
+  public MyRecursiveInput getChild() {
+    return child;
   }
 
   @Override
@@ -50,17 +50,17 @@ public final class MyRecursiveInput {
       return false;
     } else {
       final MyRecursiveInput that = (MyRecursiveInput) o;
-      return Objects.equals( child, that.child ) && Objects.equals( v, that.v );
+      return Objects.equals( v, that.v ) && Objects.equals( child, that.child );
     }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash( child, v );
+    return Objects.hash( v, child );
   }
 
   @Override
   public String toString() {
-    return "MyRecursiveInput[child=" + child + ", v=" + v + "]";
+    return "MyRecursiveInput[v=" + v + ", child=" + child + "]";
   }
 }

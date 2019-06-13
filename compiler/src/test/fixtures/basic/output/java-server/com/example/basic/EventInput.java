@@ -12,25 +12,25 @@ public final class EventInput {
   @Nonnull
   private final String name;
 
-  @Nullable
-  private final Date startedAt;
-
   @Nonnull
   private final EventType type;
 
-  private EventInput(@Nonnull final String name, @Nullable final Date startedAt,
-      @Nonnull final EventType type) {
+  @Nullable
+  private final Date startedAt;
+
+  private EventInput(@Nonnull final String name, @Nonnull final EventType type,
+      @Nullable final Date startedAt) {
     this.name = Objects.requireNonNull( name );
-    this.startedAt = startedAt;
     this.type = Objects.requireNonNull( type );
+    this.startedAt = startedAt;
   }
 
   @Nonnull
   public static EventInput from(@Nonnull final Map<String, Object> args) {
     final String $giggle$_name = (String) args.get( "name" );
-    final Date $giggle$_startedAt = (Date) args.get( "startedAt" );
     final EventType $giggle$_type = (EventType) args.get( "type" );
-    return new EventInput($giggle$_name, $giggle$_startedAt, $giggle$_type);
+    final Date $giggle$_startedAt = (Date) args.get( "startedAt" );
+    return new EventInput($giggle$_name, $giggle$_type, $giggle$_startedAt);
   }
 
   @Nullable
@@ -43,14 +43,14 @@ public final class EventInput {
     return name;
   }
 
-  @Nullable
-  public Date getStartedAt() {
-    return startedAt;
-  }
-
   @Nonnull
   public EventType getType() {
     return type;
+  }
+
+  @Nullable
+  public Date getStartedAt() {
+    return startedAt;
   }
 
   @Override
@@ -61,17 +61,17 @@ public final class EventInput {
       return false;
     } else {
       final EventInput that = (EventInput) o;
-      return Objects.equals( name, that.name ) && Objects.equals( startedAt, that.startedAt ) && Objects.equals( type, that.type );
+      return Objects.equals( name, that.name ) && Objects.equals( type, that.type ) && Objects.equals( startedAt, that.startedAt );
     }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash( name, startedAt, type );
+    return Objects.hash( name, type, startedAt );
   }
 
   @Override
   public String toString() {
-    return "EventInput[name=" + name + ", startedAt=" + startedAt + ", type=" + type + "]";
+    return "EventInput[name=" + name + ", type=" + type + ", startedAt=" + startedAt + "]";
   }
 }

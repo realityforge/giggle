@@ -11,23 +11,23 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class MyRecursiveListInput {
   @Nullable
-  private final List<MyRecursiveInput> child;
-
-  @Nullable
   private final String v;
 
-  private MyRecursiveListInput(@Nullable final List<MyRecursiveInput> child,
-      @Nullable final String v) {
-    this.child = child;
+  @Nullable
+  private final List<MyRecursiveInput> child;
+
+  private MyRecursiveListInput(@Nullable final String v,
+      @Nullable final List<MyRecursiveInput> child) {
     this.v = v;
+    this.child = child;
   }
 
   @Nonnull
   @SuppressWarnings("unchecked")
   public static MyRecursiveListInput from(@Nonnull final Map<String, Object> args) {
-    final List<Map<String, Object>> $giggle$_child = (List<Map<String, Object>>) args.get( "child" );
     final String $giggle$_v = (String) args.get( "v" );
-    return new MyRecursiveListInput(null == $giggle$_child ? null : $giggle$_child.stream().map( MyRecursiveInput::maybeFrom ).collect( Collectors.toList() ), $giggle$_v);
+    final List<Map<String, Object>> $giggle$_child = (List<Map<String, Object>>) args.get( "child" );
+    return new MyRecursiveListInput($giggle$_v, null == $giggle$_child ? null : $giggle$_child.stream().map( MyRecursiveInput::maybeFrom ).collect( Collectors.toList() ));
   }
 
   @Nullable
@@ -36,13 +36,13 @@ public final class MyRecursiveListInput {
   }
 
   @Nullable
-  public List<MyRecursiveInput> getChild() {
-    return child;
+  public String getV() {
+    return v;
   }
 
   @Nullable
-  public String getV() {
-    return v;
+  public List<MyRecursiveInput> getChild() {
+    return child;
   }
 
   @Override
@@ -53,17 +53,17 @@ public final class MyRecursiveListInput {
       return false;
     } else {
       final MyRecursiveListInput that = (MyRecursiveListInput) o;
-      return Objects.equals( child, that.child ) && Objects.equals( v, that.v );
+      return Objects.equals( v, that.v ) && Objects.equals( child, that.child );
     }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash( child, v );
+    return Objects.hash( v, child );
   }
 
   @Override
   public String toString() {
-    return "MyRecursiveListInput[child=" + child + ", v=" + v + "]";
+    return "MyRecursiveListInput[v=" + v + ", child=" + child + "]";
   }
 }
