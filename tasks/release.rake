@@ -122,7 +122,7 @@ HEADER
 HEADER
       IO.write('CHANGELOG.md', changelog)
 
-      `bundle exec zapwhite`
+      `bundle exec zapwhite --exclude-pattern 'compiler/src/test/fixtures/.*'`
       sh 'git add CHANGELOG.md'
       sh 'git commit -m "Update CHANGELOG.md in preparation for next development iteration"'
     end
