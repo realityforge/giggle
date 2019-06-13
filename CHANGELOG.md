@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Remove reflection based integration tests (i.e. `EnumTest`) and related infrastructure (i.e. `AbstractIntegrationTest` and `CompileResults`) as fixture based tests combined with the codegen integration tests have proved to be a more effective mechanisms for testing output.
+
 ### [v0.03](https://github.com/realityforge/giggle/tree/v0.03) (2019-06-13)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.02...v0.03)
 
