@@ -33,6 +33,40 @@ public class DispatchAnalysisDetailsQueryResponse
 
 * Add configuration files to control shape of output files.
 
+* Optionally generate server-side entities as one of the following forms. The form is probably driven by
+  either a directive in the schema or a configuration/mapping file.
+  - `Map<String,Object>`
+  - Resolver interface such as;
+```java
+interface PhysicalUnit {
+  DataFetcher<Integer> id();
+  DataFetcher<PhysicalUnitType> type();
+  DataFetcher<String> name();
+  DataFetcher<String> globalId();
+  DataFetcher<Iterable<Attribute>> attributes();
+}
+```
+  - `"Bean"` interface such as;
+```java
+interface PhysicalUnit {
+  int getId();
+  PhysicalUnitType getType();
+  String getName();
+  String getGlobalId();
+  List<Attribute> getAttributes();
+}
+```
+  - `"Bean"` class such as;
+```java
+public final class PhysicalUnit {
+  public int getId() { return id; }
+  public PhysicalUnitType getType() { return type; }
+  public String getName() { return name; }
+  public String getGlobalId() { return globalId; }
+  public List<Attribute> getAttributes() { return attributes; }
+}
+```
+
 * A good place to look for how to structure our services is:
   - [AWS Amplify](https://aws-amplify.github.io/docs/cli/graphql)
 
