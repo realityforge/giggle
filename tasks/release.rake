@@ -52,7 +52,7 @@ task 'perform_release' do
     end
 
     stage('ZapWhite', 'Ensure that zapwhite produces no changes') do
-      sh 'bundle exec zapwhite'
+      sh "bundle exec zapwhite --exclude-pattern 'compiler/src/test/fixtures/.*'"
     end
 
     stage('GitClean', 'Ensure there is nothing to commit and the working tree is clean') do
