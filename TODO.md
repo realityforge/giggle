@@ -9,11 +9,6 @@ complete as there is too much un-said.
 * If the project gets established consider attempting to acquire the abandoned `giggle`
   Github account: https://github.com/giggle
 
-* Constraints to take into consideration during code generation:
-  - Operations in a document should have unique names or there should be a single anonymous operation
-  - Names within a schema are unique
-  - Operations, Fragments (from the executable document) and Types can have the same name
-
 * The tool should be built so that it is command driven to make it compatible with Bazel's
   [Persistent Worker](https://medium.com/@mmorearty/how-to-create-a-persistent-worker-for-bazel-7738bba2cabb)
   infrastructure.
