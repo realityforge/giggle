@@ -91,47 +91,45 @@ public class Main
                               GENERATOR_OPT,
                               "The name of a generator to run on the model." )
     };
-  private static final Environment c_environment =
-    new Environment( Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() );
 
   public static void main( final String[] args )
   {
-    System.exit( run( args ) );
+    System.exit( run( new Environment( Paths.get( "" ).toAbsolutePath(), Logger.getGlobal() ), args ) );
   }
 
-  private static int run( @Nonnull final String[] args )
+  private static int run( @Nonnull final Environment environment, @Nonnull final String[] args )
   {
-    setupLogger();
-    if ( !processOptions( c_environment, args ) )
+    setupLogger( environment );
+    if ( !processOptions( environment, args ) )
     {
       return ExitCodes.ERROR_PARSING_ARGS_EXIT_CODE;
     }
 
-    final Logger logger = c_environment.logger();
+    final Logger logger = environment.logger();
     try
     {
       final SchemaRepository schemaRepository = new SchemaRepository();
-      final GraphQLSchema schema = schemaRepository.getSchema( c_environment.getSchemaFiles() );
+      final GraphQLSchema schema = schemaRepository.getSchema( environment.getSchemaFiles() );
 
       final DocumentRepository documentRepository = new DocumentRepository();
-      final Document document = documentRepository.getDocument( schema, c_environment.getDocumentFiles() );
+      final Document document = documentRepository.getDocument( schema, environment.getDocumentFiles() );
 
       final Map<String, String> typeMapping =
-        MappingUtil.getMapping( c_environment.getTypeMappingFiles() );
+        MappingUtil.getMapping( environment.getTypeMappingFiles() );
       final Map<String, String> fragmentMapping =
-        MappingUtil.getMapping( c_environment.getFragmentMappingFiles() );
+        MappingUtil.getMapping( environment.getFragmentMappingFiles() );
 
-      final List<String> generators = c_environment.getGenerators();
+      final List<String> generators = environment.getGenerators();
       if ( !generators.isEmpty() )
       {
-        IoUtil.deleteDirIfExists( c_environment.getOutputDirectory() );
+        IoUtil.deleteDirIfExists( environment.getOutputDirectory() );
         final GeneratorContext context =
           new GeneratorContext( schema,
                                 document,
                                 typeMapping,
                                 fragmentMapping,
-                                c_environment.getOutputDirectory(),
-                                c_environment.getPackageName() );
+                                environment.getOutputDirectory(),
+                                environment.getPackageName() );
         verifyTypeMapping( context );
         final GeneratorRepository generatorRepository = new GeneratorRepository();
         for ( final String generator : generators )
@@ -242,12 +240,12 @@ public class Main
     }
   }
 
-  private static void setupLogger()
+  private static void setupLogger( @Nonnull final Environment environment )
   {
     final ConsoleHandler handler = new ConsoleHandler();
     handler.setFormatter( new RawFormatter() );
     handler.setLevel( Level.ALL );
-    final Logger logger = c_environment.logger();
+    final Logger logger = environment.logger();
     logger.setUseParentHandlers( false );
     logger.addHandler( handler );
     logger.setLevel( Level.INFO );
