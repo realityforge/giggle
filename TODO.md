@@ -69,3 +69,5 @@ public final class PhysicalUnit {
 
 * A good place to look for how to structure our services is:
   - [AWS Amplify](https://aws-amplify.github.io/docs/cli/graphql)
+
+* Another code generator that has not been investigated is [graphql-apigen](https://github.com/Distelli/graphql-apigen).
