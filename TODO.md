@@ -16,6 +16,9 @@ public class DispatchAnalysisDetailsQueryResponse
   The `GraphQLError` should be generated and registered as a type. `Data` is what we currently represent
   as the response.
 
+* Generate the jaxrs infrastructure for issuing a request. This would probably generate a `javax.ws.rs.client.Entity`
+  based on the request and any supplied variables.
+
 * Generate interfaces for non-inline fragments and ensure generated containers implement interfaces.
 
 * If the project gets established consider attempting to acquire the abandoned `giggle`
