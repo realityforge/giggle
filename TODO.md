@@ -4,11 +4,7 @@ This document is essentially a list of shorthand notes describing work yet to co
 Unfortunately it is not complete enough for other people to pick work off the list and
 complete as there is too much un-said.
 
-* Generate server-side client APIs as a combination of jackson annotated beans and fragment
-  interfaces combined with jaxrs client endpoints.
-
-* Generate interfaces for fragments or at least those fragments that have types (some fragments
-  only have directives).
+* Generate interfaces for non-inline fragments and ensure generated containers implement interfaces.
 
 * If the project gets established consider attempting to acquire the abandoned `giggle`
   Github account: https://github.com/giggle
