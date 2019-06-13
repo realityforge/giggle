@@ -7,6 +7,7 @@ import graphql.language.FragmentDefinition;
 import graphql.language.OperationDefinition;
 import graphql.schema.GraphQLSchema;
 import graphql.validation.ValidationError;
+import graphql.validation.ValidationErrorType;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -211,6 +212,39 @@ public class DocumentRepositoryTest
       final ValidationError error = errors.get( 0 );
       assertEquals( error.getMessage(),
                     "Validation error of type FragmentCycle: Multiple fragments defined with the name 'NameParts'" );
+    } );
+  }
+
+  @Test
+  public void getDocument_documentInvalid_anonymousOperation()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final GraphQLSchema schema =
+        buildGraphQLSchema( "type Person {\n" +
+                            "  name: String\n" +
+                            "}\n" +
+                            "extend type Query {\n" +
+                            "  person: Person" +
+                            "}\n" );
+
+      final Path documentFile =
+        writeContent( "document.graphql",
+                      "{\n" +
+                      "  person {\n" +
+                      "    name\n" +
+                      "  }\n" +
+                      "}\n" );
+
+      final DocumentValidateException exception =
+        expectThrows( DocumentValidateException.class,
+                      () -> new DocumentRepository().getDocument( schema, Collections.singletonList( documentFile ) ) );
+      final List<ValidationError> errors = exception.getErrors();
+      assertEquals( errors.size(), 1 );
+      final ValidationError error = errors.get( 0 );
+      assertEquals( error.getValidationErrorType(), ValidationErrorType.LoneAnonymousOperationViolation );
+      assertEquals( error.getMessage(),
+                    "Validation error of type LoneAnonymousOperationViolation: Giggle does not allow anonymous operations." );
     } );
   }
 }

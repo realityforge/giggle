@@ -2,6 +2,7 @@ package org.realityforge.giggle.document;
 
 import graphql.language.Document;
 import graphql.language.FragmentDefinition;
+import graphql.language.OperationDefinition;
 import graphql.parser.Parser;
 import graphql.schema.GraphQLSchema;
 import graphql.validation.ValidationError;
@@ -49,6 +50,7 @@ public final class DocumentRepository
     }
     final List<ValidationError> errors = _validator.validateDocument( schema, document );
     validateFragmentNamesUnique( document, errors );
+    validateNoAnonymousOperations( document, errors );
     if ( errors.isEmpty() )
     {
       return document;
@@ -86,6 +88,20 @@ public final class DocumentRepository
                                          "Multiple fragments defined with the name '" + name + "'" ) );
       }
     }
+  }
+
+  private void validateNoAnonymousOperations( @Nonnull final Document document,
+                                              @Nonnull final List<ValidationError> errors )
+  {
+    document.getDefinitions()
+      .stream()
+      .filter( d -> d instanceof OperationDefinition )
+      .map( d -> (OperationDefinition) d )
+      .filter( d -> null == d.getName() )
+      .findAny()
+      .ifPresent( definition -> errors.add( new ValidationError( ValidationErrorType.LoneAnonymousOperationViolation,
+                                                                 definition.getSourceLocation(),
+                                                                 "Giggle does not allow anonymous operations." ) ) );
   }
 
   private void mergeComponent( @Nonnull final Document.Builder builder, @Nonnull final Path component )
