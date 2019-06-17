@@ -1,6 +1,7 @@
 # Change Log
 
-### Unreleased
+### [v0.04](https://github.com/realityforge/giggle/tree/v0.04) (2019-06-17)
+[Full Changelog](https://github.com/realityforge/giggle/compare/v0.03...v0.04)
 
 * Upgrade the `org.realityforge.getopt4j` artifact to version `1.3`.
 * Remove reflection based integration tests (i.e. `EnumTest`) and related infrastructure (i.e. `AbstractIntegrationTest` and `CompileResults`) as fixture based tests combined with the codegen integration tests have proved to be a more effective mechanisms for testing output.
