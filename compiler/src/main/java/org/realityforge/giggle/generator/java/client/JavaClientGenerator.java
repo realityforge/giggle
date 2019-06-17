@@ -1,9 +1,11 @@
 package org.realityforge.giggle.generator.java.client;
 
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import graphql.execution.MergedField;
@@ -27,8 +29,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
@@ -41,6 +45,8 @@ import org.realityforge.giggle.generator.java.NamingUtil;
 public class JavaClientGenerator
   extends AbstractJavaGenerator
 {
+  private static final String GRAPH_QL_ERROR_TYPE_NAME = "GraphQLError";
+
   @Override
   public void generate( @Nonnull final GeneratorContext context )
     throws Exception
@@ -61,6 +67,9 @@ public class JavaClientGenerator
         generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
       }
     }
+
+    emitGraphQLError( context );
+
     final Map<GraphQLType, String> fullTypeMap = new HashMap<>();
     fullTypeMap.putAll( inputTypeMap );
     fullTypeMap.putAll( generatedTypeMap );
@@ -220,5 +229,142 @@ public class JavaClientGenerator
       .addParameter( parameter.build() )
       .addStatement( "this.$N = $N", name, name );
     builder.addMethod( setter.build() );
+  }
+
+  private void emitGraphQLError( @Nonnull final GeneratorContext context )
+    throws IOException
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( GRAPH_QL_ERROR_TYPE_NAME );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
+
+    builder.addType( buildErrorLocationType().build() );
+
+    // Message property
+    {
+      builder.addField( FieldSpec.builder( String.class, "message", Modifier.PRIVATE )
+                          .addAnnotation( Nonnull.class )
+                          .build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getMessage" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( String.class )
+                           .addAnnotation( Nonnull.class )
+                           .addStatement( "return message" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setMessage" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( String.class, "message", Modifier.FINAL )
+                                            .addAnnotation( Nonnull.class )
+                                            .build() )
+                           .addStatement( "this.message = $T.requireNonNull( message )", Objects.class )
+                           .build() );
+    }
+
+    // Path property
+    {
+      final Class<?> type = Object[].class;
+      builder.addField( FieldSpec.builder( type, "path", Modifier.PRIVATE ).addAnnotation( Nullable.class ).build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getPath" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( type )
+                           .addAnnotation( Nullable.class )
+                           .addStatement( "return path" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setPath" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( type, "path", Modifier.FINAL )
+                                            .addAnnotation( Nullable.class )
+                                            .build() )
+                           .addStatement( "this.path = path" )
+                           .build() );
+    }
+
+    // Locations property
+    {
+      final ArrayTypeName type = ArrayTypeName.of( ClassName.bestGuess( "Location" ) );
+      builder.addField( FieldSpec.builder( type, "locations", Modifier.PRIVATE )
+                          .addAnnotation( Nullable.class )
+                          .build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getLocations" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( type )
+                           .addAnnotation( Nullable.class )
+                           .addStatement( "return locations" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setLocations" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( type, "locations", Modifier.FINAL )
+                                            .addAnnotation( Nullable.class )
+                                            .build() )
+                           .addStatement( "this.locations = locations" )
+                           .build() );
+    }
+
+    // Extensions property
+    {
+      final ParameterizedTypeName type = ParameterizedTypeName.get( Map.class, String.class, Object.class );
+      builder.addField( FieldSpec.builder( type, "extensions", Modifier.PRIVATE )
+                          .addAnnotation( Nullable.class )
+                          .build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getExtensions" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( type )
+                           .addAnnotation( Nullable.class )
+                           .addStatement( "return extensions" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setExtensions" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( type, "extensions", Modifier.FINAL )
+                                            .addAnnotation( Nullable.class )
+                                            .build() )
+                           .addStatement( "this.extensions = extensions" )
+                           .build() );
+    }
+
+    JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  @Nonnull
+  private TypeSpec.Builder buildErrorLocationType()
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( "Location" );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL );
+
+    // line property
+    {
+      builder.addField( FieldSpec.builder( int.class, "line", Modifier.PRIVATE ).build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getLine" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( int.class )
+                           .addStatement( "return line" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setLine" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( int.class, "line", Modifier.FINAL ).build() )
+                           .addStatement( "this.line = line" )
+                           .build() );
+    }
+
+    // column property
+    {
+      builder.addField( FieldSpec.builder( int.class, "column", Modifier.PRIVATE ).build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getColumn" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( int.class )
+                           .addStatement( "return column" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setColumn" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( int.class, "column", Modifier.FINAL ).build() )
+                           .addStatement( "this.column = column" )
+                           .build() );
+    }
+
+    return builder;
   }
 }
