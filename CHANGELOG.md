@@ -6,6 +6,9 @@
 * Remove reflection based integration tests (i.e. `EnumTest`) and related infrastructure (i.e. `AbstractIntegrationTest` and `CompileResults`) as fixture based tests combined with the codegen integration tests have proved to be a more effective mechanisms for testing output.
 * Upgrade to version `13.0` of the `graphql-java` library. This resulted in improved code generation as the nodes within the GraphQL schema are now ordered based on appearance in source document rather than based lexicographically. The library also fixed an off-by-one error when reporting parse and validation errors that was exposed in giggle error messages.
 * Generate an error if an anonymous operation is defined in a document. Anonymous operations are not supported as the name is used by generators when generating various artifacts.
+
+#### java-client generator
+
 * Change the name of the the response object from `[OperationName][OperationType]Response` to `[OperationName]Response`. As operation names must be unique within a document, the additional `[OperationType]` name modifier does not increase the uniqueness of the name but does increase the verbosity of the generated API.
 
 ### [v0.03](https://github.com/realityforge/giggle/tree/v0.03) (2019-06-13)
