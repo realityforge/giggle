@@ -16,6 +16,9 @@ public class DispatchAnalysisDetailsQueryResponse
   The `GraphQLError` should be generated and registered as a type. `Data` is what we currently represent
   as the response.
 
+* Convert between plural values in response and singular type. Maybe should name it with the underlying types name
+  unless an alias is present?
+
 * Generate the jaxrs infrastructure for issuing a request. This would probably generate a `javax.ws.rs.client.Entity`
   based on the request and any supplied variables.
 
