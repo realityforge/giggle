@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Upgrade the `org.realityforge.getopt4j` artifact to version `0.3`.
 * Remove reflection based integration tests (i.e. `EnumTest`) and related infrastructure (i.e. `AbstractIntegrationTest` and `CompileResults`) as fixture based tests combined with the codegen integration tests have proved to be a more effective mechanisms for testing output.
 * Upgrade to version `13.0` of the `graphql-java` library. This resulted in improved code generation as the nodes within the GraphQL schema are now ordered based on appearance in source document rather than based lexicographically. The library also fixed an off-by-one error when reporting parse and validation errors that was exposed in giggle error messages.
 * Generate an error if an anonymous operation is defined in a document. Anonymous operations are not supported as the name is used by generators when generating various artifacts.
