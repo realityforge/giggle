@@ -241,15 +241,13 @@ public class JavaClientGenerator
 
     // Message property
     {
-      builder.addField( FieldSpec.builder( String.class, "message", Modifier.PRIVATE )
-                          .addAnnotation( Nonnull.class )
-                          .build() );
+      builder.addField( FieldSpec.builder( String.class, "message", Modifier.PRIVATE ).build() );
 
       builder.addMethod( MethodSpec.methodBuilder( "getMessage" )
                            .addModifiers( Modifier.PUBLIC )
                            .returns( String.class )
                            .addAnnotation( Nonnull.class )
-                           .addStatement( "return message" )
+                           .addStatement( "return $T.requireNonNull( message )", Objects.class )
                            .build() );
       builder.addMethod( MethodSpec.methodBuilder( "setMessage" )
                            .addModifiers( Modifier.PUBLIC )

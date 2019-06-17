@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class GraphQLError {
-  @Nonnull
   private String message;
 
   @Nullable
@@ -22,7 +21,7 @@ public final class GraphQLError {
 
   @Nonnull
   public String getMessage() {
-    return message;
+    return Objects.requireNonNull( message );
   }
 
   public void setMessage(@Nonnull final String message) {
