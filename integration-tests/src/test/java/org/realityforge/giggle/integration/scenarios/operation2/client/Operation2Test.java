@@ -12,9 +12,9 @@ public class Operation2Test
     throws Exception
   {
     assertEquals( getResourceAsString( "specificEvent.graphql" ),
-                  "query specificEvent {event(id:1) {id ...EventName}} fragment EventName on Event {name}" );
+                  "fragment EventName on Event {name} query specificEvent {event(id:1) {id ...EventName}}" );
     assertEquals( getResourceAsString( "otherEvent.graphql" ),
-                  "query otherEvent {event(id:2) {id ...EventName ...EventType}} fragment EventName on Event {name} fragment EventType on Event {type}" );
+                  "fragment EventName on Event {name} fragment EventType on Event {type} query otherEvent {event(id:2) {id ...EventName ...EventType}}" );
   }
 
   @Test
