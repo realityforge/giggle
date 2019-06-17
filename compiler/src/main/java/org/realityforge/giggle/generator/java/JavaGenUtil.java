@@ -17,14 +17,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.generator.GeneratorContext;
 
 public final class JavaGenUtil
 {
-  private static final ClassName LIST_CLASSNAME = ClassName.get( "java.util", "List" );
-
   private JavaGenUtil()
   {
   }
@@ -174,7 +173,7 @@ public final class JavaGenUtil
   @Nonnull
   public static TypeName listOf( @Nonnull final TypeName typeName )
   {
-    return ParameterizedTypeName.get( LIST_CLASSNAME, typeName );
+    return ParameterizedTypeName.get( ClassName.get( List.class ), typeName );
   }
 
   public static boolean isList( @Nonnull final GraphQLType type )
