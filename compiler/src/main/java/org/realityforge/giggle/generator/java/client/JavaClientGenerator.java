@@ -88,9 +88,12 @@ public class JavaClientGenerator
       if ( definition instanceof OperationDefinition )
       {
         final OperationDefinition operation = (OperationDefinition) definition;
-        emitOperationResponse( context, collector, fullTypeMap, operation );
-        emitOperationType( context, fragmentCollector, operation );
-        emitOperationDocument( context, fragmentCollector, operation );
+        if ( OperationDefinition.Operation.SUBSCRIPTION != operation.getOperation() )
+        {
+          emitOperationResponse( context, collector, fullTypeMap, operation );
+          emitOperationType( context, fragmentCollector, operation );
+          emitOperationDocument( context, fragmentCollector, operation );
+        }
       }
     }
     writeTypeMappingFile( context, generatedTypeMap );
@@ -154,10 +157,6 @@ public class JavaClientGenerator
     final String name = operation.getName();
     assert null != name;
     final OperationDefinition.Operation operationType = operation.getOperation();
-    if ( OperationDefinition.Operation.SUBSCRIPTION == operationType )
-    {
-      throw new IllegalStateException( "Unable to generate infrastructure for SUBSCRIPTION operation" );
-    }
     final String typeName = NamingUtil.uppercaseFirstCharacter( name ) + "Response";
 
     final GraphQLSchema schema = context.getSchema();

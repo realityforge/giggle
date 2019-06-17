@@ -2,6 +2,10 @@
 
 ### Unreleased
 
+#### java-client generator
+
+* Stop generating an error if an operation of type `Subscription` is present and instead just skip generation of all artifacts for the operation.
+
 ### [v0.04](https://github.com/realityforge/giggle/tree/v0.04) (2019-06-17)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.03...v0.04)
 
