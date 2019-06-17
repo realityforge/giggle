@@ -229,7 +229,7 @@ public class JavaServerGenerator
   {
     final MethodSpec.Builder method = MethodSpec.methodBuilder( "coerceTrap" );
     method.addModifiers( Modifier.PRIVATE, Modifier.STATIC );
-    method.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
+    method.addAnnotation( Nonnull.class );
     final TypeVariableName type = TypeVariableName.get( "T" );
     method.addTypeVariable( type );
     method.returns( type );
@@ -304,7 +304,7 @@ public class JavaServerGenerator
   {
     final MethodSpec.Builder method = MethodSpec.methodBuilder( "from" );
     method.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
-    method.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
+    method.addAnnotation( Nonnull.class );
     final ClassName self = ClassName.bestGuess( className );
     method.returns( self );
 
@@ -641,10 +641,10 @@ public class JavaServerGenerator
   {
     return MethodSpec.methodBuilder( "maybeFrom" )
       .addModifiers( Modifier.PUBLIC, Modifier.STATIC )
-      .addAnnotation( JavaGenUtil.NULLABLE_CLASSNAME )
+      .addAnnotation( Nullable.class )
       .returns( ClassName.bestGuess( typeMap.get( type ) ) )
       .addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
-                       .addAnnotation( JavaGenUtil.NULLABLE_CLASSNAME )
+                       .addAnnotation( Nullable.class )
                        .build() )
       .addStatement( "return null == args ? null : from( args )" )
       .build();
@@ -657,12 +657,12 @@ public class JavaServerGenerator
   {
     final MethodSpec.Builder method = MethodSpec.methodBuilder( "from" );
     method.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
-    method.addAnnotation( JavaGenUtil.NONNULL_CLASSNAME );
+    method.addAnnotation( Nonnull.class );
     final ClassName self = ClassName.bestGuess( typeMap.get( type ) );
     method.returns( self );
 
     method.addParameter( ParameterSpec.builder( VALUE_MAP, "args", Modifier.FINAL )
-                           .addAnnotation( JavaGenUtil.NONNULL_CLASSNAME )
+                           .addAnnotation( Nonnull.class )
                            .build() );
 
     boolean suppressedUnchecked = false;
@@ -800,9 +800,9 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private ClassName getNullabilityAnnotation( @Nonnull final GraphQLType type )
+  private Class<?> getNullabilityAnnotation( @Nonnull final GraphQLType type )
   {
-    return type instanceof GraphQLNonNull ? JavaGenUtil.NONNULL_CLASSNAME : JavaGenUtil.NULLABLE_CLASSNAME;
+    return type instanceof GraphQLNonNull ? Nonnull.class : Nullable.class;
   }
 
   @Nonnull

@@ -184,9 +184,7 @@ public class JavaClientGenerator
     final FieldSpec.Builder field = FieldSpec.builder( fieldType, name, Modifier.PRIVATE/*, Modifier.FINAL*/ );
     if ( !fieldType.isPrimitive() )
     {
-      field.addAnnotation( GraphQLTypeUtil.isNonNull( fieldDefinition.getType() ) ?
-                           JavaGenUtil.NONNULL_CLASSNAME :
-                           JavaGenUtil.NULLABLE_CLASSNAME );
+      field.addAnnotation( GraphQLTypeUtil.isNonNull( fieldDefinition.getType() ) ? Nonnull.class : Nullable.class );
     }
     final List<Comment> comments = selection.getComments();
     if ( !comments.isEmpty() )
@@ -206,9 +204,7 @@ public class JavaClientGenerator
         .addStatement( "return $N", name );
     if ( !fieldType.isPrimitive() )
     {
-      getter.addAnnotation( GraphQLTypeUtil.isNonNull( fieldDefinition.getType() ) ?
-                            JavaGenUtil.NONNULL_CLASSNAME :
-                            JavaGenUtil.NULLABLE_CLASSNAME );
+      getter.addAnnotation( GraphQLTypeUtil.isNonNull( fieldDefinition.getType() ) ? Nonnull.class : Nullable.class );
     }
     builder.addMethod( getter.build() );
 
@@ -216,8 +212,8 @@ public class JavaClientGenerator
     if ( !fieldType.isPrimitive() )
     {
       parameter.addAnnotation( GraphQLTypeUtil.isNonNull( fieldDefinition.getType() ) ?
-                               JavaGenUtil.NONNULL_CLASSNAME :
-                               JavaGenUtil.NULLABLE_CLASSNAME );
+                               Nonnull.class :
+                               Nullable.class );
     }
     final MethodSpec.Builder setter = MethodSpec.methodBuilder( "set" + NamingUtil.uppercaseFirstCharacter( name ) )
       .addModifiers( Modifier.PUBLIC )
