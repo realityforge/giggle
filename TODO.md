@@ -5,11 +5,13 @@ Unfortunately it is not complete enough for other people to pick work off the li
 complete as there is too much un-said.
 
 * Convert between plural values in response and singular type. Maybe should name it with the underlying types name
-  unless an alias is present?
+  unless an alias is present? Probably we use the type if there is only one field of that type, otherwise we prefix
+  type with name and/or alias or some other combination.
 
 * Generate `input` types for jaxrs clients and a mechanism for serializing them.
 
-* Generate interfaces for non-inline fragments and ensure generated containers implement interfaces.
+* Generate interfaces for non-inline fragments and ensure generated containers implement interfaces. If the container
+  only contains a fragment then the getters that return container instances should be typed with the interface.
 
 * If the project gets established consider attempting to acquire the abandoned `giggle`
   Github account: https://github.com/giggle
