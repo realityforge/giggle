@@ -88,7 +88,7 @@ public class JavaClientGenerator
       if ( definition instanceof OperationDefinition )
       {
         final OperationDefinition operation = (OperationDefinition) definition;
-        emitOperation( context, collector, fullTypeMap, operation );
+        emitOperationResponse( context, collector, fullTypeMap, operation );
         emitOperationDocument( context, fragmentCollector, operation );
       }
     }
@@ -116,10 +116,10 @@ public class JavaClientGenerator
     return AstPrinter.printAstCompact( document );
   }
 
-  private void emitOperation( @Nonnull final GeneratorContext context,
-                              @Nonnull final FieldCollector collector,
-                              @Nonnull final Map<GraphQLType, String> typeMap,
-                              @Nonnull final OperationDefinition operation )
+  private void emitOperationResponse( @Nonnull final GeneratorContext context,
+                                      @Nonnull final FieldCollector collector,
+                                      @Nonnull final Map<GraphQLType, String> typeMap,
+                                      @Nonnull final OperationDefinition operation )
     throws IOException
   {
     final String name = operation.getName();
