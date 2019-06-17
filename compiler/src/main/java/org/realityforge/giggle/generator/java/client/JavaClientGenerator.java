@@ -100,12 +100,20 @@ public class JavaClientGenerator
                                       @Nonnull final OperationDefinition operation )
     throws IOException
   {
+    writeFile( getPackageOutputDirectory( context ).resolve( operation.getName() + ".graphql" ),
+               toCompactDocument( context, collector, operation ) );
+  }
+
+  @Nonnull
+  private String toCompactDocument( @Nonnull final GeneratorContext context,
+                                    @Nonnull final FragmentCollector collector,
+                                    @Nonnull final OperationDefinition operation )
+  {
     final ArrayList<Definition> definitions =
       new ArrayList<>( collector.collectFragments( operation.getSelectionSet() ) );
     definitions.add( operation );
     final Document document = context.getDocument().transform( b -> b.definitions( definitions ) );
-    writeFile( getPackageOutputDirectory( context ).resolve( operation.getName() + ".graphql" ),
-               AstPrinter.printAstCompact( document ) );
+    return AstPrinter.printAstCompact( document );
   }
 
   private void emitOperation( @Nonnull final GeneratorContext context,
