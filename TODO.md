@@ -7,9 +7,6 @@ complete as there is too much un-said.
 * Convert between plural values in response and singular type. Maybe should name it with the underlying types name
   unless an alias is present?
 
-* Generate the jaxrs infrastructure for issuing a request. This would probably generate a `javax.ws.rs.client.Entity`
-  based on the request and any supplied variables.
-
 * Generate `input` types for jaxrs clients and a mechanism for serializing them.
 
 * Generate interfaces for non-inline fragments and ensure generated containers implement interfaces.
