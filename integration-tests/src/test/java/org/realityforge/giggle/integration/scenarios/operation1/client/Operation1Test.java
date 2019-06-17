@@ -21,11 +21,8 @@ public class Operation1Test
 
   @Test
   public void operationDocument()
-    throws Exception
   {
-    final String query = "query specificEvent {event(id:1) {id name type}}";
-    assertEquals( getResourceAsString( "specificEvent.graphql" ), query );
-    assertEquals( SpecificEventQuery.QUERY, query );
+    assertEquals( SpecificEventQuery.QUERY, "query specificEvent {event(id:1) {id name type}}" );
   }
 
   @Test

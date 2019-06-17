@@ -1,1 +1,0 @@
-fragment EventName1 on Event {name} query specificEvent {event(id:1) {id ...EventName1}}

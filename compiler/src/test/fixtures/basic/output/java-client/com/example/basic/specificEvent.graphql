@@ -1,1 +1,0 @@
-query specificEvent {event(id:1) {id name type}}

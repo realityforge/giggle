@@ -92,20 +92,10 @@ public class JavaClientGenerator
         {
           emitOperationResponse( context, collector, fullTypeMap, operation );
           emitOperationType( context, fragmentCollector, operation );
-          emitOperationDocument( context, fragmentCollector, operation );
         }
       }
     }
     writeTypeMappingFile( context, generatedTypeMap );
-  }
-
-  private void emitOperationDocument( @Nonnull final GeneratorContext context,
-                                      @Nonnull final FragmentCollector collector,
-                                      @Nonnull final OperationDefinition operation )
-    throws IOException
-  {
-    writeFile( getPackageOutputDirectory( context ).resolve( operation.getName() + ".graphql" ),
-               toCompactDocument( context, collector, operation ) );
   }
 
   @Nonnull

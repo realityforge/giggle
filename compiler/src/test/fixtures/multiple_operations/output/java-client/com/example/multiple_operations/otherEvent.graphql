@@ -1,1 +1,0 @@
-fragment EventName2 on Event {name} fragment EventDesignator on Event {id name type} query otherEvent {event(id:2) {id ...EventName2 ...EventDesignator}}
