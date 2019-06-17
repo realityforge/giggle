@@ -100,9 +100,9 @@ public class JavaClientGenerator
                                       @Nonnull final OperationDefinition operation )
     throws IOException
   {
-    final ArrayList<Definition> definitions = new ArrayList<>();
+    final ArrayList<Definition> definitions =
+      new ArrayList<>( collector.collectFragments( operation.getSelectionSet() ) );
     definitions.add( operation );
-    definitions.addAll( collector.collectFragments( operation.getSelectionSet() ) );
     final Document document = context.getDocument().transform( b -> b.definitions( definitions ) );
     writeFile( getPackageOutputDirectory( context ).resolve( operation.getName() + ".graphql" ),
                AstPrinter.printAstCompact( document ) );
