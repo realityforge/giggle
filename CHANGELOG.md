@@ -10,6 +10,8 @@
 #### java-client generator
 
 * Change the name of the the response object from `[OperationName][OperationType]Response` to `[OperationName]Response`. As operation names must be unique within a document, the additional `[OperationType]` name modifier does not increase the uniqueness of the name but does increase the verbosity of the generated API.
+* Generate a class `GraphQLError` that represents an error returned by the server. The fields in this class comply with the specification as outlined in [Section 7.1.2](https://graphql.github.io/graphql-spec/draft/#sec-Errors) of the specification. Not all server implementations strictly adhere to this format and any data that is not represented in this format is not available if this class is used to represent errors.
+* Generate a class `[OperationName][OperationType]` that contains an static inner class `Answer` that represents the complete response message returned by the end point. The top level class also contains a minimized, self-contained, document for the query that is read to be sent to the server.
 
 ### [v0.03](https://github.com/realityforge/giggle/tree/v0.03) (2019-06-13)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.02...v0.03)

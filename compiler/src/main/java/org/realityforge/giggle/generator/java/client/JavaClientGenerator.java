@@ -89,6 +89,7 @@ public class JavaClientGenerator
       {
         final OperationDefinition operation = (OperationDefinition) definition;
         emitOperationResponse( context, collector, fullTypeMap, operation );
+        emitOperationType( context, fragmentCollector, operation );
         emitOperationDocument( context, fragmentCollector, operation );
       }
     }
@@ -116,6 +117,34 @@ public class JavaClientGenerator
     return AstPrinter.printAstCompact( document );
   }
 
+  private void emitOperationType( @Nonnull final GeneratorContext context,
+                                  @Nonnull final FragmentCollector fragmentCollector,
+                                  @Nonnull final OperationDefinition operation )
+    throws IOException
+  {
+    final String name = operation.getName();
+    assert null != name;
+    final OperationDefinition.Operation operationType = operation.getOperation();
+    final String typeName =
+      NamingUtil.uppercaseFirstCharacter( name ) +
+      (
+        OperationDefinition.Operation.QUERY == operationType ? "Query" :
+        OperationDefinition.Operation.MUTATION == operationType ? "Mutation" :
+        "Subscription"
+      );
+
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( typeName );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
+
+    builder.addField( FieldSpec.builder( String.class, "QUERY", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL )
+                        .addAnnotation( Nonnull.class )
+                        .initializer( "$S", toCompactDocument( context, fragmentCollector, operation ) )
+                        .build() );
+    builder.addMethod( MethodSpec.constructorBuilder().addModifiers( Modifier.PRIVATE ).build() );
+    builder.addType( buildAnswerType( operation ).build() );
+    JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
   private void emitOperationResponse( @Nonnull final GeneratorContext context,
                                       @Nonnull final FieldCollector collector,
                                       @Nonnull final Map<GraphQLType, String> typeMap,
@@ -123,10 +152,7 @@ public class JavaClientGenerator
     throws IOException
   {
     final String name = operation.getName();
-    if ( null == name )
-    {
-      throw new IllegalStateException( "Unable to generate infrastructure for anonymous operation" );
-    }
+    assert null != name;
     final OperationDefinition.Operation operationType = operation.getOperation();
     if ( OperationDefinition.Operation.SUBSCRIPTION == operationType )
     {
@@ -368,6 +394,67 @@ public class JavaClientGenerator
                            .addModifiers( Modifier.PUBLIC )
                            .addParameter( ParameterSpec.builder( int.class, "column", Modifier.FINAL ).build() )
                            .addStatement( "this.column = column" )
+                           .build() );
+    }
+
+    return builder;
+  }
+
+  @Nonnull
+  private TypeSpec.Builder buildAnswerType( @Nonnull final OperationDefinition operation )
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( "Answer" );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL );
+
+    // data property
+    {
+      final String name = operation.getName();
+      assert null != name;
+      final ClassName type = ClassName.bestGuess( NamingUtil.uppercaseFirstCharacter( name ) + "Response" );
+      builder.addField( FieldSpec.builder( type, "data", Modifier.PRIVATE ).addAnnotation( Nullable.class ).build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "hasData" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( TypeName.BOOLEAN )
+                           .addStatement( "return null != data" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "getData" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addAnnotation( Nonnull.class )
+                           .returns( type )
+                           .addStatement( "return $T.requireNonNull( data )", Objects.class )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setData" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( type, "data", Modifier.FINAL )
+                                            .addAnnotation( Nullable.class )
+                                            .build() )
+                           .addStatement( "this.data = data" )
+                           .build() );
+    }
+
+    // errors property
+    {
+      final ArrayTypeName type = ArrayTypeName.of( ClassName.bestGuess( "GraphQLError" ) );
+      builder.addField( FieldSpec.builder( type, "errors", Modifier.PRIVATE ).addAnnotation( Nullable.class ).build() );
+
+      builder.addMethod( MethodSpec.methodBuilder( "hasErrors" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .returns( TypeName.BOOLEAN )
+                           .addStatement( "return null != errors" )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "getErrors" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addAnnotation( Nonnull.class )
+                           .returns( type )
+                           .addStatement( "return $T.requireNonNull( errors )", Objects.class )
+                           .build() );
+      builder.addMethod( MethodSpec.methodBuilder( "setErrors" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addParameter( ParameterSpec.builder( type, "errors", Modifier.FINAL )
+                                            .addAnnotation( Nullable.class )
+                                            .build() )
+                           .addStatement( "this.errors = errors" )
                            .build() );
     }
 

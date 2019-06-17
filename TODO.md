@@ -4,18 +4,6 @@ This document is essentially a list of shorthand notes describing work yet to co
 Unfortunately it is not complete enough for other people to pick work off the list and
 complete as there is too much un-said.
 
-* Generate beans representing complete response. It should look something like;
-
-```java
-public class DispatchAnalysisDetailsQueryResponse
-{
-  public Data data;
-  public GraphQLError[] errors;
-}
-```
-  The `GraphQLError` should be generated and registered as a type. `Data` is what we currently represent
-  as the response.
-
 * Convert between plural values in response and singular type. Maybe should name it with the underlying types name
   unless an alias is present?
 
