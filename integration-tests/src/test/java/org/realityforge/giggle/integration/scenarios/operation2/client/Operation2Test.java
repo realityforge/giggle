@@ -18,7 +18,7 @@ public class Operation2Test
   }
 
   @Test
-  public void decode_SpecificEventQueryResponse()
+  public void decode_SpecificEventResponse()
   {
     final String json =
       "{\n" +
@@ -27,15 +27,15 @@ public class Operation2Test
       "    \"name\": \"Bob's Track\"\n" +
       "  }\n" +
       "}\n";
-    final SpecificEventQueryResponse response = fromJson( json, SpecificEventQueryResponse.class );
-    final SpecificEventQueryResponse.Event event = response.getEvent();
+    final SpecificEventResponse response = fromJson( json, SpecificEventResponse.class );
+    final SpecificEventResponse.Event event = response.getEvent();
     assertNotNull( event );
     assertEquals( event.getId(), "22" );
     assertEquals( event.getName(), "Bob's Track" );
   }
 
   @Test
-  public void decode_OtherEventQueryResponse()
+  public void decode_OtherEventResponse()
   {
     final String json =
       "{\n" +
@@ -45,8 +45,8 @@ public class Operation2Test
       "    \"type\": \"Wildfire\"\n" +
       "  }\n" +
       "}\n";
-    final OtherEventQueryResponse response = fromJson( json, OtherEventQueryResponse.class );
-    final OtherEventQueryResponse.Event event = response.getEvent();
+    final OtherEventResponse response = fromJson( json, OtherEventResponse.class );
+    final OtherEventResponse.Event event = response.getEvent();
     assertNotNull( event );
     assertEquals( event.getId(), "22" );
     assertEquals( event.getName(), "Bob's Track" );

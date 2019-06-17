@@ -115,10 +115,7 @@ public class JavaClientGenerator
     {
       throw new IllegalStateException( "Unable to generate infrastructure for SUBSCRIPTION operation" );
     }
-    final String typeName =
-      NamingUtil.uppercaseFirstCharacter( name ) +
-      NamingUtil.uppercaseFirstCharacter( operationType.name().toLowerCase() ) +
-      "Response";
+    final String typeName = NamingUtil.uppercaseFirstCharacter( name ) + "Response";
 
     final GraphQLSchema schema = context.getSchema();
     final GraphQLFieldsContainer fieldsContainer =

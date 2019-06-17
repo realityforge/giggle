@@ -13,7 +13,7 @@ public class Operation1Test
   @Test
   public void structure()
   {
-    assertTrue( Modifier.isPublic( SpecificEventQueryResponse.class.getModifiers() ) );
+    assertTrue( Modifier.isPublic( SpecificEventResponse.class.getModifiers() ) );
   }
 
   @Test
@@ -34,8 +34,8 @@ public class Operation1Test
       "    \"type\": \"Wildfire\"\n" +
       "  }\n" +
       "}\n";
-    final SpecificEventQueryResponse response = fromJson( json, SpecificEventQueryResponse.class );
-    final SpecificEventQueryResponse.Event event = response.getEvent();
+    final SpecificEventResponse response = fromJson( json, SpecificEventResponse.class );
+    final SpecificEventResponse.Event event = response.getEvent();
     assertNotNull( event );
     assertEquals( event.getId(), "22" );
     assertEquals( event.getName(), "Bob's Track" );
@@ -51,8 +51,8 @@ public class Operation1Test
       "    \"id\": \"22\"\n" +
       "  }\n" +
       "}\n";
-    final SpecificEventQueryResponse response = fromJson( json, SpecificEventQueryResponse.class );
-    final SpecificEventQueryResponse.Event event = response.getEvent();
+    final SpecificEventResponse response = fromJson( json, SpecificEventResponse.class );
+    final SpecificEventResponse.Event event = response.getEvent();
     assertNotNull( event );
     assertEquals( event.getId(), "22" );
     assertNull( event.getName() );
@@ -66,16 +66,16 @@ public class Operation1Test
       "{\n" +
       "  \"event\": null\n" +
       "}\n";
-    final SpecificEventQueryResponse response = fromJson( json, SpecificEventQueryResponse.class );
-    final SpecificEventQueryResponse.Event event = response.getEvent();
+    final SpecificEventResponse response = fromJson( json, SpecificEventResponse.class );
+    final SpecificEventResponse.Event event = response.getEvent();
     assertNull( event );
   }
 
   @Test
   public void decodeResponseEmptyData()
   {
-    final SpecificEventQueryResponse response = fromJson( "{}", SpecificEventQueryResponse.class );
-    final SpecificEventQueryResponse.Event event = response.getEvent();
+    final SpecificEventResponse response = fromJson( "{}", SpecificEventResponse.class );
+    final SpecificEventResponse.Event event = response.getEvent();
     assertNull( event );
   }
 

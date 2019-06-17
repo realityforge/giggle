@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
-public final class SpecificEventQueryResponse {
+public final class SpecificEventResponse {
   /**
    * Comment
    */

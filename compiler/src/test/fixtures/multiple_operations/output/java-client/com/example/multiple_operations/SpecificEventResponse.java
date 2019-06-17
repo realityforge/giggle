@@ -1,11 +1,11 @@
-package com.example.named_fragments;
+package com.example.multiple_operations;
 
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
-public final class SpecificEventQueryResponse {
+public final class SpecificEventResponse {
   @Nullable
   private Event event;
 
