@@ -113,7 +113,7 @@ public class JavaClientGenerator
   }
 
   private void emitOperations( @Nonnull final GeneratorContext context,
-                               @Nonnull final Map<GraphQLType, String> fullTypeMap )
+                               @Nonnull final Map<GraphQLType, String> typeMap )
     throws IOException
   {
     final FieldCollector collector = new FieldCollector( context.getDocument() );
@@ -126,7 +126,7 @@ public class JavaClientGenerator
         final OperationDefinition operation = (OperationDefinition) definition;
         if ( OperationDefinition.Operation.SUBSCRIPTION != operation.getOperation() )
         {
-          emitOperationResponse( context, collector, fullTypeMap, operation );
+          emitOperationResponse( context, collector, typeMap, operation );
           emitOperationType( context, fragmentCollector, operation );
         }
       }
