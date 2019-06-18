@@ -48,6 +48,12 @@ public abstract class AbstractScenarioTest
     return JsonbBuilder.create().fromJson( jsonData, type );
   }
 
+  @Nonnull
+  protected final String toJson( @Nonnull final Object data )
+  {
+    return JsonbBuilder.create().toJson( data );
+  }
+
   protected final void assertListFieldType( @Nonnull final Class<?> clazz,
                                             @Nonnull final String name,
                                             @Nonnull final Class<?> componentType )
