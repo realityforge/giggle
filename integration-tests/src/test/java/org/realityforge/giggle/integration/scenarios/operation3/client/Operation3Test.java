@@ -10,7 +10,7 @@ public class Operation3Test
   @Test
   public void operationDocument()
   {
-    assertEquals( EventQuery.QUERY, "query event($id:ID!) {event(id:$id) {id name}}" );
+    assertEquals( new EventQuery.Question( "X" ).getQuery(), "query event($id:ID!) {event(id:$id) {id name}}" );
   }
 
   @Test

@@ -9,11 +9,10 @@ public class Operation2Test
 {
   @Test
   public void operationDocument()
-    throws Exception
   {
-    assertEquals( SpecificEventQuery.QUERY,
+    assertEquals( new SpecificEventQuery.Question().getQuery(),
                   "fragment EventName on Event {name} query specificEvent {event(id:1) {id ...EventName}}" );
-    assertEquals( OtherEventQuery.QUERY,
+    assertEquals( new OtherEventQuery.Question().getQuery(),
                   "fragment EventName on Event {name} fragment EventType on Event {type} query otherEvent {event(id:2) {id ...EventName ...EventType}}" );
   }
 

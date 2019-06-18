@@ -344,7 +344,7 @@ public class JavaClientGenerator
     final TypeSpec.Builder builder = TypeSpec.classBuilder( typeName );
     builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
 
-    builder.addField( FieldSpec.builder( String.class, "QUERY", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL )
+    builder.addField( FieldSpec.builder( String.class, "QUERY", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL )
                         .addAnnotation( Nonnull.class )
                         .initializer( "$S", toCompactDocument( context, fragmentCollector, operation ) )
                         .build() );
