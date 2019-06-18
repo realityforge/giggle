@@ -353,6 +353,7 @@ public class JavaClientGenerator
     {
       builder.addType( buildVariableType( typeMap, operation ).build() );
     }
+    builder.addType( buildQuestionType( typeMap, operation ).build() );
     builder.addType( buildAnswerType( operation ).build() );
     JavaGenUtil.writeTopLevelType( context, builder );
   }
@@ -636,7 +637,7 @@ public class JavaClientGenerator
                                                 @Nonnull final Map<VariableDefinition, TypeName> variableTypes )
   {
     final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
-    ctor.addModifiers( Modifier.PUBLIC );
+    ctor.addModifiers( Modifier.PRIVATE );
     for ( final VariableDefinition variable : operation.getVariableDefinitions() )
     {
       final TypeName javaType = variableTypes.get( variable );
@@ -688,6 +689,83 @@ public class JavaClientGenerator
     }
     builder.addStatement( "return $N", name );
     return builder.build();
+  }
+
+  @Nonnull
+  private TypeSpec.Builder buildQuestionType( @Nonnull final Map<GraphQLType, String> typeMap,
+                                              @Nonnull final OperationDefinition operation )
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( "Question" );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL );
+
+    final Map<VariableDefinition, TypeName> variableTypes = new HashMap<>();
+    for ( final VariableDefinition variable : operation.getVariableDefinitions() )
+    {
+      variableTypes.put( variable, JavaGenUtil.getJavaType( typeMap, variable.getType() ) );
+    }
+
+    if ( !variableTypes.isEmpty() )
+    {
+      final ClassName variablesType = ClassName.bestGuess( "Variables" );
+      builder.addField( FieldSpec.builder( variablesType,
+                                           "variables",
+                                           Modifier.PRIVATE,
+                                           Modifier.FINAL ).addAnnotation( Nonnull.class ).build() );
+      builder.addMethod( buildQuestionConstructor( operation, variableTypes ) );
+
+      builder.addMethod( MethodSpec.methodBuilder( "getVariables" )
+                           .addModifiers( Modifier.PUBLIC )
+                           .addAnnotation( Nonnull.class )
+                           .returns( variablesType )
+                           .addStatement( "return variables" )
+                           .build() );
+    }
+
+    builder.addMethod( MethodSpec.methodBuilder( "getQuery" )
+                         .addModifiers( Modifier.PUBLIC )
+                         .addAnnotation( Nonnull.class )
+                         .returns( ClassName.get( String.class ) )
+                         .addStatement( "return QUERY" )
+                         .build() );
+
+    return builder;
+  }
+
+  @Nonnull
+  private MethodSpec buildQuestionConstructor( @Nonnull final OperationDefinition operation,
+                                               @Nonnull final Map<VariableDefinition, TypeName> variableTypes )
+  {
+    final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
+    ctor.addModifiers( Modifier.PUBLIC );
+    final StringBuilder sb = new StringBuilder();
+    final ArrayList<Object> params = new ArrayList<>();
+    sb.append( "this.$N = new Variables( " );
+    params.add( "variables" );
+    boolean first = true;
+    for ( final VariableDefinition variable : operation.getVariableDefinitions() )
+    {
+      final TypeName javaType = variableTypes.get( variable );
+      final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, variable.getName(), Modifier.FINAL );
+      final boolean isNonnull = variable.getType() instanceof NonNullType;
+      if ( !javaType.isPrimitive() )
+      {
+        parameter.addAnnotation( isNonnull ? Nonnull.class : Nullable.class );
+      }
+      ctor.addParameter( parameter.build() );
+      if ( !first )
+      {
+        sb.append( ", $N" );
+      }
+      else
+      {
+        sb.append( "$N" );
+        first = false;
+      }
+      params.add( variable.getName() );
+    }
+    sb.append( " )" );
+    ctor.addStatement( sb.toString(), params.toArray() );
+    return ctor.build();
   }
 
   @Nonnull

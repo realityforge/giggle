@@ -33,7 +33,9 @@ public class Operation3Test
   @Test
   public void EventQuery_Variables()
   {
-    final EventQuery.Variables variables = new EventQuery.Variables( "73" );
+    final EventQuery.Question question = new EventQuery.Question( "73" );
+    assertEquals( question.getQuery(), "query event($id:ID!) {event(id:$id) {id name}}" );
+    final EventQuery.Variables variables = question.getVariables();
     assertEquals( variables.getId(), "73" );
   }
 }

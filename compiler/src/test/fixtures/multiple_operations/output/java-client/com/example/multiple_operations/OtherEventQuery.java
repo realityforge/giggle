@@ -13,6 +13,13 @@ public final class OtherEventQuery {
   private OtherEventQuery() {
   }
 
+  public static final class Question {
+    @Nonnull
+    public String getQuery() {
+      return QUERY;
+    }
+  }
+
   public static final class Answer {
     @Nullable
     private OtherEventResponse data;
