@@ -3,7 +3,6 @@
 *.graphql text
 *.graphqls text
 *.java text
-*.json text
 *.md text
 *.properties text
 *.rake text
