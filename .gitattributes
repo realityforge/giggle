@@ -4,7 +4,6 @@
 *.graphqls text
 *.java text
 *.md text
-*.properties text
 *.rake text
 *.yaml text
 *.yml text
