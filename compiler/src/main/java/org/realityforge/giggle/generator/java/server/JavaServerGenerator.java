@@ -22,7 +22,6 @@ import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
-import graphql.schema.GraphQLNonNull;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
@@ -448,7 +447,7 @@ public class JavaServerGenerator
       final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, argument.getName(), Modifier.FINAL );
       if ( !javaType.isPrimitive() )
       {
-        parameter.addAnnotation( getNullabilityAnnotation( fieldType ) );
+        parameter.addAnnotation( GraphQLTypeUtil.isNonNull( fieldType ) ? Nonnull.class : Nullable.class );
       }
       ctor.addParameter( parameter.build() );
       if ( GraphQLTypeUtil.isNonNull( fieldType ) && !javaType.isPrimitive() )
@@ -474,7 +473,7 @@ public class JavaServerGenerator
     builder.returns( javaType );
     if ( !javaType.isPrimitive() )
     {
-      builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+      builder.addAnnotation( GraphQLTypeUtil.isNonNull( argument.getType() ) ? Nonnull.class : Nullable.class );
     }
 
     final String description = argument.getDescription();
@@ -495,7 +494,7 @@ public class JavaServerGenerator
       FieldSpec.builder( javaType, argument.getName(), Modifier.PRIVATE, Modifier.FINAL );
     if ( !javaType.isPrimitive() )
     {
-      builder.addAnnotation( getNullabilityAnnotation( argument.getType() ) );
+      builder.addAnnotation( GraphQLTypeUtil.isNonNull( argument.getType() ) ? Nonnull.class : Nullable.class );
     }
 
     final String description = argument.getDescription();
@@ -784,7 +783,7 @@ public class JavaServerGenerator
       final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, field.getName(), Modifier.FINAL );
       if ( !javaType.isPrimitive() )
       {
-        parameter.addAnnotation( getNullabilityAnnotation( fieldType ) );
+        parameter.addAnnotation( GraphQLTypeUtil.isNonNull( fieldType ) ? Nonnull.class : Nullable.class );
       }
       ctor.addParameter( parameter.build() );
       if ( GraphQLTypeUtil.isNonNull( fieldType ) )
@@ -800,12 +799,6 @@ public class JavaServerGenerator
   }
 
   @Nonnull
-  private Class<?> getNullabilityAnnotation( @Nonnull final GraphQLType type )
-  {
-    return type instanceof GraphQLNonNull ? Nonnull.class : Nullable.class;
-  }
-
-  @Nonnull
   private MethodSpec buildInputFieldGetter( @Nonnull final GraphQLInputObjectField field,
                                             @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
@@ -816,7 +809,7 @@ public class JavaServerGenerator
     builder.returns( javaType );
     if ( !javaType.isPrimitive() )
     {
-      builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
+      builder.addAnnotation( GraphQLTypeUtil.isNonNull( field.getType() ) ? Nonnull.class : Nullable.class );
     }
 
     final String description = field.getDescription();
@@ -843,7 +836,7 @@ public class JavaServerGenerator
       FieldSpec.builder( javaType, field.getName(), Modifier.PRIVATE, Modifier.FINAL );
     if ( !javaType.isPrimitive() )
     {
-      builder.addAnnotation( getNullabilityAnnotation( field.getType() ) );
+      builder.addAnnotation( GraphQLTypeUtil.isNonNull( field.getType() ) ? Nonnull.class : Nullable.class );
     }
 
     final String description = field.getDescription();
