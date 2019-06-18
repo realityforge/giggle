@@ -1,0 +1,9 @@
+# This document contains a variable
+
+query event($id: ID!) {
+  event(id: $id) {
+    id
+    name
+  }
+}
+

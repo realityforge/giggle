@@ -7,6 +7,9 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import graphql.Scalars;
+import graphql.language.ListType;
+import graphql.language.NonNullType;
+import graphql.language.Type;
 import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLDirectiveContainer;
 import graphql.schema.GraphQLFieldDefinition;
@@ -61,6 +64,47 @@ public final class JavaGenUtil
     builder.addAnnotation( AnnotationSpec.builder( ClassName.get( generated ) )
                              .addMember( "value", "$S", "org.realityforge.giggle.Main" )
                              .build() );
+  }
+
+  @Nonnull
+  public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
+                                      @Nonnull final Type varType )
+  {
+    Type type = varType;
+    boolean isNonNull = false;
+    boolean isList = false;
+    if ( type instanceof NonNullType )
+    {
+      isNonNull = true;
+      type = ( (NonNullType) type ).getType();
+    }
+    if ( type instanceof ListType )
+    {
+      isList = true;
+      type = ( (ListType) type ).getType();
+      if ( type instanceof NonNullType )
+      {
+        type = ( (NonNullType) type ).getType();
+      }
+    }
+
+    final graphql.language.TypeName typeName = (graphql.language.TypeName) type;
+
+    final String name =
+      typeMap.entrySet()
+        .stream()
+        .filter( e -> e.getKey().getName().equals( typeName.getName() ) )
+        .findAny()
+        .map( Map.Entry::getValue )
+        .orElse( null );
+    if ( null != name )
+    {
+      return wrap( isList, ClassName.bestGuess( name ) );
+    }
+    else
+    {
+      return getScalarJavaType( isList, isNonNull, typeName.getName() );
+    }
   }
 
   @Nonnull
@@ -163,6 +207,66 @@ public final class JavaGenUtil
     else
     {
       throw new IllegalStateException( "Unknown type " + type.getName() );
+    }
+  }
+
+  @Nonnull
+  private static TypeName getScalarJavaType( final boolean isList,
+                                             final boolean isNonnull,
+                                             @Nonnull final String type )
+  {
+    if ( Scalars.GraphQLInt.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.INT );
+    }
+    else if ( Scalars.GraphQLBoolean.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.BOOLEAN );
+    }
+    else if ( Scalars.GraphQLByte.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.BYTE );
+    }
+    else if ( Scalars.GraphQLShort.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.SHORT );
+    }
+    else if ( Scalars.GraphQLLong.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.LONG );
+    }
+    else if ( Scalars.GraphQLChar.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.CHAR );
+    }
+    else if ( Scalars.GraphQLFloat.getName().equals( type ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.FLOAT );
+    }
+    else if ( Scalars.GraphQLID.getName().equals( type ) )
+    {
+      return wrap( isList, ClassName.get( String.class ) );
+    }
+    else if ( Scalars.GraphQLString.getName().equals( type ) )
+    {
+      return wrap( isList, ClassName.get( String.class ) );
+    }
+    else if ( Scalars.GraphQLBigDecimal.getName().equals( type ) )
+    {
+      return wrap( isList, ClassName.get( BigDecimal.class ) );
+    }
+    else if ( Scalars.GraphQLBigInteger.getName().equals( type ) )
+    {
+      return wrap( isList, ClassName.get( BigInteger.class ) );
+    }
+    else if ( type.equals( "Date" ) || type.equals( "DateTime" ) )
+    {
+      //TODO: Support other scalars through some sort of mapping configuration
+      return wrap( isList, ClassName.get( Date.class ) );
+    }
+    else
+    {
+      throw new IllegalStateException( "Unknown type " + type );
     }
   }
 

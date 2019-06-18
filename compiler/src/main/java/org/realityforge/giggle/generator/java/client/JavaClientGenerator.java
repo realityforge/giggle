@@ -17,8 +17,10 @@ import graphql.language.Comment;
 import graphql.language.Definition;
 import graphql.language.Document;
 import graphql.language.Field;
+import graphql.language.NonNullType;
 import graphql.language.OperationDefinition;
 import graphql.language.SelectionSetContainer;
+import graphql.language.VariableDefinition;
 import graphql.schema.GraphQLDirective;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLFieldDefinition;
@@ -127,7 +129,7 @@ public class JavaClientGenerator
         if ( OperationDefinition.Operation.SUBSCRIPTION != operation.getOperation() )
         {
           emitOperationResponse( context, collector, typeMap, operation );
-          emitOperationType( context, fragmentCollector, operation );
+          emitOperationType( context, fragmentCollector, typeMap, operation );
         }
       }
     }
@@ -324,6 +326,7 @@ public class JavaClientGenerator
 
   private void emitOperationType( @Nonnull final GeneratorContext context,
                                   @Nonnull final FragmentCollector fragmentCollector,
+                                  @Nonnull final Map<GraphQLType, String> typeMap,
                                   @Nonnull final OperationDefinition operation )
     throws IOException
   {
@@ -346,6 +349,10 @@ public class JavaClientGenerator
                         .initializer( "$S", toCompactDocument( context, fragmentCollector, operation ) )
                         .build() );
     builder.addMethod( MethodSpec.constructorBuilder().addModifiers( Modifier.PRIVATE ).build() );
+    if ( !operation.getVariableDefinitions().isEmpty() )
+    {
+      builder.addType( buildVariableType( typeMap, operation ).build() );
+    }
     builder.addType( buildAnswerType( operation ).build() );
     JavaGenUtil.writeTopLevelType( context, builder );
   }
@@ -599,6 +606,88 @@ public class JavaClientGenerator
     }
 
     return builder;
+  }
+
+  @Nonnull
+  private TypeSpec.Builder buildVariableType( @Nonnull final Map<GraphQLType, String> typeMap,
+                                              @Nonnull final OperationDefinition operation )
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( "Variables" );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL );
+
+    final Map<VariableDefinition, TypeName> variableTypes = new HashMap<>();
+    for ( final VariableDefinition variable : operation.getVariableDefinitions() )
+    {
+      variableTypes.put( variable, JavaGenUtil.getJavaType( typeMap, variable.getType() ) );
+    }
+
+    builder.addMethod( buildVariablesConstructor( operation, variableTypes ) );
+    for ( final VariableDefinition variable : operation.getVariableDefinitions() )
+    {
+      builder.addField( buildVariableField( variable, variableTypes ) );
+      builder.addMethod( buildVariableGetter( variable, variableTypes ) );
+    }
+
+    return builder;
+  }
+
+  @Nonnull
+  private MethodSpec buildVariablesConstructor( @Nonnull final OperationDefinition operation,
+                                                @Nonnull final Map<VariableDefinition, TypeName> variableTypes )
+  {
+    final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
+    ctor.addModifiers( Modifier.PUBLIC );
+    for ( final VariableDefinition variable : operation.getVariableDefinitions() )
+    {
+      final TypeName javaType = variableTypes.get( variable );
+      final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, variable.getName(), Modifier.FINAL );
+      final boolean isNonnull = variable.getType() instanceof NonNullType;
+      if ( !javaType.isPrimitive() )
+      {
+        parameter.addAnnotation( isNonnull ? Nonnull.class : Nullable.class );
+      }
+      ctor.addParameter( parameter.build() );
+      if ( isNonnull )
+      {
+        ctor.addStatement( "this.$N = $T.requireNonNull( $N )", variable.getName(), Objects.class, variable.getName() );
+      }
+      else
+      {
+        ctor.addStatement( "this.$N = $N", variable.getName(), variable.getName() );
+      }
+    }
+    return ctor.build();
+  }
+
+  @Nonnull
+  private FieldSpec buildVariableField( @Nonnull final VariableDefinition variable,
+                                        @Nonnull final Map<VariableDefinition, TypeName> variableTypes )
+  {
+    final TypeName javaType = variableTypes.get( variable );
+    final FieldSpec.Builder builder =
+      FieldSpec.builder( javaType, variable.getName(), Modifier.PRIVATE, Modifier.FINAL );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( variable.getType() instanceof NonNullType ? Nonnull.class : Nullable.class );
+    }
+    return builder.build();
+  }
+
+  @Nonnull
+  private MethodSpec buildVariableGetter( @Nonnull final VariableDefinition variable,
+                                          @Nonnull final Map<VariableDefinition, TypeName> variableTypes )
+  {
+    final String name = variable.getName();
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
+    builder.addModifiers( Modifier.PUBLIC );
+    final TypeName javaType = variableTypes.get( variable );
+    builder.returns( javaType );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( variable.getType() instanceof NonNullType ? Nonnull.class : Nullable.class );
+    }
+    builder.addStatement( "return $N", name );
+    return builder.build();
   }
 
   @Nonnull
