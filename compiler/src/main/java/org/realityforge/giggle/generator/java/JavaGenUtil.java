@@ -67,8 +67,7 @@ public final class JavaGenUtil
   public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
                                       @Nonnull final GraphQLDirectiveContainer container )
   {
-    final GraphQLType valueType =
-      getValueType( container );
+    final GraphQLType valueType = getValueType( container );
     final GraphQLType type = GraphQLTypeUtil.unwrapAll( valueType );
     final String typeName = typeMap.get( type );
     if ( null != typeName )
