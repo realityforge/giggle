@@ -20,6 +20,7 @@ import graphql.language.SelectionSetContainer;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLFieldsContainer;
+import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
@@ -62,17 +63,25 @@ public class JavaClientGenerator
         .collect( Collectors.toList() );
     for ( final GraphQLType type : types )
     {
-      if ( type instanceof GraphQLEnumType )
+      if ( type instanceof GraphQLEnumType | type instanceof GraphQLInputObjectType )
       {
         generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
       }
     }
 
-    emitGraphQLError( context );
-
-    final Map<GraphQLType, String> fullTypeMap = new HashMap<>();
-    fullTypeMap.putAll( inputTypeMap );
+    final Map<GraphQLType, String> fullTypeMap = new HashMap<>( inputTypeMap );
     fullTypeMap.putAll( generatedTypeMap );
+
+    emitGraphQLError( context );
+    emitEnums( context, types );
+    emitOperations( context, fullTypeMap );
+
+    writeTypeMappingFile( context, generatedTypeMap );
+  }
+
+  private void emitEnums( @Nonnull final GeneratorContext context, @Nonnull final List<GraphQLType> types )
+    throws IOException
+  {
     for ( final GraphQLType type : types )
     {
       if ( type instanceof GraphQLEnumType )
@@ -80,6 +89,12 @@ public class JavaClientGenerator
         emitEnum( context, (GraphQLEnumType) type );
       }
     }
+  }
+
+  private void emitOperations( @Nonnull final GeneratorContext context,
+                               @Nonnull final Map<GraphQLType, String> fullTypeMap )
+    throws IOException
+  {
     final FieldCollector collector = new FieldCollector( context.getDocument() );
     final FragmentCollector fragmentCollector = new FragmentCollector( context.getDocument() );
 
@@ -95,7 +110,6 @@ public class JavaClientGenerator
         }
       }
     }
-    writeTypeMappingFile( context, generatedTypeMap );
   }
 
   @Nonnull
