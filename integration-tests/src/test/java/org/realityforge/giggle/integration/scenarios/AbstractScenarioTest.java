@@ -25,6 +25,7 @@ public abstract class AbstractScenarioTest
     Gir.go( () -> FileUtil.inTempDir( task ) );
   }
 
+  @SuppressWarnings( "SameParameterValue" )
   @Nonnull
   private InputStream getResourceAsStream( @Nonnull final String name )
   {
