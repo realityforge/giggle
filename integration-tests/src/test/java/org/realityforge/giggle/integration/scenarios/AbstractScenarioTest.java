@@ -26,7 +26,7 @@ public abstract class AbstractScenarioTest
   }
 
   @Nonnull
-  protected final InputStream getResourceAsStream( @Nonnull final String name )
+  private InputStream getResourceAsStream( @Nonnull final String name )
   {
     final InputStream inputStream = getClass().getResourceAsStream( name );
     assertNotNull( inputStream, "Missing resource " + name + " (relative to " + getClass().getName() + ")" );
