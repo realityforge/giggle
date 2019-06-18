@@ -95,6 +95,22 @@ public final class JavaGenUtil
                                              final boolean isNonnull,
                                              @Nonnull final GraphQLType type )
   {
+
+    if ( Scalars.GraphQLID.equals( type ) && hasNumericDirective( container ) )
+    {
+      return wrapPrimitive( isList, isNonnull, TypeName.INT );
+    }
+    else
+    {
+      return getScalarJavaType( isList, isNonnull, type );
+    }
+  }
+
+  @Nonnull
+  private static TypeName getScalarJavaType( final boolean isList,
+                                             final boolean isNonnull,
+                                             @Nonnull final GraphQLType type )
+  {
     if ( Scalars.GraphQLInt.equals( type ) )
     {
       return wrapPrimitive( isList, isNonnull, TypeName.INT );
@@ -125,14 +141,7 @@ public final class JavaGenUtil
     }
     else if ( Scalars.GraphQLID.equals( type ) )
     {
-      if ( hasNumericDirective( container ) )
-      {
-        return wrapPrimitive( isList, isNonnull, TypeName.INT );
-      }
-      else
-      {
-        return wrap( isList, ClassName.get( String.class ) );
-      }
+      return wrap( isList, ClassName.get( String.class ) );
     }
     else if ( Scalars.GraphQLString.equals( type ) )
     {
