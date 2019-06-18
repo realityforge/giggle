@@ -3,18 +3,11 @@ package org.realityforge.giggle.integration.scenarios;
 import gir.Gir;
 import gir.Task;
 import gir.io.FileUtil;
-import gir.io.IoUtil;
-import graphql.schema.GraphQLSchema;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +15,6 @@ import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.bind.JsonbBuilder;
-import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
 
 public abstract class AbstractScenarioTest
@@ -31,33 +23,6 @@ public abstract class AbstractScenarioTest
     throws Exception
   {
     Gir.go( () -> FileUtil.inTempDir( task ) );
-  }
-
-  @Nonnull
-  protected final GraphQLSchema loadSchema()
-    throws IOException
-  {
-    return new SchemaRepository().getSchema( Collections.singletonList( getResourceAsFile( "schema.graphqls" ) ) );
-  }
-
-  @Nonnull
-  protected final Path getResourceAsFile( @Nonnull final String name )
-    throws IOException
-  {
-    final Path file = Files.createTempFile( FileUtil.createTempDir(), "", name );
-    final InputStream inputStream = getResourceAsStream( name );
-    IoUtil.copy( inputStream, new FileOutputStream( file.toFile() ) );
-    return file;
-  }
-
-  @Nonnull
-  protected final String getResourceAsString( @Nonnull final String name )
-    throws IOException
-  {
-    final InputStream stream = getResourceAsStream( name );
-    final byte[] data = new byte[ stream.available() ];
-    assertEquals( stream.read( data ), data.length );
-    return new String( data, StandardCharsets.US_ASCII );
   }
 
   @Nonnull
@@ -80,11 +45,6 @@ public abstract class AbstractScenarioTest
   protected final <T> T fromJson( @Nonnull final String jsonData, @Nonnull final Class<T> type )
   {
     return JsonbBuilder.create().fromJson( jsonData, type );
-  }
-
-  protected final <T> T fromJsonResource( @Nonnull final String resourceName, @Nonnull final Class<T> type )
-  {
-    return JsonbBuilder.create().fromJson( getResourceAsStream( resourceName ), type );
   }
 
   protected final void assertListFieldType( @Nonnull final Class<?> clazz,
