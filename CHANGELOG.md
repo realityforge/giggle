@@ -6,6 +6,7 @@
 
 * Stop generating an error if an operation of type `Subscription` is present and instead just skip generation of all artifacts for the operation.
 * Stop generating the "...compact, minimized graphql document for each GraphQL operation" as the document (a.k.a. the query) is now generated as a static final field on the query type.
+* Generate classes to represent input types. The classes are able to be serialized to json using json-b.
 
 ### [v0.04](https://github.com/realityforge/giggle/tree/v0.04) (2019-06-17)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.03...v0.04)

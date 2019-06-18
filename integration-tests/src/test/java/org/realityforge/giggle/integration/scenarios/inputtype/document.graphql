@@ -1,0 +1,5 @@
+mutation saveObservations($input: ObservationsInput!) {
+  saveObservations(input: $input) {
+    success
+  }
+}

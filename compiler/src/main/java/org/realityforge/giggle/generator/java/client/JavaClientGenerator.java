@@ -1,7 +1,9 @@
 package org.realityforge.giggle.generator.java.client;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
@@ -17,10 +19,13 @@ import graphql.language.Document;
 import graphql.language.Field;
 import graphql.language.OperationDefinition;
 import graphql.language.SelectionSetContainer;
+import graphql.schema.GraphQLDirective;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLFieldsContainer;
+import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
+import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
@@ -32,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
@@ -74,6 +80,7 @@ public class JavaClientGenerator
 
     emitGraphQLError( context );
     emitEnums( context, types );
+    emitInputs( context, fullTypeMap, types );
     emitOperations( context, fullTypeMap );
 
     writeTypeMappingFile( context, generatedTypeMap );
@@ -87,6 +94,20 @@ public class JavaClientGenerator
       if ( type instanceof GraphQLEnumType )
       {
         emitEnum( context, (GraphQLEnumType) type );
+      }
+    }
+  }
+
+  private void emitInputs( @Nonnull final GeneratorContext context,
+                           @Nonnull final Map<GraphQLType, String> fullTypeMap,
+                           @Nonnull final List<GraphQLType> types )
+    throws IOException
+  {
+    for ( final GraphQLType type : types )
+    {
+      if ( type instanceof GraphQLInputObjectType )
+      {
+        emitInput( context, fullTypeMap, (GraphQLInputObjectType) type );
       }
     }
   }
@@ -110,6 +131,183 @@ public class JavaClientGenerator
         }
       }
     }
+  }
+
+  private void emitInput( @Nonnull final GeneratorContext context,
+                          @Nonnull final Map<GraphQLType, String> typeMap,
+                          @Nonnull final GraphQLInputObjectType type )
+    throws IOException
+  {
+    final ClassName self = ClassName.bestGuess( typeMap.get( type ) );
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( type.getName() );
+    builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );
+    final String description = type.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    final Map<GraphQLInputObjectField, TypeName> fieldTypes = new HashMap<>();
+    for ( final GraphQLInputObjectField field : type.getFields() )
+    {
+      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field ) );
+    }
+
+    builder.addMethod( buildInputConstructor( type, fieldTypes ) );
+    for ( final GraphQLInputObjectField field : type.getFields() )
+    {
+      builder.addField( buildInputFieldField( field, fieldTypes ) );
+      builder.addMethod( buildInputFieldGetter( field, fieldTypes ) );
+    }
+    builder.addMethod( buildInputEquals( self, type ) );
+    builder.addMethod( buildInputHashCode( type ) );
+    builder.addMethod( buildInputToString( type ) );
+    JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  @Nonnull
+  private MethodSpec buildInputConstructor( @Nonnull final GraphQLInputObjectType type,
+                                            @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  {
+    final MethodSpec.Builder ctor = MethodSpec.constructorBuilder();
+    ctor.addModifiers( Modifier.PUBLIC );
+    for ( final GraphQLInputObjectField field : type.getFields() )
+    {
+      final GraphQLInputType fieldType = field.getType();
+      final TypeName javaType = fieldTypes.get( field );
+      final ParameterSpec.Builder parameter = ParameterSpec.builder( javaType, field.getName(), Modifier.FINAL );
+      if ( !javaType.isPrimitive() )
+      {
+        parameter.addAnnotation( GraphQLTypeUtil.isNonNull( fieldType ) ? Nonnull.class : Nullable.class );
+      }
+      ctor.addParameter( parameter.build() );
+      if ( GraphQLTypeUtil.isNonNull( fieldType ) )
+      {
+        ctor.addStatement( "this.$N = $T.requireNonNull( $N )", field.getName(), Objects.class, field.getName() );
+      }
+      else
+      {
+        ctor.addStatement( "this.$N = $N", field.getName(), field.getName() );
+      }
+    }
+    return ctor.build();
+  }
+
+  @Nonnull
+  private MethodSpec buildInputFieldGetter( @Nonnull final GraphQLInputObjectField field,
+                                            @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  {
+    final String name = field.getName();
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder( "get" + NamingUtil.uppercaseFirstCharacter( name ) );
+    builder.addModifiers( Modifier.PUBLIC );
+    final TypeName javaType = fieldTypes.get( field );
+    builder.returns( javaType );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( GraphQLTypeUtil.isNonNull( field.getType() ) ? Nonnull.class : Nullable.class );
+    }
+
+    final String description = field.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    final GraphQLDirective deprecated = field.getDirective( "deprecated" );
+    if ( null != deprecated )
+    {
+      builder.addJavadoc( "@deprecated " + deprecated.getArgument( "reason" ) + "\n" );
+      builder.addAnnotation( AnnotationSpec.builder( Deprecated.class ).build() );
+    }
+    builder.addStatement( "return $N", name );
+    return builder.build();
+  }
+
+  @Nonnull
+  private FieldSpec buildInputFieldField( @Nonnull final GraphQLInputObjectField field,
+                                          @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
+  {
+    final TypeName javaType = fieldTypes.get( field );
+    final FieldSpec.Builder builder =
+      FieldSpec.builder( javaType, field.getName(), Modifier.PRIVATE, Modifier.FINAL );
+    if ( !javaType.isPrimitive() )
+    {
+      builder.addAnnotation( GraphQLTypeUtil.isNonNull( field.getType() ) ? Nonnull.class : Nullable.class );
+    }
+
+    final String description = field.getDescription();
+    if ( null != description )
+    {
+      builder.addJavadoc( asJavadoc( description ) );
+    }
+    final GraphQLDirective deprecated = field.getDirective( "deprecated" );
+    if ( null != deprecated )
+    {
+      builder.addJavadoc( "@deprecated " + deprecated.getArgument( "reason" ) + "\n" );
+      builder.addAnnotation( AnnotationSpec.builder( Deprecated.class ).build() );
+    }
+    return builder.build();
+  }
+
+  @Nonnull
+  private MethodSpec buildInputEquals( @Nonnull final ClassName self, @Nonnull final GraphQLInputObjectType type )
+  {
+    final MethodSpec.Builder method =
+      MethodSpec.methodBuilder( "equals" ).
+        addModifiers( Modifier.PUBLIC ).
+        addAnnotation( Override.class ).
+        addParameter( Object.class, "o", Modifier.FINAL ).
+        returns( TypeName.BOOLEAN );
+
+    final CodeBlock.Builder codeBlock = CodeBlock.builder();
+    codeBlock.beginControlFlow( "if ( this == o )" );
+    codeBlock.addStatement( "return true" );
+    codeBlock.nextControlFlow( "else if ( !( o instanceof $T ) )", self );
+    codeBlock.addStatement( "return false" );
+    codeBlock.nextControlFlow( "else" );
+    codeBlock.addStatement( "final $T that = ($T) o", self, self );
+
+    final ArrayList<Object> args = new ArrayList<>();
+    final String expr = type.getFields().stream().map( field -> {
+      args.add( Objects.class );
+      args.add( field.getName() );
+      args.add( field.getName() );
+      return "$T.equals( $N, that.$N )";
+    } ).collect( Collectors.joining( " && " ) );
+    codeBlock.addStatement( "return " + expr, args.toArray() );
+    codeBlock.endControlFlow();
+    method.addCode( codeBlock.build() );
+    return method.build();
+  }
+
+  @Nonnull
+  private MethodSpec buildInputHashCode( @Nonnull final GraphQLInputObjectType type )
+  {
+    final String fields = type.getFields().stream().map( f -> "$N" ).collect( Collectors.joining( ", " ) );
+    return MethodSpec.methodBuilder( "hashCode" )
+      .addModifiers( Modifier.PUBLIC )
+      .addAnnotation( Override.class )
+      .returns( TypeName.INT )
+      .addStatement( "return $T.hash( " + fields + " )",
+                     Stream.concat( Stream.of( Objects.class ),
+                                    type.getFields().stream().map( GraphQLInputObjectField::getName ) ).toArray() )
+      .build();
+  }
+
+  @Nonnull
+  private MethodSpec buildInputToString( @Nonnull final GraphQLInputObjectType type )
+  {
+    final String fields =
+      type.getFields().stream().map( f -> "$N=\" + $N" ).collect( Collectors.joining( " + \", " ) );
+    return MethodSpec.methodBuilder( "toString" )
+      .addModifiers( Modifier.PUBLIC )
+      .addAnnotation( Override.class )
+      .returns( String.class )
+      .addStatement( "return \"$N[" + fields + " + \"]\"",
+                     Stream.concat( Stream.of( type.getName() ),
+                                    type.getFields()
+                                      .stream()
+                                      .flatMap( field -> Stream.of( field.getName(), field.getName() ) ) )
+                       .toArray() )
+      .build();
   }
 
   @Nonnull

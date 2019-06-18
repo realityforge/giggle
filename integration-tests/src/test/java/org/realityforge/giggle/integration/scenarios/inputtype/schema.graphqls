@@ -1,8 +1,13 @@
 schema {
   query: Query
+  mutation: Mutation
 }
 
 type Query {
+}
+
+type Mutation {
+  saveObservations(input: ObservationsInput!): SaveObservationsResponse
 }
 
 input ObservationInput {
@@ -13,4 +18,8 @@ input ObservationInput {
 input ObservationsInput {
   name: String!
   observations: [ObservationInput!]!
+}
+
+type SaveObservationsResponse {
+  success: Boolean!
 }
