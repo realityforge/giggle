@@ -81,7 +81,7 @@ public final class JavaGenUtil
   }
 
   @Nonnull
-  private static GraphQLType getValueType( @Nonnull final GraphQLDirectiveContainer type )
+  private static GraphQLType getValueType( @Nonnull final GraphQLType type )
   {
     return type instanceof GraphQLInputObjectField ? ( (GraphQLInputObjectField) type ).getType() :
            type instanceof GraphQLArgument ? ( (GraphQLArgument) type ).getType() :
