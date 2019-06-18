@@ -14,6 +14,10 @@ complete as there is too much un-said.
   - a list of enums
   - a list of objectTypes
 
+* Replace `@numeric` with an `integers.txt` that just lists the fully qualified names of `ID`
+  `Variables`/`Fields`/`InputFields` that should be numeric. The tool should detect any unused entries. The `@numeric`
+  directive should be removed from domgen.
+
 * Generate interfaces for non-inline fragments and ensure generated containers implement interfaces. If the container
   only contains a fragment then the getters that return container instances should be typed with the interface.
 
