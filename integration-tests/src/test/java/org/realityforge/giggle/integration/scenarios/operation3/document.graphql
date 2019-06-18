@@ -6,4 +6,3 @@ query event($id: ID!) {
     name
   }
 }
-
