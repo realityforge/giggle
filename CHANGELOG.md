@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.14`.
+
 ### [v0.05](https://github.com/realityforge/giggle/tree/v0.05) (2019-06-18)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.04...v0.05)
 
