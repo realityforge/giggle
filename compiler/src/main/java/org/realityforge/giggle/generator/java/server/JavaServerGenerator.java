@@ -136,7 +136,7 @@ public class JavaServerGenerator
   }
 
   private void buildArgsCoerceMethods( @Nonnull final List<GraphQLArgument> arguments,
-                                       final TypeSpec.Builder builder )
+                                       @Nonnull final TypeSpec.Builder builder )
   {
     boolean coerceTrapRequired = false;
     boolean coerceForID = false;
