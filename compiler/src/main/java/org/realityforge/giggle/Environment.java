@@ -3,7 +3,9 @@ package org.realityforge.giggle;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -23,6 +25,8 @@ final class Environment
   private final List<Path> _typeMappingFiles = new ArrayList<>();
   @Nonnull
   private final List<Path> _fragmentMappingFiles = new ArrayList<>();
+  @Nonnull
+  private final Map<String, String> _defines = new HashMap<>();
   @Nullable
   private Path _outputDirectory;
   @Nullable
@@ -106,6 +110,17 @@ final class Environment
   void setOutputDirectory( @Nonnull final Path outputDirectory )
   {
     _outputDirectory = Objects.requireNonNull( outputDirectory );
+  }
+
+  @Nonnull
+  public Map<String, String> getDefines()
+  {
+    return Collections.unmodifiableMap( _defines );
+  }
+
+  void addDefine( @Nonnull final String key, @Nonnull final String value )
+  {
+    _defines.put( key, value );
   }
 
   boolean hasPackageName()

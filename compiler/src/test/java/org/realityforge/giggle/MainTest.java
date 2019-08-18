@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.generator.GeneratorContext;
@@ -39,6 +40,8 @@ public class MainTest
                   "\t\tThe path to a mapping file for types.\n" +
                   "\t--fragment-mapping <argument>\n" +
                   "\t\tThe path to a mapping file for fragments.\n" +
+                  "\t-D, --define <argument>=<value>\n" +
+                  "\t\tDefine a property used by the generators.\n" +
                   "\t--package <argument>\n" +
                   "\t\tThe java package name used to generate artifacts.\n" +
                   "\t--output-directory <argument>\n" +
@@ -417,6 +420,69 @@ public class MainTest
       assertEquals( exception.getMessage(),
                     "Type mapping attempted to map the type named 'Person' to com.biz.Person but there is no type named 'Person'" );
       assertEquals( exception.getExitCode(), ExitCodes.BAD_TYPE_MAPPING_EXIT_CODE );
+    } );
+  }
+
+  @Test
+  public void processOptions_singleDefine()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "-Dmyprop=value" );
+      assertEquals( handler.toString(), "" );
+      final Map<String, String> defines = environment.getDefines();
+      assertEquals( defines.size(), 1 );
+      assertEquals( defines.get( "myprop" ), "value" );
+    } );
+  }
+
+  @Test
+  public void processOptions_multipleDefines()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "-Dmyprop=value",
+                      "-Dmyprop2=value2" );
+      assertEquals( handler.toString(), "" );
+      final Map<String, String> defines = environment.getDefines();
+      assertEquals( defines.size(), 2 );
+      assertEquals( defines.get( "myprop" ), "value" );
+      assertEquals( defines.get( "myprop2" ), "value2" );
+    } );
+  }
+
+  @Test
+  public void processOptions_duplicateDefines()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( false,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "-Dmyprop=value",
+                      "-Dmyprop=value" );
+      assertEquals( handler.toString(), "Error: Duplicate property defined specified: myprop" );
     } );
   }
 

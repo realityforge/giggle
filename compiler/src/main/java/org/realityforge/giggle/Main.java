@@ -39,6 +39,7 @@ public class Main
   private static final int HELP_OPT = 'h';
   private static final int QUIET_OPT = 'q';
   private static final int VERBOSE_OPT = 'v';
+  private static final int DEFINE_OPT = 'D';
   private static final int SCHEMA_FILE_OPT = 1;
   private static final int DOCUMENT_FILE_OPT = 2;
   private static final int TYPE_MAPPING_FILE_OPT = 3;
@@ -78,6 +79,10 @@ public class Main
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               FRAGMENT_MAPPING_FILE_OPT,
                               "The path to a mapping file for fragments." ),
+      new CLOptionDescriptor( "define",
+                              CLOptionDescriptor.ARGUMENTS_REQUIRED_2 | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              DEFINE_OPT,
+                              "Define a property used by the generators." ),
       new CLOptionDescriptor( "package",
                               CLOptionDescriptor.ARGUMENT_REQUIRED,
                               PACKAGE_NAME_OPT,
@@ -304,6 +309,18 @@ public class Main
           {
             return false;
           }
+          break;
+        }
+        case DEFINE_OPT:
+        {
+          final String key = option.getArgument( 0 );
+          final String value = option.getArgument( 1 );
+          if ( environment.getDefines().containsKey( key ) )
+          {
+            logger.log( Level.SEVERE, "Error: Duplicate property defined specified: " + key );
+            return false;
+          }
+          environment.addDefine( key, value );
           break;
         }
         case OUTPUT_DIRECTORY_OPT:
