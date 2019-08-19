@@ -24,7 +24,7 @@ public abstract class AbstractGeneratorRepository
   }
 
   @Nonnull
-  final Generator getGenerator( @Nonnull final String name )
+  public final Generator getGenerator( @Nonnull final String name )
     throws NoSuchGeneratorException
   {
     final Generator generator = _generators.get( name );
@@ -41,7 +41,7 @@ public abstract class AbstractGeneratorRepository
     return _generators.keySet();
   }
 
-  final void registerGenerator( @Nonnull final Generator generator )
+  public final void registerGenerator( @Nonnull final Generator generator )
   {
     final Class<? extends Generator> type = generator.getClass();
     final Generator.MetaData metaData = type.getAnnotation( Generator.MetaData.class );
