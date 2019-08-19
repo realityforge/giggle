@@ -24,7 +24,6 @@ import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.generator.GenerateException;
 import org.realityforge.giggle.generator.GeneratorContext;
-import org.realityforge.giggle.generator.GeneratorRepository;
 import org.realityforge.giggle.generator.NoSuchGeneratorException;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
@@ -136,10 +135,9 @@ public class Main
                                 environment.getOutputDirectory(),
                                 environment.getPackageName() );
         verifyTypeMapping( context );
-        final GeneratorRepository generatorRepository = new GeneratorRepository();
         for ( final String generator : generators )
         {
-          generatorRepository.generate( generator, context );
+          environment.getGeneratorRepository().generate( generator, context );
         }
       }
     }

@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.realityforge.giggle.generator.GeneratorRepository;
 
 final class Environment
 {
@@ -33,6 +34,8 @@ final class Environment
   private String _packageName;
   @Nonnull
   private final List<String> _generators = new ArrayList<>();
+  @Nonnull
+  private final GeneratorRepository _generatorRepository = new GeneratorRepository();
 
   Environment( @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -148,5 +151,11 @@ final class Environment
   List<String> getGenerators()
   {
     return Collections.unmodifiableList( _generators );
+  }
+
+  @Nonnull
+  GeneratorRepository getGeneratorRepository()
+  {
+    return _generatorRepository;
   }
 }
