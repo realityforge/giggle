@@ -4,6 +4,7 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.TypeSpec;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
+import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import java.io.File;
@@ -105,6 +106,21 @@ public abstract class AbstractJavaGenerator
       .filter( this::isNotIntrospectionType )
       .filter( t -> !existing.containsKey( t ) )
       .collect( Collectors.toList() );
+  }
+
+  @Nonnull
+  protected final Map<GraphQLType, String> extractGeneratedDataTypes( @Nonnull final GeneratorContext context,
+                                                                      @Nonnull final List<GraphQLType> types )
+  {
+    final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
+    for ( final GraphQLType type : types )
+    {
+      if ( type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType )
+      {
+        generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
+      }
+    }
+    return generatedTypeMap;
   }
 
   @Nonnull
