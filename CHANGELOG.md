@@ -5,6 +5,7 @@
 * Upgrade the `org.realityforge.guiceyloops` artifact to version `0.102`.
 * Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.14`.
 * Upgrade the Generator API so that each generator can declare properties that they will use during the generation process. These properties can be required for the generator to run or optional. The commandline interface has also been updated to emit the generators and the supported properties as part of the `--help` command.
+* Add a generator named `java-cdi-client` that generates a CDI service that exposes a separate method for invoking every operation declared in the document. The generator makes use of the new property system and requires several properties to control how the service is generated. The `cdi.service.name` property controls the name of the generated service, while the properties `cdi.base_url.jndi_name` and `cdi.url.suffix` control the way that the service determines the url of the GraphQL server. The `cdi.keycloak.client.name` property controls whether keycloak support is added to the generated service.
 
 ### [v0.05](https://github.com/realityforge/giggle/tree/v0.05) (2019-06-18)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.04...v0.05)

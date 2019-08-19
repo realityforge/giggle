@@ -25,7 +25,7 @@ public abstract class AbstractJavaGenerator
   implements Generator
 {
   /**
-   * Prefix for synthesized variables. Used to guarantee uniqueness in the presence of user supplied variables.
+   * Prefix for synthesized methods and variables. Used to guarantee uniqueness in the presence of user supplied variables.
    */
   protected static final String GEN_PREFIX = "$giggle$_";
 
