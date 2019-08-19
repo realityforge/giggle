@@ -52,7 +52,7 @@ define 'giggle' do
       'giggle.fixture.java-cdi-client.libs' => "#{Buildr.artifact(:glassfish_embedded).to_s}:#{Buildr.artifact(:keycloak_jaxrs_client_authfilter).to_s}:#{Buildr.artifact(:keycloak_core).to_s}"
     }
     test.options[:java_args] = %w(-ea)
-    test.enhance(Buildr.artifacts(:glassfish_embedded, :keycloak_jaxrs_client_authfilter))
+    test.enhance(Buildr.artifacts(:glassfish_embedded, :keycloak_jaxrs_client_authfilter, :keycloak_core))
   end
 
   desc 'Integration Tests'
