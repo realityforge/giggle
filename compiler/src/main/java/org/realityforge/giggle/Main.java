@@ -28,6 +28,7 @@ import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.generator.GeneratorRepository;
 import org.realityforge.giggle.generator.NoSuchGeneratorException;
+import org.realityforge.giggle.generator.PropertyDef;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
 import org.realityforge.giggle.util.IoUtil;
@@ -426,6 +427,23 @@ public class Main
         }
       }
     }
+
+    for ( final String generatorName : environment.getGenerators() )
+    {
+      final Generator generator = repository.getGenerator( generatorName );
+      for ( final PropertyDef property : generator.getSupportedProperties() )
+      {
+        if ( property.isRequired() && !defines.containsKey( property.getKey() ) )
+        {
+          final String message =
+            "Error: Property named '" + property.getKey() + "' is required by the generator named '" +
+            generatorName + "' but has not been defined.";
+          environment.logger().log( Level.SEVERE, message );
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 

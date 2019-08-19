@@ -146,9 +146,9 @@ public class MainTest
                       "--output-directory", "output",
                       "--package", "com.example.model",
                       "--schema", "schema.graphql",
-                      "--generator=graphql-java-server" );
+                      "--generator=java-server" );
       assertEquals( handler.toString(), "" );
-      assertEquals( environment.getGenerators(), Collections.singletonList( "graphql-java-server" ) );
+      assertEquals( environment.getGenerators(), Collections.singletonList( "java-server" ) );
     } );
   }
 
@@ -165,10 +165,10 @@ public class MainTest
                       "--output-directory", "output",
                       "--package", "com.example.model",
                       "--schema", "schema.graphql",
-                      "--generator=graphql-java-server",
-                      "--generator=graphql-java-client" );
+                      "--generator=java-server",
+                      "--generator=java-client" );
       assertEquals( handler.toString(), "" );
-      assertEquals( environment.getGenerators(), Arrays.asList( "graphql-java-server", "graphql-java-client" ) );
+      assertEquals( environment.getGenerators(), Arrays.asList( "java-server", "java-client" ) );
     } );
   }
 
@@ -505,6 +505,27 @@ public class MainTest
   }
 
   @Test
+  public void processOptions_requiredDefineNotPresent()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.getGeneratorRepository().registerGenerator( new TestGenerator() );
+      processOptions( false,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "--generator=test-generator",
+                      "-Dmyprop2=value2" );
+      assertEquals( handler.toString(),
+                    "Error: Property named 'myprop' is required by the generator named 'test-generator' but has not been defined." );
+    } );
+  }
+
+  @Test
   public void processOptions_defineNotUsed()
     throws Exception
   {
@@ -579,7 +600,7 @@ public class MainTest
     public Set<PropertyDef> getSupportedProperties()
     {
       final Set<PropertyDef> propertyDefs = new HashSet<>();
-      propertyDefs.add( new PropertyDef( "myprop", false, "a property for testing" ) );
+      propertyDefs.add( new PropertyDef( "myprop", true, "a required property for testing" ) );
       propertyDefs.add( new PropertyDef( "myprop2", false, "another property for testing" ) );
       return propertyDefs;
     }
