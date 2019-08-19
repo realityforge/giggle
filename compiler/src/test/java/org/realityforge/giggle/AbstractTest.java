@@ -37,6 +37,7 @@ public abstract class AbstractTest
                 "Expected output\n---\n" + output + "\n---\nto contain text\n---\n" + text + "\n---\n" );
   }
 
+  @SuppressWarnings( "SameParameterValue" )
   final void assertOutputNotContains( @Nonnull final String output, @Nonnull final String text )
   {
     assertFalse( output.contains( text ),
