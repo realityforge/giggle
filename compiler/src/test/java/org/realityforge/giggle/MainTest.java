@@ -4,13 +4,12 @@ import gir.io.FileUtil;
 import graphql.language.Document;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.generator.Generator;
@@ -57,7 +56,13 @@ public class MainTest
                   "\n" +
                   "Supported Generators:\n" +
                   "  java-server\n" +
-                  "  java-client" );
+                  "  java-client\n" +
+                  "  java-cdi-client\n" +
+                  "   Supported Properties:\n" +
+                  "   - cdi.service.name (required): The name of the generated service class\n" +
+                  "   - cdi.base_url.jndi_name (required): The name of the JNDI resource that contains the base url for the endpoint\n" +
+                  "   - cdi.url.suffix: The path added to the setting retrieved from the base_url.config.key to construct the url. If unspecified then no suffix is added\n" +
+                  "   - cdi.keycloak.client.name: The name of the keycloak client used to authenticate the client. If unspecified then it is assumed no authentication step" );
   }
 
   @Test
@@ -550,9 +555,9 @@ public class MainTest
   {
     @Nonnull
     @Override
-    public Set<PropertyDef> getSupportedProperties()
+    public List<PropertyDef> getSupportedProperties()
     {
-      final Set<PropertyDef> propertyDefs = new HashSet<>();
+      final List<PropertyDef> propertyDefs = new ArrayList<>();
       propertyDefs.add( new PropertyDef( "myprop", true, "a required property for testing" ) );
       propertyDefs.add( new PropertyDef( "myprop2", false, "another property for testing" ) );
       return propertyDefs;

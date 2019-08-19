@@ -22,7 +22,6 @@ import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
-import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import graphql.schema.GraphQLUnmodifiedType;
@@ -59,23 +58,9 @@ public class JavaServerGenerator
     throws Exception
   {
     final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
-    final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
-    final GraphQLSchema schema = context.getSchema();
-    final List<GraphQLType> types =
-      schema.getAllTypesAsList()
-        .stream()
-        .filter( this::isNotIntrospectionType )
-        .filter( t -> !inputTypeMap.containsKey( t ) )
-        .collect( Collectors.toList() );
-    for ( final GraphQLType type : types )
-    {
-      if ( type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType )
-      {
-        generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
-      }
-    }
-    final Map<GraphQLType, String> fullTypeMap = new HashMap<>();
-    fullTypeMap.putAll( inputTypeMap );
+    final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), inputTypeMap );
+    final Map<GraphQLType, String> generatedTypeMap = extractGeneratedDataTypes( context, types );
+    final Map<GraphQLType, String> fullTypeMap = new HashMap<>( inputTypeMap );
     fullTypeMap.putAll( generatedTypeMap );
     for ( final GraphQLType type : types )
     {
@@ -322,7 +307,7 @@ public class JavaServerGenerator
     for ( final GraphQLArgument argument : arguments )
     {
       final String argName = argument.getName();
-      final String name = VAR_PREFIX + argName;
+      final String name = GEN_PREFIX + argName;
       final TypeName typeName = argTypes.get( argument );
       final GraphQLType graphQLType = argument.getType();
 
@@ -672,7 +657,7 @@ public class JavaServerGenerator
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
       final String fieldName = field.getName();
-      final String name = VAR_PREFIX + fieldName;
+      final String name = GEN_PREFIX + fieldName;
       final TypeName typeName = fieldTypes.get( field );
       final GraphQLType graphQLType = field.getType();
 

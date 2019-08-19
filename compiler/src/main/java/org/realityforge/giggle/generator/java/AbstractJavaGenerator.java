@@ -4,6 +4,8 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.TypeSpec;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
+import graphql.schema.GraphQLInputObjectType;
+import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -22,9 +25,9 @@ public abstract class AbstractJavaGenerator
   implements Generator
 {
   /**
-   * Prefix for synthesized variables. Used to guarantee uniqueness in the presence of user supplied variables.
+   * Prefix for synthesized methods and variables. Used to guarantee uniqueness in the presence of user supplied variables.
    */
-  protected static final String VAR_PREFIX = "$giggle$_";
+  protected static final String GEN_PREFIX = "$giggle$_";
 
   /**
    * Ensure that the supplied text is cleaned for insertion into javadoc.
@@ -84,6 +87,40 @@ public abstract class AbstractJavaGenerator
       Files.createDirectories( dir );
     }
     Files.write( file, bytes );
+  }
+
+  /**
+   * Return a list of types that can be generated and have not been supplied by an external tool.
+   * The method removes introspection types and any existing types and returns the remaining types.
+   *
+   * @param schema   the schema to process.
+   * @param existing existing types.
+   * @return the list of types
+   */
+  @Nonnull
+  protected final List<GraphQLType> extractTypesToGenerate( @Nonnull final GraphQLSchema schema,
+                                                            @Nonnull final Map<GraphQLType, String> existing )
+  {
+    return schema.getAllTypesAsList()
+      .stream()
+      .filter( this::isNotIntrospectionType )
+      .filter( t -> !existing.containsKey( t ) )
+      .collect( Collectors.toList() );
+  }
+
+  @Nonnull
+  protected final Map<GraphQLType, String> extractGeneratedDataTypes( @Nonnull final GeneratorContext context,
+                                                                      @Nonnull final List<GraphQLType> types )
+  {
+    final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
+    for ( final GraphQLType type : types )
+    {
+      if ( type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType )
+      {
+        generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
+      }
+    }
+    return generatedTypeMap;
   }
 
   @Nonnull

@@ -27,3 +27,9 @@ artifacts:
   jakarta_json: org.glassfish:jakarta.json:jar:1.1.5
   jakarta_json_api: jakarta.json:jakarta.json-api:jar:1.1.5
   jakarta_json_bind: jakarta.json.bind:jakarta.json.bind-api:jar:1.0.1
+
+  glassfish_embedded: fish.payara.extras:payara-embedded-all:jar:5.192
+
+  keycloak_jaxrs_client_authfilter: org.realityforge.keycloak.client.authfilter:keycloak-jaxrs-client-authfilter:jar:0.2
+
+  keycloak_core: org.keycloak:keycloak-core:jar:2.0.0.Final

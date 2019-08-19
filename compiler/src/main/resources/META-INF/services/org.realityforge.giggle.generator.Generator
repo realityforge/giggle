@@ -1,2 +1,3 @@
+org.realityforge.giggle.generator.java.cdi_client.JavaCdiClientGenerator
 org.realityforge.giggle.generator.java.client.JavaClientGenerator
 org.realityforge.giggle.generator.java.server.JavaServerGenerator

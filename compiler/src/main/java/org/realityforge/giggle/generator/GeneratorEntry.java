@@ -1,7 +1,7 @@
 package org.realityforge.giggle.generator;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ public final class GeneratorEntry
 
     _name = "<default>".equals( name ) ? type.getSimpleName().replaceAll( "Generator$", "" ) : name;
     _generator = Objects.requireNonNull( generator );
-    final HashMap<String, PropertyDef> map = new HashMap<>();
+    final Map<String, PropertyDef> map = new LinkedHashMap<>();
     for ( final PropertyDef propertyDef : generator.getSupportedProperties() )
     {
       map.put( propertyDef.getKey(), propertyDef );

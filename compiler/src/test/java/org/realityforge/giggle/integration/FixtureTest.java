@@ -4,6 +4,7 @@ import gir.io.FileUtil;
 import graphql.language.Document;
 import graphql.schema.GraphQLSchema;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,8 +13,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.tools.DiagnosticCollector;
@@ -64,6 +67,7 @@ public class FixtureTest
     final Path baseDir = fixtureDir().resolve( name );
     final Path inputDir = baseDir.resolve( "input" );
     final Path generatorOutputDir = baseDir.resolve( "output" ).resolve( generator );
+    final List<Path> defineFiles = collectFilesRecursively( inputDir, generator + ".properties" );
     final List<Path> schemaFiles = collectFilesRecursively( inputDir, ".graphqls" );
     final List<Path> documentFiles = collectFilesRecursively( inputDir, ".graphql" );
     final List<Path> typeMappingFiles = collectFilesRecursively( inputDir, "types.properties" );
@@ -83,12 +87,15 @@ public class FixtureTest
       fragmentMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( fragmentMappingFiles );
     final Path outputDirectory = FileUtil.createLocalTempDir();
 
+    final Map<String, String> defines = new HashMap<>();
+    defineFiles.forEach( d -> loadDefines( defines, d ) );
+
     final GlobalGeneratorContext context =
       new GlobalGeneratorContext( schema,
                                   document,
                                   typeMapping,
                                   fragmentMapping,
-                                  Collections.emptyMap(),
+                                  defines,
                                   outputDirectory,
                                   "com.example." + name );
 
@@ -101,9 +108,49 @@ public class FixtureTest
     }
 
     final List<File> javaFiles = collectJavaFiles( outputDirectory, inputDir.resolve( "java" ) );
-    ensureGeneratedCodeCompiles( javaFiles );
+
+    if ( "java-cdi-client".equals( generator ) )
+    {
+      // The java-cdi-client generator builds on output of java-client so we need to include
+      // the output of that generator during compilation
+      final Path javaClientOutput = generatorOutputDir.getParent().resolve( "java-client" );
+      javaFiles.addAll( collectJavaFiles( javaClientOutput, inputDir.resolve( "java" ) ) );
+    }
+    final List<File> classpathEntries = collectLibs( generator );
+    classpathEntries.addAll( collectLibs( "all" ) );
+
+    ensureGeneratedCodeCompiles( javaFiles, classpathEntries );
 
     assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
+  }
+
+  @Nonnull
+  private List<File> collectLibs( @Nonnull final String generator )
+  {
+    final String libraries = System.getProperty( "giggle.fixture." + generator + ".libs" );
+    return null == libraries ?
+           new ArrayList<>(  ) :
+           Arrays
+      .stream( libraries.split( File.pathSeparator ) )
+      .map( File::new )
+      .collect( Collectors.toList() );
+  }
+
+  private void loadDefines( @Nonnull final Map<String, String> defines, @Nonnull final Path path )
+  {
+    final Properties properties = new Properties();
+    try
+    {
+      properties.load( new FileInputStream( path.toFile() ) );
+    }
+    catch ( final IOException ioe )
+    {
+      assertNull( ioe );
+    }
+    for ( final String propertyName : properties.stringPropertyNames() )
+    {
+      defines.put( propertyName, properties.getProperty( propertyName ) );
+    }
   }
 
   @Nonnull
@@ -153,7 +200,8 @@ public class FixtureTest
    * @param javaFiles the java files.
    * @throws Exception if there is an error
    */
-  private void ensureGeneratedCodeCompiles( @Nonnull final List<File> javaFiles )
+  private void ensureGeneratedCodeCompiles( @Nonnull final List<File> javaFiles,
+                                            @Nonnull final List<File> classpathEntries )
     throws Exception
   {
     if ( !javaFiles.isEmpty() )
@@ -161,14 +209,15 @@ public class FixtureTest
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
       final StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null );
       final Path output = FileUtil.createLocalTempDir();
-      final Iterable<? extends JavaFileObject> compilationUnits =
-        fileManager.getJavaFileObjectsFromFiles( javaFiles );
+      final Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles( javaFiles );
       final DiagnosticCollector<JavaFileObject> listener = new DiagnosticCollector<>();
+      final String classpath =
+        classpathEntries.stream().map( File::getAbsolutePath ).collect( Collectors.joining( File.pathSeparator ) );
       final JavaCompiler.CompilationTask compilationTask =
         compiler.getTask( null,
                           fileManager,
                           listener,
-                          Arrays.asList( "-d", output.toString() ),
+                          Arrays.asList( "-d", output.toString(), "-cp", classpath ),
                           null,
                           compilationUnits );
       if ( !compilationTask.call() )
