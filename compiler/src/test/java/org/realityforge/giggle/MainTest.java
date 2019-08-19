@@ -29,29 +29,34 @@ public class MainTest
     Main.printUsage( newEnvironment( handler ) );
     assertEquals( handler.toString(),
                   "java org.realityforge.giggle.Main [options]\n" +
-                  "\tOptions:\n" +
-                  "\t-h, --help\n" +
-                  "\t\tprint this message and exit\n" +
-                  "\t-q, --quiet\n" +
-                  "\t\tDo not output unless an error occurs.\n" +
-                  "\t-v, --verbose\n" +
-                  "\t\tVerbose output of differences.\n" +
-                  "\t--schema <argument>\n" +
-                  "\t\tThe path to a graphql schema file.\n" +
-                  "\t--document <argument>\n" +
-                  "\t\tThe path to a graphql document file.\n" +
-                  "\t--type-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for types.\n" +
-                  "\t--fragment-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for fragments.\n" +
-                  "\t-D, --define <argument>=<value>\n" +
-                  "\t\tDefine a property used by the generators.\n" +
-                  "\t--package <argument>\n" +
-                  "\t\tThe java package name used to generate artifacts.\n" +
-                  "\t--output-directory <argument>\n" +
-                  "\t\tThe directory where generated files are output.\n" +
-                  "\t--generator <argument>\n" +
-                  "\t\tThe name of a generator to run on the model." );
+                  "\n" +
+                  "Options:\n" +
+                  "  -h, --help\n" +
+                  "    print this message and exit\n" +
+                  "  -q, --quiet\n" +
+                  "    Do not output unless an error occurs.\n" +
+                  "  -v, --verbose\n" +
+                  "    Verbose output of differences.\n" +
+                  "  --schema <argument>\n" +
+                  "    The path to a graphql schema file.\n" +
+                  "  --document <argument>\n" +
+                  "    The path to a graphql document file.\n" +
+                  "  --type-mapping <argument>\n" +
+                  "    The path to a mapping file for types.\n" +
+                  "  --fragment-mapping <argument>\n" +
+                  "    The path to a mapping file for fragments.\n" +
+                  "  -D, --define <argument>=<value>\n" +
+                  "    Define a property used by the generators.\n" +
+                  "  --package <argument>\n" +
+                  "    The java package name used to generate artifacts.\n" +
+                  "  --output-directory <argument>\n" +
+                  "    The directory where generated files are output.\n" +
+                  "  --generator <argument>\n" +
+                  "    The name of a generator to run on the model.\n" +
+                  "\n" +
+                  "Supported Generators:\n" +
+                  "  java-server\n" +
+                  "  java-client" );
   }
 
   @Test

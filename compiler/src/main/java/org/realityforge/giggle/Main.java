@@ -496,12 +496,37 @@ public class Main
   {
     final Logger logger = environment.logger();
     logger.info( "java " + Main.class.getName() + " [options]" );
-    logger.info( "\tOptions:" );
+    logger.info( "" );
+    logger.info( "Options:" );
     final String[] options =
-      CLUtil.describeOptions( OPTIONS ).toString().split( System.getProperty( "line.separator" ) );
+      CLUtil.describeOptions( OPTIONS )
+        .toString()
+        .replace( "\t", "  " )
+        .split( System.getProperty( "line.separator" ) );
     for ( final String line : options )
     {
       logger.info( line );
+    }
+    final GeneratorRepository repository = environment.getGeneratorRepository();
+    logger.info( "" );
+    logger.info( "Supported Generators:" );
+    for ( final String generatorName : repository.getGeneratorNames() )
+    {
+      final Generator generator = repository.getGenerator( generatorName );
+      logger.info( "  " + generatorName );
+      final Set<PropertyDef> properties = generator.getSupportedProperties();
+      if ( !properties.isEmpty() )
+      {
+        logger.info( "   Supported Properties:" );
+        for ( final PropertyDef property : properties )
+        {
+          logger.info( "   - " +
+                       property.getKey() +
+                       ( property.isRequired() ? " (required)" : "" ) +
+                       ": " +
+                       property.getDescription() );
+        }
+      }
     }
   }
 }
