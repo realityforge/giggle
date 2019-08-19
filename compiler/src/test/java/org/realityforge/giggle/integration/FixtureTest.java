@@ -108,6 +108,14 @@ public class FixtureTest
     }
 
     final List<File> javaFiles = collectJavaFiles( outputDirectory, inputDir.resolve( "java" ) );
+
+    if ( "java-cdi-client".equals( generator ) )
+    {
+      // The java-cdi-client generator builds on output of java-client so we need to include
+      // the output of that generator during compilation
+      final Path javaClientOutput = generatorOutputDir.getParent().resolve( "java-client" );
+      javaFiles.addAll( collectJavaFiles( javaClientOutput, inputDir.resolve( "java" ) ) );
+    }
     ensureGeneratedCodeCompiles( javaFiles );
 
     assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
