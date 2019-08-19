@@ -16,6 +16,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.AbstractTest;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GeneratorEntry;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -38,19 +40,23 @@ public class JavaGeneratorTest
     inIsolatedDirectory( () -> {
       final HashMap<String, String> typeMapping = new HashMap<>();
       typeMapping.put( "Person", "com.biz.Person" );
+      final GlobalGeneratorContext globalContext =
+        new GlobalGeneratorContext( buildGraphQLSchema( "type Person {\n" +
+                                                        "  name: String\n" +
+                                                        "}\n" +
+                                                        "type Tanker {\n" +
+                                                        "  name: String\n" +
+                                                        "}\n" ),
+                                    Document.newDocument().build(),
+                                    typeMapping,
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
+      final MyTestJavaGenerator gen = new MyTestJavaGenerator();
       final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "type Person {\n" +
-                                                  "  name: String\n" +
-                                                  "}\n" +
-                                                  "type Tanker {\n" +
-                                                  "  name: String\n" +
-                                                  "}\n" ),
-                              Document.newDocument().build(),
-                              typeMapping,
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
-      final Map<GraphQLType, String> mapping = new MyTestJavaGenerator().buildTypeMapping( context );
+        new GeneratorContext( new GeneratorEntry( gen ), globalContext );
+      final Map<GraphQLType, String> mapping = gen.buildTypeMapping( context );
       assertEquals( mapping.size(), 1 );
       final Map.Entry<GraphQLType, String> entry = mapping.entrySet().iterator().next();
       assertEquals( entry.getKey().getName(), "Person" );
@@ -80,7 +86,6 @@ public class JavaGeneratorTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      final MyTestJavaGenerator gen = new MyTestJavaGenerator();
       final GraphQLSchema schema =
         buildGraphQLSchema( "type Person {\n" +
                             "  name: String\n" +
@@ -89,13 +94,17 @@ public class JavaGeneratorTest
                             "  name: String\n" +
                             "}\n" );
       final Path dir = FileUtil.createLocalTempDir();
+      final GlobalGeneratorContext globalContext =
+        new GlobalGeneratorContext( schema,
+                                    Document.newDocument().build(),
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    dir,
+                                    "com.example" );
+      final MyTestJavaGenerator gen = new MyTestJavaGenerator();
       final GeneratorContext context =
-        new GeneratorContext( schema,
-                              Document.newDocument().build(),
-                              Collections.emptyMap(),
-                              Collections.emptyMap(),
-                              dir,
-                              "com.example" );
+        new GeneratorContext( new GeneratorEntry( gen ), globalContext );
       final HashMap<GraphQLType, String> typeMap = new HashMap<>();
       typeMap.put( schema.getType( "Person" ), "com.example.Person" );
       typeMap.put( schema.getType( "Tanker" ), "com.example.Tanker" );

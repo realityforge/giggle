@@ -6,70 +6,54 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class GeneratorContext
 {
   @Nonnull
-  private final GraphQLSchema _schema;
+  private final GeneratorEntry _generator;
   @Nonnull
-  private final Document _document;
-  @Nonnull
-  private final Map<String, String> _typeMapping;
-  @Nonnull
-  private final Map<String, String> _fragmentMapping;
-  @Nonnull
-  private final Path _outputDirectory;
-  @Nonnull
-  private final String _packageName;
+  private final GlobalGeneratorContext _context;
 
-  public GeneratorContext( @Nonnull final GraphQLSchema schema,
-                           @Nonnull final Document document,
-                           @Nonnull final Map<String, String> typeMapping,
-                           @Nonnull final Map<String, String> fragmentMapping,
-                           @Nonnull final Path outputDirectory,
-                           @Nonnull final String packageName )
+  public GeneratorContext( @Nonnull final GeneratorEntry generator, @Nonnull final GlobalGeneratorContext context )
   {
-    _schema = Objects.requireNonNull( schema );
-    _document = Objects.requireNonNull( document );
-    _typeMapping = Objects.requireNonNull( typeMapping );
-    _fragmentMapping = Objects.requireNonNull( fragmentMapping );
-    _outputDirectory = Objects.requireNonNull( outputDirectory );
-    _packageName = Objects.requireNonNull( packageName );
+    _generator = Objects.requireNonNull( generator );
+    _context = Objects.requireNonNull( context );
   }
 
   @Nonnull
   public GraphQLSchema getSchema()
   {
-    return _schema;
+    return _context.getSchema();
   }
 
   @Nonnull
   public Document getDocument()
   {
-    return _document;
+    return _context.getDocument();
   }
 
   @Nonnull
   public Map<String, String> getTypeMapping()
   {
-    return _typeMapping;
+    return _context.getTypeMapping();
   }
 
   @Nonnull
   public Map<String, String> getFragmentMapping()
   {
-    return _fragmentMapping;
+    return _context.getFragmentMapping();
   }
 
   @Nonnull
   public Path getOutputDirectory()
   {
-    return _outputDirectory;
+    return _context.getOutputDirectory();
   }
 
   @Nonnull
   public String getPackageName()
   {
-    return _packageName;
+    return _context.getPackageName();
   }
 }

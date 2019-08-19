@@ -7,6 +7,7 @@ import graphql.schema.idl.errors.SchemaProblem;
 import graphql.validation.ValidationError;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,9 +25,9 @@ import org.realityforge.giggle.document.DocumentReadException;
 import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.generator.GenerateException;
-import org.realityforge.giggle.generator.Generator;
-import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GeneratorEntry;
 import org.realityforge.giggle.generator.GeneratorRepository;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.generator.NoSuchGeneratorException;
 import org.realityforge.giggle.generator.PropertyDef;
 import org.realityforge.giggle.schema.SchemaReadException;
@@ -131,17 +132,18 @@ public class Main
       if ( !generators.isEmpty() )
       {
         IoUtil.deleteDirIfExists( environment.getOutputDirectory() );
-        final GeneratorContext context =
-          new GeneratorContext( schema,
-                                document,
-                                typeMapping,
-                                fragmentMapping,
-                                environment.getOutputDirectory(),
-                                environment.getPackageName() );
+        final GlobalGeneratorContext context =
+          new GlobalGeneratorContext( schema,
+                                      document,
+                                      typeMapping,
+                                      fragmentMapping,
+                                      environment.getDefines(),
+                                      environment.getOutputDirectory(),
+                                      environment.getPackageName() );
         verifyTypeMapping( context );
         for ( final String generator : generators )
         {
-          environment.getGeneratorRepository().generate( generator, context );
+          environment.getGeneratorRepository().getGenerator( generator ).generate( context );
         }
       }
     }
@@ -231,7 +233,7 @@ public class Main
     return ExitCodes.SUCCESS_EXIT_CODE;
   }
 
-  static void verifyTypeMapping( @Nonnull final GeneratorContext context )
+  static void verifyTypeMapping( @Nonnull final GlobalGeneratorContext context )
   {
     final GraphQLSchema schema = context.getSchema();
     for ( final Map.Entry<String, String> entry : context.getTypeMapping().entrySet() )
@@ -411,8 +413,8 @@ public class Main
         boolean propertyMatched = false;
         for ( final String generatorName : generatorNames )
         {
-          final Generator generator = repository.getGenerator( generatorName );
-          if ( generator.getSupportedProperties().stream().anyMatch( p -> p.getKey().equals( propertyKey ) ) )
+          final GeneratorEntry generator = repository.getGenerator( generatorName );
+          if ( generator.getSupportedProperties().containsKey( propertyKey ) )
           {
             propertyMatched = true;
             break;
@@ -430,8 +432,8 @@ public class Main
 
     for ( final String generatorName : environment.getGenerators() )
     {
-      final Generator generator = repository.getGenerator( generatorName );
-      for ( final PropertyDef property : generator.getSupportedProperties() )
+      final GeneratorEntry generator = repository.getGenerator( generatorName );
+      for ( final PropertyDef property : generator.getSupportedProperties().values() )
       {
         if ( property.isRequired() && !defines.containsKey( property.getKey() ) )
         {
@@ -512,9 +514,9 @@ public class Main
     logger.info( "Supported Generators:" );
     for ( final String generatorName : repository.getGeneratorNames() )
     {
-      final Generator generator = repository.getGenerator( generatorName );
+      final GeneratorEntry generator = repository.getGenerator( generatorName );
       logger.info( "  " + generatorName );
-      final Set<PropertyDef> properties = generator.getSupportedProperties();
+      final Collection<PropertyDef> properties = generator.getSupportedProperties().values();
       if ( !properties.isEmpty() )
       {
         logger.info( "   Supported Properties:" );

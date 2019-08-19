@@ -1,5 +1,7 @@
 package org.realityforge.giggle.generator;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,8 +59,8 @@ public class GeneratorRepositoryTest
     final TestGenerator generator = new TestGenerator();
     repository.registerGenerator( generator );
 
-    final Generator result = repository.getGenerator( "test" );
-    assertEquals( result, generator );
+    final GeneratorEntry entry = repository.getGenerator( "test" );
+    assertEquals( entry.getGenerator(), generator );
   }
 
   @Test
@@ -68,8 +70,8 @@ public class GeneratorRepositoryTest
     final DefaultNamedGenerator generator = new DefaultNamedGenerator();
     repository.registerGenerator( generator );
 
-    final Generator result = repository.getGenerator( "DefaultNamed" );
-    assertEquals( result, generator );
+    final GeneratorEntry result = repository.getGenerator( "DefaultNamed" );
+    assertEquals( result.getGenerator(), generator );
   }
 
   @Test
@@ -91,9 +93,9 @@ public class GeneratorRepositoryTest
     final FailingGenerator generator = new FailingGenerator();
     repository.registerGenerator( generator );
 
-    //noinspection ConstantConditions
     final GenerateException exception =
-      expectThrows( GenerateException.class, () -> repository.generate( name, null ) );
+      expectThrows( GenerateException.class,
+                    () -> repository.getGenerator( name ).generate( newContext( Files.createTempDirectory( "giggle") ) ) );
 
     assertEquals( exception.getName(), name );
     assertTrue( exception.getCause() instanceof NumberFormatException );
@@ -101,14 +103,14 @@ public class GeneratorRepositoryTest
 
   @Test
   public void generate()
+    throws IOException
   {
     final TestGeneratorRepository repository = new TestGeneratorRepository();
     final TestGenerator generator = new TestGenerator();
     repository.registerGenerator( generator );
 
     assertEquals( generator._generateCount, 0 );
-    //noinspection ConstantConditions
-    repository.generate( "test", null );
+    repository.getGenerator( "test" ).generate( newContext( Files.createTempDirectory( "giggle") ) );
     assertEquals( generator._generateCount, 1 );
   }
 

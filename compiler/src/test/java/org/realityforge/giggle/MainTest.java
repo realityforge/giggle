@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.generator.PropertyDef;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -408,13 +409,14 @@ public class MainTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "" ),
-                              Document.newDocument().build(),
-                              Collections.emptyMap(),
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( buildGraphQLSchema( "" ),
+                                    Document.newDocument().build(),
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
       Main.verifyTypeMapping( context );
     } );
   }
@@ -426,15 +428,16 @@ public class MainTest
     inIsolatedDirectory( () -> {
       final HashMap<String, String> typeMapping = new HashMap<>();
       typeMapping.put( "Person", "com.biz.Person" );
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "type Person {\n" +
-                                                  "  name: String\n" +
-                                                  "}\n" ),
-                              Document.newDocument().build(),
-                              typeMapping,
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( buildGraphQLSchema( "type Person {\n" +
+                                                        "  name: String\n" +
+                                                        "}\n" ),
+                                    Document.newDocument().build(),
+                                    typeMapping,
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
       Main.verifyTypeMapping( context );
     } );
   }
@@ -446,13 +449,14 @@ public class MainTest
     inIsolatedDirectory( () -> {
       final HashMap<String, String> typeMapping = new HashMap<>();
       typeMapping.put( "Person", "com.biz.Person" );
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "" ),
-                              Document.newDocument().build(),
-                              typeMapping,
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( buildGraphQLSchema( "" ),
+                                    Document.newDocument().build(),
+                                    typeMapping,
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
       final TerminalStateException exception =
         expectThrows( TerminalStateException.class, () -> Main.verifyTypeMapping( context ) );
       assertEquals( exception.getMessage(),

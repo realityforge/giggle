@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.realityforge.giggle.AbstractTest;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GeneratorEntry;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
+import org.realityforge.giggle.generator.java.server.JavaServerGenerator;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -19,7 +22,9 @@ public class JavaGenUtilTest
   {
     inIsolatedDirectory( () -> {
       final Path dir = FileUtil.getCurrentDirectory();
-      final GeneratorContext context = newContext( dir );
+      final GlobalGeneratorContext globalGeneratorContext = newContext( dir );
+      final GeneratorContext context =
+        new GeneratorContext( new GeneratorEntry( new JavaServerGenerator() ), globalGeneratorContext );
       final Path file = dir.resolve( "com/example/MyEnum.java" );
 
       assertFalse( file.toFile().exists() );
