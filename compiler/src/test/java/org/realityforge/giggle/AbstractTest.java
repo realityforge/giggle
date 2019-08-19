@@ -41,7 +41,7 @@ public abstract class AbstractTest
   final void assertOutputNotContains( @Nonnull final String output, @Nonnull final String text )
   {
     assertFalse( output.contains( text ),
-                "Expected output\n---\n" + output + "\n---\nto not contain text\n---\n" + text + "\n---\n" );
+                 "Expected output\n---\n" + output + "\n---\nto not contain text\n---\n" + text + "\n---\n" );
   }
 
   final Environment newEnvironment()
