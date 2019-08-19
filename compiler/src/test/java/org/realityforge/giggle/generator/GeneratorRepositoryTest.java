@@ -14,11 +14,6 @@ import static org.testng.Assert.*;
 public class GeneratorRepositoryTest
   extends AbstractTest
 {
-  private static class TestGeneratorRepository
-    extends AbstractGeneratorRepository
-  {
-  }
-
   @Generator.MetaData( name = "test" )
   private static class TestGenerator
     implements Generator
