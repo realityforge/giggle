@@ -23,8 +23,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.realityforge.giggle.AbstractTest;
 import org.realityforge.giggle.document.DocumentRepository;
-import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.generator.GeneratorRepository;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.schema.SchemaRepository;
 import org.realityforge.giggle.util.MappingUtil;
 import org.testng.annotations.DataProvider;
@@ -84,10 +84,16 @@ public class FixtureTest
         fragmentMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( fragmentMappingFiles );
       final Path outputDirectory = FileUtil.createLocalTempDir();
 
-      final GeneratorContext context =
-        new GeneratorContext( schema, document, typeMapping, fragmentMapping, outputDirectory, "com.example." + name );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( schema,
+                                    document,
+                                    typeMapping,
+                                    fragmentMapping,
+                                    Collections.emptyMap(),
+                                    outputDirectory,
+                                    "com.example." + name );
 
-      new GeneratorRepository().generate( generator, context );
+      new GeneratorRepository().getGenerator( generator ).generate( context );
 
       if ( outputFixtureData() )
       {

@@ -7,10 +7,16 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
+import org.realityforge.giggle.generator.PropertyDef;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -24,27 +30,34 @@ public class MainTest
     Main.printUsage( newEnvironment( handler ) );
     assertEquals( handler.toString(),
                   "java org.realityforge.giggle.Main [options]\n" +
-                  "\tOptions:\n" +
-                  "\t-h, --help\n" +
-                  "\t\tprint this message and exit\n" +
-                  "\t-q, --quiet\n" +
-                  "\t\tDo not output unless an error occurs.\n" +
-                  "\t-v, --verbose\n" +
-                  "\t\tVerbose output of differences.\n" +
-                  "\t--schema <argument>\n" +
-                  "\t\tThe path to a graphql schema file.\n" +
-                  "\t--document <argument>\n" +
-                  "\t\tThe path to a graphql document file.\n" +
-                  "\t--type-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for types.\n" +
-                  "\t--fragment-mapping <argument>\n" +
-                  "\t\tThe path to a mapping file for fragments.\n" +
-                  "\t--package <argument>\n" +
-                  "\t\tThe java package name used to generate artifacts.\n" +
-                  "\t--output-directory <argument>\n" +
-                  "\t\tThe directory where generated files are output.\n" +
-                  "\t--generator <argument>\n" +
-                  "\t\tThe name of a generator to run on the model." );
+                  "\n" +
+                  "Options:\n" +
+                  "  -h, --help\n" +
+                  "    print this message and exit\n" +
+                  "  -q, --quiet\n" +
+                  "    Do not output unless an error occurs.\n" +
+                  "  -v, --verbose\n" +
+                  "    Verbose output of differences.\n" +
+                  "  --schema <argument>\n" +
+                  "    The path to a graphql schema file.\n" +
+                  "  --document <argument>\n" +
+                  "    The path to a graphql document file.\n" +
+                  "  --type-mapping <argument>\n" +
+                  "    The path to a mapping file for types.\n" +
+                  "  --fragment-mapping <argument>\n" +
+                  "    The path to a mapping file for fragments.\n" +
+                  "  -D, --define <argument>=<value>\n" +
+                  "    Define a property used by the generators.\n" +
+                  "  --package <argument>\n" +
+                  "    The java package name used to generate artifacts.\n" +
+                  "  --output-directory <argument>\n" +
+                  "    The directory where generated files are output.\n" +
+                  "  --generator <argument>\n" +
+                  "    The name of a generator to run on the model.\n" +
+                  "\n" +
+                  "Supported Generators:\n" +
+                  "  java-server\n" +
+                  "  java-client" );
   }
 
   @Test
@@ -67,6 +80,35 @@ public class MainTest
       assertOutputContains( output, "  Document files: " );
       assertOutputContains( output, "  Type mapping files: " );
       assertOutputContains( output, "  Fragment mapping files: " );
+      assertOutputNotContains( output, "  Property Defines:\n" );
+    } );
+  }
+
+  @Test
+  public void printBanner_withDefines()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.setOutputDirectory( FileUtil.getCurrentDirectory().resolve( "generated" ) );
+      environment.setPackageName( "com.biz" );
+      environment.addDefine( "myKey1", "myValue" );
+      environment.addDefine( "myKey2", "myValue" );
+      environment.logger().setLevel( Level.ALL );
+      Main.printBanner( environment );
+      final String output = handler.toString();
+      assertOutputContains( output, "Giggle Starting..." );
+      assertOutputContains( output, "  Output directory: " );
+      assertOutputContains( output, "  Output Package: " );
+      assertOutputContains( output, "  Generators: " );
+      assertOutputContains( output, "  Schema files: " );
+      assertOutputContains( output, "  Document files: " );
+      assertOutputContains( output, "  Type mapping files: " );
+      assertOutputContains( output, "  Fragment mapping files: " );
+      assertOutputContains( output, "  Property Defines:\n" );
+      assertOutputContains( output, "    myKey1=myValue" );
+      assertOutputContains( output, "    myKey2=myValue" );
     } );
   }
 
@@ -110,9 +152,9 @@ public class MainTest
                       "--output-directory", "output",
                       "--package", "com.example.model",
                       "--schema", "schema.graphql",
-                      "--generator=graphql-java-server" );
+                      "--generator=java-server" );
       assertEquals( handler.toString(), "" );
-      assertEquals( environment.getGenerators(), Collections.singletonList( "graphql-java-server" ) );
+      assertEquals( environment.getGenerators(), Collections.singletonList( "java-server" ) );
     } );
   }
 
@@ -129,10 +171,10 @@ public class MainTest
                       "--output-directory", "output",
                       "--package", "com.example.model",
                       "--schema", "schema.graphql",
-                      "--generator=graphql-java-server",
-                      "--generator=graphql-java-client" );
+                      "--generator=java-server",
+                      "--generator=java-client" );
       assertEquals( handler.toString(), "" );
-      assertEquals( environment.getGenerators(), Arrays.asList( "graphql-java-server", "graphql-java-client" ) );
+      assertEquals( environment.getGenerators(), Arrays.asList( "java-server", "java-client" ) );
     } );
   }
 
@@ -367,13 +409,14 @@ public class MainTest
     throws Exception
   {
     inIsolatedDirectory( () -> {
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "" ),
-                              Document.newDocument().build(),
-                              Collections.emptyMap(),
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( buildGraphQLSchema( "" ),
+                                    Document.newDocument().build(),
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
       Main.verifyTypeMapping( context );
     } );
   }
@@ -385,15 +428,16 @@ public class MainTest
     inIsolatedDirectory( () -> {
       final HashMap<String, String> typeMapping = new HashMap<>();
       typeMapping.put( "Person", "com.biz.Person" );
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "type Person {\n" +
-                                                  "  name: String\n" +
-                                                  "}\n" ),
-                              Document.newDocument().build(),
-                              typeMapping,
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( buildGraphQLSchema( "type Person {\n" +
+                                                        "  name: String\n" +
+                                                        "}\n" ),
+                                    Document.newDocument().build(),
+                                    typeMapping,
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
       Main.verifyTypeMapping( context );
     } );
   }
@@ -405,18 +449,125 @@ public class MainTest
     inIsolatedDirectory( () -> {
       final HashMap<String, String> typeMapping = new HashMap<>();
       typeMapping.put( "Person", "com.biz.Person" );
-      final GeneratorContext context =
-        new GeneratorContext( buildGraphQLSchema( "" ),
-                              Document.newDocument().build(),
-                              typeMapping,
-                              Collections.emptyMap(),
-                              FileUtil.createLocalTempDir(),
-                              "com.example" );
+      final GlobalGeneratorContext context =
+        new GlobalGeneratorContext( buildGraphQLSchema( "" ),
+                                    Document.newDocument().build(),
+                                    typeMapping,
+                                    Collections.emptyMap(),
+                                    Collections.emptyMap(),
+                                    FileUtil.createLocalTempDir(),
+                                    "com.example" );
       final TerminalStateException exception =
         expectThrows( TerminalStateException.class, () -> Main.verifyTypeMapping( context ) );
       assertEquals( exception.getMessage(),
                     "Type mapping attempted to map the type named 'Person' to com.biz.Person but there is no type named 'Person'" );
       assertEquals( exception.getExitCode(), ExitCodes.BAD_TYPE_MAPPING_EXIT_CODE );
+    } );
+  }
+
+  @Test
+  public void processOptions_singleDefine()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.getGeneratorRepository().registerGenerator( new TestGenerator() );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "--generator=test-generator",
+                      "-Dmyprop=value" );
+      assertEquals( handler.toString(), "" );
+      final Map<String, String> defines = environment.getDefines();
+      assertEquals( defines.size(), 1 );
+      assertEquals( defines.get( "myprop" ), "value" );
+    } );
+  }
+
+  @Test
+  public void processOptions_multipleDefines()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.getGeneratorRepository().registerGenerator( new TestGenerator() );
+      processOptions( true,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "--generator=test-generator",
+                      "-Dmyprop=value",
+                      "-Dmyprop2=value2" );
+      assertEquals( handler.toString(), "" );
+      final Map<String, String> defines = environment.getDefines();
+      assertEquals( defines.size(), 2 );
+      assertEquals( defines.get( "myprop" ), "value" );
+      assertEquals( defines.get( "myprop2" ), "value2" );
+    } );
+  }
+
+  @Test
+  public void processOptions_requiredDefineNotPresent()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.getGeneratorRepository().registerGenerator( new TestGenerator() );
+      processOptions( false,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "--generator=test-generator",
+                      "-Dmyprop2=value2" );
+      assertEquals( handler.toString(),
+                    "Error: Property named 'myprop' is required by the generator named 'test-generator' but has not been defined." );
+    } );
+  }
+
+  @Test
+  public void processOptions_defineNotUsed()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( false,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "-Dnotused=value" );
+      assertEquals( handler.toString(), "Error: Property defined with name 'notused' is not used by any generator." );
+    } );
+  }
+
+  @Test
+  public void processOptions_duplicateDefines()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( false,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "-Dmyprop=value",
+                      "-Dmyprop=value" );
+      assertEquals( handler.toString(), "Error: Duplicate property defined specified: myprop" );
     } );
   }
 
@@ -447,5 +598,25 @@ public class MainTest
   private Path toPath( @Nonnull final String filename )
   {
     return FileUtil.getCurrentDirectory().resolve( filename );
+  }
+
+  @Generator.MetaData( name = "test-generator" )
+  private static class TestGenerator
+    implements Generator
+  {
+    @Nonnull
+    @Override
+    public Set<PropertyDef> getSupportedProperties()
+    {
+      final Set<PropertyDef> propertyDefs = new HashSet<>();
+      propertyDefs.add( new PropertyDef( "myprop", true, "a required property for testing" ) );
+      propertyDefs.add( new PropertyDef( "myprop2", false, "another property for testing" ) );
+      return propertyDefs;
+    }
+
+    @Override
+    public void generate( @Nonnull final GeneratorContext context )
+    {
+    }
   }
 }

@@ -7,8 +7,10 @@ import graphql.schema.idl.errors.SchemaProblem;
 import graphql.validation.ValidationError;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -23,9 +25,11 @@ import org.realityforge.giggle.document.DocumentReadException;
 import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.generator.GenerateException;
-import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GeneratorEntry;
 import org.realityforge.giggle.generator.GeneratorRepository;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.generator.NoSuchGeneratorException;
+import org.realityforge.giggle.generator.PropertyDef;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
 import org.realityforge.giggle.util.IoUtil;
@@ -39,6 +43,7 @@ public class Main
   private static final int HELP_OPT = 'h';
   private static final int QUIET_OPT = 'q';
   private static final int VERBOSE_OPT = 'v';
+  private static final int DEFINE_OPT = 'D';
   private static final int SCHEMA_FILE_OPT = 1;
   private static final int DOCUMENT_FILE_OPT = 2;
   private static final int TYPE_MAPPING_FILE_OPT = 3;
@@ -78,6 +83,10 @@ public class Main
                               CLOptionDescriptor.ARGUMENT_REQUIRED | CLOptionDescriptor.DUPLICATES_ALLOWED,
                               FRAGMENT_MAPPING_FILE_OPT,
                               "The path to a mapping file for fragments." ),
+      new CLOptionDescriptor( "define",
+                              CLOptionDescriptor.ARGUMENTS_REQUIRED_2 | CLOptionDescriptor.DUPLICATES_ALLOWED,
+                              DEFINE_OPT,
+                              "Define a property used by the generators." ),
       new CLOptionDescriptor( "package",
                               CLOptionDescriptor.ARGUMENT_REQUIRED,
                               PACKAGE_NAME_OPT,
@@ -123,18 +132,18 @@ public class Main
       if ( !generators.isEmpty() )
       {
         IoUtil.deleteDirIfExists( environment.getOutputDirectory() );
-        final GeneratorContext context =
-          new GeneratorContext( schema,
-                                document,
-                                typeMapping,
-                                fragmentMapping,
-                                environment.getOutputDirectory(),
-                                environment.getPackageName() );
+        final GlobalGeneratorContext context =
+          new GlobalGeneratorContext( schema,
+                                      document,
+                                      typeMapping,
+                                      fragmentMapping,
+                                      environment.getDefines(),
+                                      environment.getOutputDirectory(),
+                                      environment.getPackageName() );
         verifyTypeMapping( context );
-        final GeneratorRepository generatorRepository = new GeneratorRepository();
         for ( final String generator : generators )
         {
-          generatorRepository.generate( generator, context );
+          environment.getGeneratorRepository().getGenerator( generator ).generate( context );
         }
       }
     }
@@ -224,7 +233,7 @@ public class Main
     return ExitCodes.SUCCESS_EXIT_CODE;
   }
 
-  static void verifyTypeMapping( @Nonnull final GeneratorContext context )
+  static void verifyTypeMapping( @Nonnull final GlobalGeneratorContext context )
   {
     final GraphQLSchema schema = context.getSchema();
     for ( final Map.Entry<String, String> entry : context.getTypeMapping().entrySet() )
@@ -306,6 +315,18 @@ public class Main
           }
           break;
         }
+        case DEFINE_OPT:
+        {
+          final String key = option.getArgument( 0 );
+          final String value = option.getArgument( 1 );
+          if ( environment.getDefines().containsKey( key ) )
+          {
+            logger.log( Level.SEVERE, "Error: Duplicate property defined specified: " + key );
+            return false;
+          }
+          environment.addDefine( key, value );
+          break;
+        }
         case OUTPUT_DIRECTORY_OPT:
         {
           final String argument = option.getArgument();
@@ -370,7 +391,60 @@ public class Main
       return false;
     }
 
+    if ( !verifyDefines( environment ) )
+    {
+      return false;
+    }
+
     printBanner( environment );
+
+    return true;
+  }
+
+  private static boolean verifyDefines( @Nonnull final Environment environment )
+  {
+    final GeneratorRepository repository = environment.getGeneratorRepository();
+    final Set<String> generatorNames = repository.getGeneratorNames();
+    final Map<String, String> defines = environment.getDefines();
+    if ( !defines.isEmpty() )
+    {
+      for ( final String propertyKey : defines.keySet() )
+      {
+        boolean propertyMatched = false;
+        for ( final String generatorName : generatorNames )
+        {
+          final GeneratorEntry generator = repository.getGenerator( generatorName );
+          if ( generator.getSupportedProperties().containsKey( propertyKey ) )
+          {
+            propertyMatched = true;
+            break;
+          }
+        }
+        if ( !propertyMatched )
+        {
+          final String message =
+            "Error: Property defined with name '" + propertyKey + "' is not used by any generator.";
+          environment.logger().log( Level.SEVERE, message );
+          return false;
+        }
+      }
+    }
+
+    for ( final String generatorName : environment.getGenerators() )
+    {
+      final GeneratorEntry generator = repository.getGenerator( generatorName );
+      for ( final PropertyDef property : generator.getSupportedProperties().values() )
+      {
+        if ( property.isRequired() && !defines.containsKey( property.getKey() ) )
+        {
+          final String message =
+            "Error: Property named '" + property.getKey() + "' is required by the generator named '" +
+            generatorName + "' but has not been defined.";
+          environment.logger().log( Level.SEVERE, message );
+          return false;
+        }
+      }
+    }
 
     return true;
   }
@@ -388,6 +462,15 @@ public class Main
       logger.log( Level.FINE, "  Document files: " + environment.getDocumentFiles() );
       logger.log( Level.FINE, "  Type mapping files: " + environment.getTypeMappingFiles() );
       logger.log( Level.FINE, "  Fragment mapping files: " + environment.getTypeMappingFiles() );
+      final Map<String, String> defines = environment.getDefines();
+      if ( !defines.isEmpty() )
+      {
+        logger.log( Level.FINE, "  Property Defines:" );
+        for ( final Map.Entry<String, String> property : defines.entrySet() )
+        {
+          logger.log( Level.FINE, "    " + property.getKey() + "=" + property.getValue() );
+        }
+      }
     }
   }
 
@@ -415,12 +498,37 @@ public class Main
   {
     final Logger logger = environment.logger();
     logger.info( "java " + Main.class.getName() + " [options]" );
-    logger.info( "\tOptions:" );
+    logger.info( "" );
+    logger.info( "Options:" );
     final String[] options =
-      CLUtil.describeOptions( OPTIONS ).toString().split( System.getProperty( "line.separator" ) );
+      CLUtil.describeOptions( OPTIONS )
+        .toString()
+        .replace( "\t", "  " )
+        .split( System.getProperty( "line.separator" ) );
     for ( final String line : options )
     {
       logger.info( line );
+    }
+    final GeneratorRepository repository = environment.getGeneratorRepository();
+    logger.info( "" );
+    logger.info( "Supported Generators:" );
+    for ( final String generatorName : repository.getGeneratorNames() )
+    {
+      final GeneratorEntry generator = repository.getGenerator( generatorName );
+      logger.info( "  " + generatorName );
+      final Collection<PropertyDef> properties = generator.getSupportedProperties().values();
+      if ( !properties.isEmpty() )
+      {
+        logger.info( "   Supported Properties:" );
+        for ( final PropertyDef property : properties )
+        {
+          logger.info( "   - " +
+                       property.getKey() +
+                       ( property.isRequired() ? " (required)" : "" ) +
+                       ": " +
+                       property.getDescription() );
+        }
+      }
     }
   }
 }

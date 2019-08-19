@@ -3,11 +3,14 @@ package org.realityforge.giggle;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.realityforge.giggle.generator.GeneratorRepository;
 
 final class Environment
 {
@@ -23,12 +26,16 @@ final class Environment
   private final List<Path> _typeMappingFiles = new ArrayList<>();
   @Nonnull
   private final List<Path> _fragmentMappingFiles = new ArrayList<>();
+  @Nonnull
+  private final Map<String, String> _defines = new HashMap<>();
   @Nullable
   private Path _outputDirectory;
   @Nullable
   private String _packageName;
   @Nonnull
   private final List<String> _generators = new ArrayList<>();
+  @Nonnull
+  private final GeneratorRepository _generatorRepository = new GeneratorRepository();
 
   Environment( @Nonnull final Path currentDirectory, @Nonnull final Logger logger )
   {
@@ -108,6 +115,17 @@ final class Environment
     _outputDirectory = Objects.requireNonNull( outputDirectory );
   }
 
+  @Nonnull
+  Map<String, String> getDefines()
+  {
+    return Collections.unmodifiableMap( _defines );
+  }
+
+  void addDefine( @Nonnull final String key, @Nonnull final String value )
+  {
+    _defines.put( key, value );
+  }
+
   boolean hasPackageName()
   {
     return null != _packageName;
@@ -133,5 +151,11 @@ final class Environment
   List<String> getGenerators()
   {
     return Collections.unmodifiableList( _generators );
+  }
+
+  @Nonnull
+  GeneratorRepository getGeneratorRepository()
+  {
+    return _generatorRepository;
   }
 }

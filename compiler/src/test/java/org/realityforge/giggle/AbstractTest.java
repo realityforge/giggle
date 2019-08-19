@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.document.DocumentRepository;
-import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.schema.SchemaRepository;
 import static org.testng.Assert.*;
 
@@ -37,6 +37,13 @@ public abstract class AbstractTest
                 "Expected output\n---\n" + output + "\n---\nto contain text\n---\n" + text + "\n---\n" );
   }
 
+  @SuppressWarnings( "SameParameterValue" )
+  final void assertOutputNotContains( @Nonnull final String output, @Nonnull final String text )
+  {
+    assertFalse( output.contains( text ),
+                 "Expected output\n---\n" + output + "\n---\nto not contain text\n---\n" + text + "\n---\n" );
+  }
+
   final Environment newEnvironment()
   {
     return newEnvironment( new TestHandler() );
@@ -57,15 +64,16 @@ public abstract class AbstractTest
   }
 
   @Nonnull
-  protected final GeneratorContext newContext( @Nonnull final Path outputDir )
+  protected final GlobalGeneratorContext newContext( @Nonnull final Path outputDir )
     throws IOException
   {
-    return new GeneratorContext( buildGraphQLSchema( "" ),
-                                 Document.newDocument().build(),
-                                 Collections.emptyMap(),
-                                 Collections.emptyMap(),
-                                 outputDir,
-                                 "com.example" );
+    return new GlobalGeneratorContext( buildGraphQLSchema( "" ),
+                                       Document.newDocument().build(),
+                                       Collections.emptyMap(),
+                                       Collections.emptyMap(),
+                                       Collections.emptyMap(),
+                                       outputDir,
+                                       "com.example" );
   }
 
   @Nonnull
