@@ -113,7 +113,7 @@ final class Environment
   }
 
   @Nonnull
-  public Map<String, String> getDefines()
+  Map<String, String> getDefines()
   {
     return Collections.unmodifiableMap( _defines );
   }
