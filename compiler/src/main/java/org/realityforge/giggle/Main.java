@@ -403,6 +403,15 @@ public class Main
       logger.log( Level.FINE, "  Document files: " + environment.getDocumentFiles() );
       logger.log( Level.FINE, "  Type mapping files: " + environment.getTypeMappingFiles() );
       logger.log( Level.FINE, "  Fragment mapping files: " + environment.getTypeMappingFiles() );
+      final Map<String, String> defines = environment.getDefines();
+      if ( !defines.isEmpty() )
+      {
+        logger.log( Level.FINE, "  Property Defines:" );
+        for ( final Map.Entry<String, String> property : defines.entrySet() )
+        {
+          logger.log( Level.FINE, "    " + property.getKey() + "=" + property.getValue() );
+        }
+      }
     }
   }
 

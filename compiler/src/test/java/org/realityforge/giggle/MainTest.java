@@ -70,6 +70,35 @@ public class MainTest
       assertOutputContains( output, "  Document files: " );
       assertOutputContains( output, "  Type mapping files: " );
       assertOutputContains( output, "  Fragment mapping files: " );
+      assertOutputNotContains( output, "  Property Defines:\n" );
+    } );
+  }
+
+  @Test
+  public void printBanner_withDefines()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      environment.setOutputDirectory( FileUtil.getCurrentDirectory().resolve( "generated" ) );
+      environment.setPackageName( "com.biz" );
+      environment.addDefine( "myKey1", "myValue" );
+      environment.addDefine( "myKey2", "myValue" );
+      environment.logger().setLevel( Level.ALL );
+      Main.printBanner( environment );
+      final String output = handler.toString();
+      assertOutputContains( output, "Giggle Starting..." );
+      assertOutputContains( output, "  Output directory: " );
+      assertOutputContains( output, "  Output Package: " );
+      assertOutputContains( output, "  Generators: " );
+      assertOutputContains( output, "  Schema files: " );
+      assertOutputContains( output, "  Document files: " );
+      assertOutputContains( output, "  Type mapping files: " );
+      assertOutputContains( output, "  Fragment mapping files: " );
+      assertOutputContains( output, "  Property Defines:\n" );
+      assertOutputContains( output, "    myKey1=myValue" );
+      assertOutputContains( output, "    myKey2=myValue" );
     } );
   }
 
