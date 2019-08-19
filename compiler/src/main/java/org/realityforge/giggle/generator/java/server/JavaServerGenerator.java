@@ -60,8 +60,7 @@ public class JavaServerGenerator
     final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
     final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), inputTypeMap );
     final Map<GraphQLType, String> generatedTypeMap = extractGeneratedDataTypes( context, types );
-    final Map<GraphQLType, String> fullTypeMap = new HashMap<>();
-    fullTypeMap.putAll( inputTypeMap );
+    final Map<GraphQLType, String> fullTypeMap = new HashMap<>( inputTypeMap );
     fullTypeMap.putAll( generatedTypeMap );
     for ( final GraphQLType type : types )
     {
