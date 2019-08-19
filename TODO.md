@@ -4,9 +4,6 @@ This document is essentially a list of shorthand notes describing work yet to co
 Unfortunately it is not complete enough for other people to pick work off the list and
 complete as there is too much un-said.
 
-* Each generator can declare required and optional properties and runner will verify required are present and
-  no unused are present. The generators can also declare documentation associated with the properties.
-
 * Convert between plural values in response and singular type. Maybe should name it with the underlying types name
   unless an alias is present? Probably we use the type if there is only one field of that type, otherwise we prefix
   type with name and/or alias or some other combination.
