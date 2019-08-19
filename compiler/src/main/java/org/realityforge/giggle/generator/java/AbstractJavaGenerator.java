@@ -4,6 +4,7 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.TypeSpec;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
+import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -84,6 +86,25 @@ public abstract class AbstractJavaGenerator
       Files.createDirectories( dir );
     }
     Files.write( file, bytes );
+  }
+
+  /**
+   * Return a list of types that can be generated and have not been supplied by an external tool.
+   * The method removes introspection types and any existing types and returns the remaining types.
+   *
+   * @param schema   the schema to process.
+   * @param existing existing types.
+   * @return the list of types
+   */
+  @Nonnull
+  protected final List<GraphQLType> extractTypesToGenerate( @Nonnull final GraphQLSchema schema,
+                                                            @Nonnull final Map<GraphQLType, String> existing )
+  {
+    return schema.getAllTypesAsList()
+      .stream()
+      .filter( this::isNotIntrospectionType )
+      .filter( t -> !existing.containsKey( t ) )
+      .collect( Collectors.toList() );
   }
 
   @Nonnull

@@ -61,14 +61,8 @@ public class JavaClientGenerator
     throws Exception
   {
     final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
+    final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), inputTypeMap );
     final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
-    final GraphQLSchema schema = context.getSchema();
-    final List<GraphQLType> types =
-      schema.getAllTypesAsList()
-        .stream()
-        .filter( this::isNotIntrospectionType )
-        .filter( t -> !inputTypeMap.containsKey( t ) )
-        .collect( Collectors.toList() );
     for ( final GraphQLType type : types )
     {
       if ( type instanceof GraphQLEnumType | type instanceof GraphQLInputObjectType )

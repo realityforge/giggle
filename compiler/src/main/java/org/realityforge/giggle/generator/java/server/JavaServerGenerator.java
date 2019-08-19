@@ -22,7 +22,6 @@ import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
-import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import graphql.schema.GraphQLUnmodifiedType;
@@ -59,14 +58,8 @@ public class JavaServerGenerator
     throws Exception
   {
     final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
+    final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), inputTypeMap );
     final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
-    final GraphQLSchema schema = context.getSchema();
-    final List<GraphQLType> types =
-      schema.getAllTypesAsList()
-        .stream()
-        .filter( this::isNotIntrospectionType )
-        .filter( t -> !inputTypeMap.containsKey( t ) )
-        .collect( Collectors.toList() );
     for ( final GraphQLType type : types )
     {
       if ( type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType )
