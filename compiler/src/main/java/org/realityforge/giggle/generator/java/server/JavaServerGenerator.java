@@ -307,7 +307,7 @@ public class JavaServerGenerator
     for ( final GraphQLArgument argument : arguments )
     {
       final String argName = argument.getName();
-      final String name = VAR_PREFIX + argName;
+      final String name = GEN_PREFIX + argName;
       final TypeName typeName = argTypes.get( argument );
       final GraphQLType graphQLType = argument.getType();
 
@@ -657,7 +657,7 @@ public class JavaServerGenerator
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
       final String fieldName = field.getName();
-      final String name = VAR_PREFIX + fieldName;
+      final String name = GEN_PREFIX + fieldName;
       final TypeName typeName = fieldTypes.get( field );
       final GraphQLType graphQLType = field.getType();
 
