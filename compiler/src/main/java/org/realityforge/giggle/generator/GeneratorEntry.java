@@ -58,7 +58,7 @@ public final class GeneratorEntry
     }
     catch ( final Throwable t )
     {
-      throw new GenerateException( getName(), t );
+      throw new GenerateException( getName(), t.getMessage(), t );
     }
   }
 }

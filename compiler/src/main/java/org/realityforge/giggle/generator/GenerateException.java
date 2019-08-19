@@ -10,9 +10,9 @@ public class GenerateException
   @Nonnull
   private final String _name;
 
-  public GenerateException( @Nonnull final String name, @Nullable final Throwable cause )
+  public GenerateException( @Nonnull final String name, @Nonnull final String message, @Nullable final Throwable cause )
   {
-    super( cause );
+    super( message, cause );
     _name = Objects.requireNonNull( name );
   }
 
