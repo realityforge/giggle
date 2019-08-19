@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -23,7 +24,9 @@ import org.realityforge.giggle.document.DocumentReadException;
 import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.generator.GenerateException;
+import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.GeneratorRepository;
 import org.realityforge.giggle.generator.NoSuchGeneratorException;
 import org.realityforge.giggle.schema.SchemaReadException;
 import org.realityforge.giggle.schema.SchemaRepository;
@@ -385,8 +388,44 @@ public class Main
       return false;
     }
 
+    if ( !verifyDefines( environment ) )
+    {
+      return false;
+    }
+
     printBanner( environment );
 
+    return true;
+  }
+
+  private static boolean verifyDefines( @Nonnull final Environment environment )
+  {
+    final GeneratorRepository repository = environment.getGeneratorRepository();
+    final Set<String> generatorNames = repository.getGeneratorNames();
+    final Map<String, String> defines = environment.getDefines();
+    if ( !defines.isEmpty() )
+    {
+      for ( final String propertyKey : defines.keySet() )
+      {
+        boolean propertyMatched = false;
+        for ( final String generatorName : generatorNames )
+        {
+          final Generator generator = repository.getGenerator( generatorName );
+          if ( generator.getSupportedProperties().stream().anyMatch( p -> p.getKey().equals( propertyKey ) ) )
+          {
+            propertyMatched = true;
+            break;
+          }
+        }
+        if ( !propertyMatched )
+        {
+          final String message =
+            "Error: Property defined with name '" + propertyKey + "' is not used by any generator.";
+          environment.logger().log( Level.SEVERE, message );
+          return false;
+        }
+      }
+    }
     return true;
   }
 

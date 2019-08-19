@@ -7,11 +7,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.PropertyDef;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -460,11 +464,13 @@ public class MainTest
       writeFile( "schema.graphql" );
       final TestHandler handler = new TestHandler();
       final Environment environment = newEnvironment( handler );
+      environment.getGeneratorRepository().registerGenerator( new TestGenerator() );
       processOptions( true,
                       environment,
                       "--output-directory", "output",
                       "--package", "com.example.model",
                       "--schema", "schema.graphql",
+                      "--generator=test-generator",
                       "-Dmyprop=value" );
       assertEquals( handler.toString(), "" );
       final Map<String, String> defines = environment.getDefines();
@@ -481,11 +487,13 @@ public class MainTest
       writeFile( "schema.graphql" );
       final TestHandler handler = new TestHandler();
       final Environment environment = newEnvironment( handler );
+      environment.getGeneratorRepository().registerGenerator( new TestGenerator() );
       processOptions( true,
                       environment,
                       "--output-directory", "output",
                       "--package", "com.example.model",
                       "--schema", "schema.graphql",
+                      "--generator=test-generator",
                       "-Dmyprop=value",
                       "-Dmyprop2=value2" );
       assertEquals( handler.toString(), "" );
@@ -493,6 +501,24 @@ public class MainTest
       assertEquals( defines.size(), 2 );
       assertEquals( defines.get( "myprop" ), "value" );
       assertEquals( defines.get( "myprop2" ), "value2" );
+    } );
+  }
+
+  @Test
+  public void processOptions_defineNotUsed()
+    throws Exception
+  {
+    inIsolatedDirectory( () -> {
+      writeFile( "schema.graphql" );
+      final TestHandler handler = new TestHandler();
+      final Environment environment = newEnvironment( handler );
+      processOptions( false,
+                      environment,
+                      "--output-directory", "output",
+                      "--package", "com.example.model",
+                      "--schema", "schema.graphql",
+                      "-Dnotused=value" );
+      assertEquals( handler.toString(), "Error: Property defined with name 'notused' is not used by any generator." );
     } );
   }
 
@@ -542,5 +568,25 @@ public class MainTest
   private Path toPath( @Nonnull final String filename )
   {
     return FileUtil.getCurrentDirectory().resolve( filename );
+  }
+
+  @Generator.MetaData( name = "test-generator" )
+  private static class TestGenerator
+    implements Generator
+  {
+    @Nonnull
+    @Override
+    public Set<PropertyDef> getSupportedProperties()
+    {
+      final Set<PropertyDef> propertyDefs = new HashSet<>();
+      propertyDefs.add( new PropertyDef( "myprop", false, "a property for testing" ) );
+      propertyDefs.add( new PropertyDef( "myprop2", false, "another property for testing" ) );
+      return propertyDefs;
+    }
+
+    @Override
+    public void generate( @Nonnull final GeneratorContext context )
+    {
+    }
   }
 }
