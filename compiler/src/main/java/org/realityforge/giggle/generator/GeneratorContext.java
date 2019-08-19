@@ -56,4 +56,33 @@ public final class GeneratorContext
   {
     return _context.getPackageName();
   }
+
+  @Nonnull
+  public String getRequiredProperty( @Nonnull final String name )
+  {
+    if ( !_generator.getProperty( name ).isRequired() )
+    {
+      final String message =
+        "Generator named '" + _generator.getName() + "' attempted to access property named '" + name +
+        "' as if it was required but declared the property as optional";
+      throw new IllegalStateException( message );
+    }
+    final String value = _context.getDefines().get( name );
+    if( null == value )
+    {
+      final String message =
+        "Generator named '" + _generator.getName() + "' accessed required property named '" + name +
+        "' but no such property was defined";
+      throw new IllegalStateException( message );
+    }
+    return Objects.requireNonNull( value );
+  }
+
+  @Nullable
+  public String getProperty( @Nonnull final String name )
+  {
+    // getProperty verifies that property access is allowed
+    _generator.getProperty( name );
+    return _context.getDefines().get( name );
+  }
 }

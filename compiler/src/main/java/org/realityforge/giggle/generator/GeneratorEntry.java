@@ -61,4 +61,18 @@ public final class GeneratorEntry
       throw new GenerateException( getName(), t.getMessage(), t );
     }
   }
+
+  @Nonnull
+  public PropertyDef getProperty( @Nonnull final String name )
+  {
+    final PropertyDef propertyDef = _properties.get( name );
+    if ( null == propertyDef )
+    {
+      final String message =
+        "Generator named '" + getName() + "' attempted to access property named '" + name +
+        "' but did not declare property";
+      throw new IllegalStateException( message );
+    }
+    return propertyDef;
+  }
 }
