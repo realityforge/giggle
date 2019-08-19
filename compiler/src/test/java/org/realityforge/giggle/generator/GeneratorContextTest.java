@@ -4,7 +4,7 @@ import gir.io.FileUtil;
 import graphql.language.Document;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.realityforge.giggle.AbstractTest;
@@ -29,9 +29,9 @@ public class GeneratorContextTest
   {
     @Nonnull
     @Override
-    public Set<PropertyDef> getSupportedProperties()
+    public List<PropertyDef> getSupportedProperties()
     {
-      return Collections.singleton( new PropertyDef( "Foo", false, "A test prop" ) );
+      return Collections.singletonList( new PropertyDef( "Foo", false, "A test prop" ) );
     }
 
     @Override
@@ -54,9 +54,9 @@ public class GeneratorContextTest
 
     @Nonnull
     @Override
-    public Set<PropertyDef> getSupportedProperties()
+    public List<PropertyDef> getSupportedProperties()
     {
-      return Collections.singleton( new PropertyDef( "Foo", false, "A test prop" ) );
+      return Collections.singletonList( new PropertyDef( "Foo", false, "A test prop" ) );
     }
 
     @Override
@@ -79,9 +79,9 @@ public class GeneratorContextTest
 
     @Nonnull
     @Override
-    public Set<PropertyDef> getSupportedProperties()
+    public List<PropertyDef> getSupportedProperties()
     {
-      return Collections.singleton( new PropertyDef( "Foo", true, "A test prop" ) );
+      return Collections.singletonList( new PropertyDef( "Foo", true, "A test prop" ) );
     }
 
     @Override

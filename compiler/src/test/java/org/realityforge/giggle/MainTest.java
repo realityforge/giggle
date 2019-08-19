@@ -4,13 +4,12 @@ import gir.io.FileUtil;
 import graphql.language.Document;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.generator.Generator;
@@ -550,9 +549,9 @@ public class MainTest
   {
     @Nonnull
     @Override
-    public Set<PropertyDef> getSupportedProperties()
+    public List<PropertyDef> getSupportedProperties()
     {
-      final Set<PropertyDef> propertyDefs = new HashSet<>();
+      final List<PropertyDef> propertyDefs = new ArrayList<>();
       propertyDefs.add( new PropertyDef( "myprop", true, "a required property for testing" ) );
       propertyDefs.add( new PropertyDef( "myprop2", false, "another property for testing" ) );
       return propertyDefs;

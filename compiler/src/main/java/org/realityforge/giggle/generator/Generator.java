@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
@@ -20,9 +21,9 @@ public interface Generator
   }
 
   @Nonnull
-  default Set<PropertyDef> getSupportedProperties()
+  default List<PropertyDef> getSupportedProperties()
   {
-    return Collections.emptySet();
+    return Collections.emptyList();
   }
 
   void generate( @Nonnull GeneratorContext context )
