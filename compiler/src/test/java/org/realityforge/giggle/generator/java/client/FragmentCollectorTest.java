@@ -20,207 +20,195 @@ public class FragmentCollectorTest
   public void collectFragments_noFragments()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final GraphQLSchema schema =
-        buildGraphQLSchema( "type Person {\n" +
-                            "  name: String\n" +
-                            "}\n" +
-                            "extend type Query {\n" +
-                            "  person: Person" +
-                            "}\n" );
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Person {\n" +
+                          "  name: String\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
 
-      final Document document =
-        buildDocument( schema,
-                       "query myQuery {\n" +
-                       "  person {\n" +
-                       "    name\n" +
-                       "  }\n" +
-                       "}\n" );
+    final Document document =
+      buildDocument( schema,
+                     "query myQuery {\n" +
+                     "  person {\n" +
+                     "    name\n" +
+                     "  }\n" +
+                     "}\n" );
 
-      final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "myQuery" );
+    final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "myQuery" );
 
-      assertEquals( fragmentDefinitions.size(), 0 );
-    } );
+    assertEquals( fragmentDefinitions.size(), 0 );
   }
 
   @Test
   public void collectFragments_singleFragment()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final GraphQLSchema schema =
-        buildGraphQLSchema( "type Person {\n" +
-                            "  name: String\n" +
-                            "}\n" +
-                            "extend type Query {\n" +
-                            "  person: Person" +
-                            "}\n" );
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Person {\n" +
+                          "  name: String\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
 
-      final Document document =
-        buildDocument( schema,
-                       "fragment Nameable on Person { name }\n" +
-                       "query aQuery {\n" +
-                       "  person {\n" +
-                       "    ...Nameable\n" +
-                       "  }\n" +
-                       "}\n" );
+    final Document document =
+      buildDocument( schema,
+                     "fragment Nameable on Person { name }\n" +
+                     "query aQuery {\n" +
+                     "  person {\n" +
+                     "    ...Nameable\n" +
+                     "  }\n" +
+                     "}\n" );
 
-      final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
+    final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
 
-      assertEquals( fragmentDefinitions.size(), 1 );
-      assertEquals( fragmentDefinitions.get( 0 ).getName(), "Nameable" );
-    } );
+    assertEquals( fragmentDefinitions.size(), 1 );
+    assertEquals( fragmentDefinitions.get( 0 ).getName(), "Nameable" );
   }
 
   @Test
   public void collectFragments_multipleFragments()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final GraphQLSchema schema =
-        buildGraphQLSchema( "type Person {\n" +
-                            "  name: String\n" +
-                            "  age: Int\n" +
-                            "}\n" +
-                            "extend type Query {\n" +
-                            "  person: Person" +
-                            "}\n" );
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Person {\n" +
+                          "  name: String\n" +
+                          "  age: Int\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
 
-      final Document document =
-        buildDocument( schema,
-                       "fragment Nameable on Person { name }\n" +
-                       "fragment Aging on Person { age }\n" +
-                       "query aQuery {\n" +
-                       "  person {\n" +
-                       "    ...Nameable\n" +
-                       "    ...Aging\n" +
-                       "  }\n" +
-                       "}\n" );
+    final Document document =
+      buildDocument( schema,
+                     "fragment Nameable on Person { name }\n" +
+                     "fragment Aging on Person { age }\n" +
+                     "query aQuery {\n" +
+                     "  person {\n" +
+                     "    ...Nameable\n" +
+                     "    ...Aging\n" +
+                     "  }\n" +
+                     "}\n" );
 
-      final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
-      assertEquals( fragmentDefinitions.stream()
-                      .map( FragmentDefinition::getName )
-                      .sorted()
-                      .collect( Collectors.toList() ),
-                    Arrays.asList( "Aging", "Nameable" ) );
-    } );
+    final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
+    assertEquals( fragmentDefinitions.stream()
+                    .map( FragmentDefinition::getName )
+                    .sorted()
+                    .collect( Collectors.toList() ),
+                  Arrays.asList( "Aging", "Nameable" ) );
   }
 
   @Test
   public void collectFragments_nestedFragments()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final GraphQLSchema schema =
-        buildGraphQLSchema( "type Person {\n" +
-                            "  id: ID!\n" +
-                            "  name: String\n" +
-                            "  age: Int\n" +
-                            "}\n" +
-                            "extend type Query {\n" +
-                            "  person: Person" +
-                            "}\n" );
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Person {\n" +
+                          "  id: ID!\n" +
+                          "  name: String\n" +
+                          "  age: Int\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
 
-      final Document document =
-        buildDocument( schema,
-                       "fragment Nameable on Person { name }\n" +
-                       "fragment Personish on Person { ...Nameable age }\n" +
-                       "query aQuery {\n" +
-                       "  person {\n" +
-                       "    id\n" +
-                       "    ...Personish\n" +
-                       "  }\n" +
-                       "}\n" );
+    final Document document =
+      buildDocument( schema,
+                     "fragment Nameable on Person { name }\n" +
+                     "fragment Personish on Person { ...Nameable age }\n" +
+                     "query aQuery {\n" +
+                     "  person {\n" +
+                     "    id\n" +
+                     "    ...Personish\n" +
+                     "  }\n" +
+                     "}\n" );
 
-      final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
-      assertEquals( fragmentDefinitions.stream()
-                      .map( FragmentDefinition::getName )
-                      .sorted()
-                      .collect( Collectors.toList() ),
-                    Arrays.asList( "Nameable", "Personish" ) );
-    } );
+    final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
+    assertEquals( fragmentDefinitions.stream()
+                    .map( FragmentDefinition::getName )
+                    .sorted()
+                    .collect( Collectors.toList() ),
+                  Arrays.asList( "Nameable", "Personish" ) );
   }
 
   @Test
   public void collectFragments_fragmentNestedInType()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final GraphQLSchema schema =
-        buildGraphQLSchema( "type Agency {\n" +
-                            "  id: ID!\n" +
-                            "  name: String\n" +
-                            "}\n" +
-                            "type Person {\n" +
-                            "  id: ID!\n" +
-                            "  name: String\n" +
-                            "  agency: Agency\n" +
-                            "}\n" +
-                            "extend type Query {\n" +
-                            "  person: Person" +
-                            "}\n" );
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Agency {\n" +
+                          "  id: ID!\n" +
+                          "  name: String\n" +
+                          "}\n" +
+                          "type Person {\n" +
+                          "  id: ID!\n" +
+                          "  name: String\n" +
+                          "  agency: Agency\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
 
-      final Document document =
-        buildDocument( schema,
-                       "fragment Nameable on Agency { name }\n" +
-                       "query aQuery {\n" +
-                       "  person {\n" +
-                       "    id\n" +
-                       "    agency {\n" +
-                       "      ...Nameable\n" +
-                       "    }\n" +
-                       "  }\n" +
-                       "}\n" );
+    final Document document =
+      buildDocument( schema,
+                     "fragment Nameable on Agency { name }\n" +
+                     "query aQuery {\n" +
+                     "  person {\n" +
+                     "    id\n" +
+                     "    agency {\n" +
+                     "      ...Nameable\n" +
+                     "    }\n" +
+                     "  }\n" +
+                     "}\n" );
 
-      final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
-      assertEquals( fragmentDefinitions.stream()
-                      .map( FragmentDefinition::getName )
-                      .sorted()
-                      .collect( Collectors.toList() ),
-                    Collections.singletonList( "Nameable" ) );
-    } );
+    final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
+    assertEquals( fragmentDefinitions.stream()
+                    .map( FragmentDefinition::getName )
+                    .sorted()
+                    .collect( Collectors.toList() ),
+                  Collections.singletonList( "Nameable" ) );
   }
 
   @Test
   public void collectFragments_fragmentNestedInInlineFragment()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final GraphQLSchema schema =
-        buildGraphQLSchema( "type Agency {\n" +
-                            "  id: ID!\n" +
-                            "  name: String\n" +
-                            "}\n" +
-                            "type Person {\n" +
-                            "  id: ID!\n" +
-                            "  name: String\n" +
-                            "  agency: Agency\n" +
-                            "}\n" +
-                            "extend type Query {\n" +
-                            "  person: Person" +
-                            "}\n" );
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Agency {\n" +
+                          "  id: ID!\n" +
+                          "  name: String\n" +
+                          "}\n" +
+                          "type Person {\n" +
+                          "  id: ID!\n" +
+                          "  name: String\n" +
+                          "  agency: Agency\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
 
-      final Document document =
-        buildDocument( schema,
-                       "fragment Nameable on Agency { name }\n" +
-                       "query aQuery {\n" +
-                       "  person {\n" +
-                       "    id\n" +
-                       "    ... @include(if: true) {\n" +
-                       "      agency {\n" +
-                       "        ...Nameable\n" +
-                       "      }\n" +
-                       "    }\n" +
-                       "  }\n" +
-                       "}\n" );
+    final Document document =
+      buildDocument( schema,
+                     "fragment Nameable on Agency { name }\n" +
+                     "query aQuery {\n" +
+                     "  person {\n" +
+                     "    id\n" +
+                     "    ... @include(if: true) {\n" +
+                     "      agency {\n" +
+                     "        ...Nameable\n" +
+                     "      }\n" +
+                     "    }\n" +
+                     "  }\n" +
+                     "}\n" );
 
-      final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
-      assertEquals( fragmentDefinitions.stream()
-                      .map( FragmentDefinition::getName )
-                      .sorted()
-                      .collect( Collectors.toList() ),
-                    Collections.singletonList( "Nameable" ) );
-    } );
+    final List<FragmentDefinition> fragmentDefinitions = collectFragments( document, "aQuery" );
+    assertEquals( fragmentDefinitions.stream()
+                    .map( FragmentDefinition::getName )
+                    .sorted()
+                    .collect( Collectors.toList() ),
+                  Collections.singletonList( "Nameable" ) );
   }
 
 

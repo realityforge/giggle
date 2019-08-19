@@ -1,7 +1,6 @@
 package org.realityforge.giggle;
 
 import gir.Gir;
-import gir.Task;
 import gir.io.FileUtil;
 import graphql.language.Document;
 import graphql.schema.GraphQLSchema;
@@ -13,14 +12,25 @@ import javax.annotation.Nonnull;
 import org.realityforge.giggle.document.DocumentRepository;
 import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.schema.SchemaRepository;
+import org.testng.IHookCallBack;
+import org.testng.IHookable;
+import org.testng.ITestResult;
 import static org.testng.Assert.*;
 
 public abstract class AbstractTest
+  implements IHookable
 {
-  protected final void inIsolatedDirectory( @Nonnull final Task task )
-    throws Exception
+  @Override
+  public void run( final IHookCallBack callBack, final ITestResult testResult )
   {
-    Gir.go( () -> FileUtil.inTempDir( task ) );
+    try
+    {
+      Gir.go( () -> FileUtil.inTempDir( () -> callBack.runTestMethod( testResult ) ) );
+    }
+    catch ( final Exception e )
+    {
+      assertNull( e );
+    }
   }
 
   @Nonnull

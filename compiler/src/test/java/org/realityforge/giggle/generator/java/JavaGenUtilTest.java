@@ -20,27 +20,25 @@ public class JavaGenUtilTest
   public void writeTopLevelType()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final Path dir = FileUtil.getCurrentDirectory();
-      final GlobalGeneratorContext globalGeneratorContext = newContext( dir );
-      final GeneratorContext context =
-        new GeneratorContext( new GeneratorEntry( new JavaServerGenerator() ), globalGeneratorContext );
-      final Path file = dir.resolve( "com/example/MyEnum.java" );
+    final Path dir = FileUtil.getCurrentDirectory();
+    final GlobalGeneratorContext globalGeneratorContext = newContext( dir );
+    final GeneratorContext context =
+      new GeneratorContext( new GeneratorEntry( new JavaServerGenerator() ), globalGeneratorContext );
+    final Path file = dir.resolve( "com/example/MyEnum.java" );
 
-      assertFalse( file.toFile().exists() );
+    assertFalse( file.toFile().exists() );
 
-      JavaGenUtil.writeTopLevelType( context, TypeSpec.enumBuilder( "MyEnum" ).addEnumConstant( "Foo" ) );
+    JavaGenUtil.writeTopLevelType( context, TypeSpec.enumBuilder( "MyEnum" ).addEnumConstant( "Foo" ) );
 
-      assertTrue( file.toFile().exists() );
-      assertEquals( new String( Files.readAllBytes( file ), StandardCharsets.US_ASCII ),
-                    "package com.example;\n" +
-                    "\n" +
-                    "import javax.annotation.Generated;\n" +
-                    "\n" +
-                    "@Generated(\"org.realityforge.giggle.Main\")\n" +
-                    "enum MyEnum {\n" +
-                    "  Foo\n" +
-                    "}\n" );
-    } );
+    assertTrue( file.toFile().exists() );
+    assertEquals( new String( Files.readAllBytes( file ), StandardCharsets.US_ASCII ),
+                  "package com.example;\n" +
+                  "\n" +
+                  "import javax.annotation.Generated;\n" +
+                  "\n" +
+                  "@Generated(\"org.realityforge.giggle.Main\")\n" +
+                  "enum MyEnum {\n" +
+                  "  Foo\n" +
+                  "}\n" );
   }
 }
