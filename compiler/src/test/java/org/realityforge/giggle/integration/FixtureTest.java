@@ -193,8 +193,7 @@ public class FixtureTest
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
       final StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null );
       final Path output = FileUtil.createLocalTempDir();
-      final Iterable<? extends JavaFileObject> compilationUnits =
-        fileManager.getJavaFileObjectsFromFiles( javaFiles );
+      final Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles( javaFiles );
       final DiagnosticCollector<JavaFileObject> listener = new DiagnosticCollector<>();
       final JavaCompiler.CompilationTask compilationTask =
         compiler.getTask( null,
