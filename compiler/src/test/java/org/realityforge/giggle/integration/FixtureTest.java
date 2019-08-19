@@ -4,6 +4,7 @@ import gir.io.FileUtil;
 import graphql.language.Document;
 import graphql.schema.GraphQLSchema;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,8 +13,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.tools.DiagnosticCollector;
@@ -64,6 +67,7 @@ public class FixtureTest
     final Path baseDir = fixtureDir().resolve( name );
     final Path inputDir = baseDir.resolve( "input" );
     final Path generatorOutputDir = baseDir.resolve( "output" ).resolve( generator );
+    final List<Path> defineFiles = collectFilesRecursively( inputDir, generator + ".properties" );
     final List<Path> schemaFiles = collectFilesRecursively( inputDir, ".graphqls" );
     final List<Path> documentFiles = collectFilesRecursively( inputDir, ".graphql" );
     final List<Path> typeMappingFiles = collectFilesRecursively( inputDir, "types.properties" );
@@ -83,12 +87,15 @@ public class FixtureTest
       fragmentMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( fragmentMappingFiles );
     final Path outputDirectory = FileUtil.createLocalTempDir();
 
+    final Map<String, String> defines = new HashMap<>();
+    defineFiles.forEach( d -> loadDefines( defines, d ) );
+
     final GlobalGeneratorContext context =
       new GlobalGeneratorContext( schema,
                                   document,
                                   typeMapping,
                                   fragmentMapping,
-                                  Collections.emptyMap(),
+                                  defines,
                                   outputDirectory,
                                   "com.example." + name );
 
@@ -104,6 +111,23 @@ public class FixtureTest
     ensureGeneratedCodeCompiles( javaFiles );
 
     assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
+  }
+
+  private void loadDefines( @Nonnull final Map<String, String> defines, @Nonnull final Path path )
+  {
+    final Properties properties = new Properties();
+    try
+    {
+      properties.load( new FileInputStream( path.toFile() ) );
+    }
+    catch ( final IOException ioe )
+    {
+      assertNull( ioe );
+    }
+    for ( final String propertyName : properties.stringPropertyNames() )
+    {
+      defines.put( propertyName, properties.getProperty( propertyName ) );
+    }
   }
 
   @Nonnull
