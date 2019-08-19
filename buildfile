@@ -46,7 +46,10 @@ define 'giggle' do
 
     test.using :testng
     test.with :gir, :guiceyloops
-    test.options[:properties] = { 'giggle.fixture_dir' => _('src/test/fixtures') }
+    test.options[:properties] = {
+      'giggle.fixture_dir' => _('src/test/fixtures'),
+      'giggle.fixture.all.libs' => "#{Buildr.artifact(:javax_annotation).to_s}:#{Buildr.artifact(:graphql_java).to_s}"
+    }
     test.options[:java_args] = %w(-ea)
   end
 
@@ -64,7 +67,7 @@ define 'giggle' do
     integration_tests(project)
   end
 
-  ipr.add_default_testng_configuration(:jvm_args => '-ea -Dgiggle.output_fixture_data=false -Dgiggle.fixture_dir=compiler/src/test/fixtures')
+  ipr.add_default_testng_configuration(:jvm_args => "-ea -Dgiggle.output_fixture_data=false -Dgiggle.fixture_dir=compiler/src/test/fixtures -Dgiggle.fixture.all.libs=#{Buildr.artifact(:javax_annotation).to_s}:#{Buildr.artifact(:graphql_java).to_s}")
 
   iml.excluded_directories << project._('tmp')
 

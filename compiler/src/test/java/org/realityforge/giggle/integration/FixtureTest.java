@@ -116,9 +116,24 @@ public class FixtureTest
       final Path javaClientOutput = generatorOutputDir.getParent().resolve( "java-client" );
       javaFiles.addAll( collectJavaFiles( javaClientOutput, inputDir.resolve( "java" ) ) );
     }
-    ensureGeneratedCodeCompiles( javaFiles );
+    final List<File> classpathEntries = collectLibs( generator );
+    classpathEntries.addAll( collectLibs( "all" ) );
+
+    ensureGeneratedCodeCompiles( javaFiles, classpathEntries );
 
     assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
+  }
+
+  @Nonnull
+  private List<File> collectLibs( @Nonnull final String generator )
+  {
+    final String libraries = System.getProperty( "giggle.fixture." + generator + ".libs" );
+    return null == libraries ?
+           new ArrayList<>(  ) :
+           Arrays
+      .stream( libraries.split( File.pathSeparator ) )
+      .map( File::new )
+      .collect( Collectors.toList() );
   }
 
   private void loadDefines( @Nonnull final Map<String, String> defines, @Nonnull final Path path )
@@ -185,7 +200,8 @@ public class FixtureTest
    * @param javaFiles the java files.
    * @throws Exception if there is an error
    */
-  private void ensureGeneratedCodeCompiles( @Nonnull final List<File> javaFiles )
+  private void ensureGeneratedCodeCompiles( @Nonnull final List<File> javaFiles,
+                                            @Nonnull final List<File> classpathEntries )
     throws Exception
   {
     if ( !javaFiles.isEmpty() )
@@ -195,11 +211,13 @@ public class FixtureTest
       final Path output = FileUtil.createLocalTempDir();
       final Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles( javaFiles );
       final DiagnosticCollector<JavaFileObject> listener = new DiagnosticCollector<>();
+      final String classpath =
+        classpathEntries.stream().map( File::getAbsolutePath ).collect( Collectors.joining( File.pathSeparator ) );
       final JavaCompiler.CompilationTask compilationTask =
         compiler.getTask( null,
                           fileManager,
                           listener,
-                          Arrays.asList( "-d", output.toString() ),
+                          Arrays.asList( "-d", output.toString(), "-cp", classpath ),
                           null,
                           compilationUnits );
       if ( !compilationTask.call() )
