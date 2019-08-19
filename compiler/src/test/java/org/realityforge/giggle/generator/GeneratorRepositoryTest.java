@@ -1,5 +1,8 @@
 package org.realityforge.giggle.generator;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.AbstractTest;
 import org.realityforge.guiceyloops.shared.ValueUtil;
@@ -107,5 +110,17 @@ public class GeneratorRepositoryTest
     //noinspection ConstantConditions
     repository.generate( "test", null );
     assertEquals( generator._generateCount, 1 );
+  }
+
+  @Test
+  public void getGeneratorNames()
+  {
+    final TestGeneratorRepository repository = new TestGeneratorRepository();
+    repository.registerGenerator( new TestGenerator() );
+
+    assertEquals( repository.getGeneratorNames(), Collections.singleton( "test" ) );
+
+    repository.registerGenerator( new FailingGenerator() );
+    assertEquals( repository.getGeneratorNames(), new HashSet<>( Arrays.asList( "test", "fail" ) ) );
   }
 }

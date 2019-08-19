@@ -2,6 +2,7 @@ package org.realityforge.giggle.generator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nonnull;
 
 public abstract class AbstractGeneratorRepository
@@ -32,6 +33,12 @@ public abstract class AbstractGeneratorRepository
       throw new NoSuchGeneratorException( name );
     }
     return generator;
+  }
+
+  @Nonnull
+  public final Set<String> getGeneratorNames()
+  {
+    return _generators.keySet();
   }
 
   final void registerGenerator( @Nonnull final Generator generator )
