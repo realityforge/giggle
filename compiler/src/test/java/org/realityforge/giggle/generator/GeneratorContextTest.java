@@ -15,7 +15,7 @@ public class GeneratorContextTest
   extends AbstractTest
 {
   private static class Test1Generator
-    implements Generator
+    extends Generator
   {
     @Override
     public void generate( @Nonnull final GeneratorContext context )
@@ -25,7 +25,7 @@ public class GeneratorContextTest
   }
 
   private static class Test2Generator
-    implements Generator
+    extends Generator
   {
     @Nonnull
     @Override
@@ -42,7 +42,7 @@ public class GeneratorContextTest
   }
 
   private static class Test3Generator
-    implements Generator
+    extends Generator
   {
     @Nullable
     private final String _expectedValue;
@@ -67,7 +67,7 @@ public class GeneratorContextTest
   }
 
   private static class Test4Generator
-    implements Generator
+    extends Generator
   {
     @Nullable
     private final String _expectedValue;
@@ -180,7 +180,6 @@ public class GeneratorContextTest
                                                                        "com.example" );
     repository.getGenerator( "Test4" ).generate( context );
   }
-
 
   @Test
   public void getProperty()

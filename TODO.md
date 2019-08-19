@@ -14,7 +14,7 @@ complete as there is too much un-said.
   - a list of enums
   - a list of objectTypes
 
-* Convert `Generator` interface into an abstract class and expose the supported properties via annotations.
+* Expose supported properties via annotations on type rather than a method on an instances.
 
 * Replace `@numeric` with an `integers.txt` that just lists the fully qualified names of `ID`
   `Variables`/`Fields`/`InputFields` that should be numeric. The tool should detect any unused entries. The `@numeric`

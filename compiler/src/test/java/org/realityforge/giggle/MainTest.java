@@ -551,7 +551,7 @@ public class MainTest
 
   @Generator.MetaData( name = "test-generator" )
   private static class TestGenerator
-    implements Generator
+    extends Generator
   {
     @Nonnull
     @Override

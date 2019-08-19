@@ -16,7 +16,7 @@ public class GeneratorRepositoryTest
 {
   @Generator.MetaData( name = "test" )
   private static class TestGenerator
-    implements Generator
+    extends Generator
   {
     int _generateCount;
 
@@ -28,7 +28,7 @@ public class GeneratorRepositoryTest
   }
 
   private static class DefaultNamedGenerator
-    implements Generator
+    extends Generator
   {
     @Override
     public void generate( @Nonnull final GeneratorContext context )
@@ -38,7 +38,7 @@ public class GeneratorRepositoryTest
 
   @Generator.MetaData( name = "fail" )
   private static class FailingGenerator
-    implements Generator
+    extends Generator
   {
     @Override
     public void generate( @Nonnull final GeneratorContext context )

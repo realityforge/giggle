@@ -7,25 +7,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nonnull;
 
-public interface Generator
+public abstract class Generator
 {
   @Documented
   @Target( ElementType.TYPE )
   @Retention( RetentionPolicy.RUNTIME )
-  @interface MetaData
+  public static @interface MetaData
   {
     String name() default "<default>";
   }
 
   @Nonnull
-  default List<PropertyDef> getSupportedProperties()
+  public List<PropertyDef> getSupportedProperties()
   {
     return Collections.emptyList();
   }
 
-  void generate( @Nonnull GeneratorContext context )
+  public abstract void generate( @Nonnull GeneratorContext context )
     throws Exception;
 }

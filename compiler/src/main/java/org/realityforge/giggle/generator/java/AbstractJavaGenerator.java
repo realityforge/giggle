@@ -22,7 +22,7 @@ import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
 
 public abstract class AbstractJavaGenerator
-  implements Generator
+  extends Generator
 {
   /**
    * Prefix for synthesized methods and variables. Used to guarantee uniqueness in the presence of user supplied variables.
