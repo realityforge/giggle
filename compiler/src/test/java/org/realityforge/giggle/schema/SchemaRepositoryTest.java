@@ -21,169 +21,163 @@ public class SchemaRepositoryTest
   public void getSchema_singleFile()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final Path schemaFile =
-        writeContent( "schema.graphql",
-                      "schema {\n" +
-                      "  query: Query\n" +
-                      "}\n" +
-                      "type Query {\n" +
-                      "}" );
-      final SchemaRepository schemaRepository = new SchemaRepository();
-      final List<Path> components = Collections.singletonList( schemaFile );
-
-      final GraphQLSchema schema1 = schemaRepository.getSchema( components );
-      final GraphQLSchema schema2 = schemaRepository.getSchema( components );
-
-      // They must be the same instance
-      assertSame( schema1, schema2 );
-
-      //Slightly different file with trailing whitespace
+    // They must be the same instance
+    //Slightly different file with trailing whitespace
+    final Path schemaFile =
       writeContent( "schema.graphql",
                     "schema {\n" +
                     "  query: Query\n" +
                     "}\n" +
                     "type Query {\n" +
-                    "}  " );
+                    "}" );
+    final SchemaRepository schemaRepository = new SchemaRepository();
+    final List<Path> components = Collections.singletonList( schemaFile );
 
-      final GraphQLSchema schema3 = schemaRepository.getSchema( components );
+    final GraphQLSchema schema1 = schemaRepository.getSchema( components );
+    final GraphQLSchema schema2 = schemaRepository.getSchema( components );
 
-      assertNotSame( schema1, schema3 );
-      assertNotSame( schema2, schema3 );
-    } );
+    // They must be the same instance
+    assertSame( schema1, schema2 );
+
+    //Slightly different file with trailing whitespace
+    writeContent( "schema.graphql",
+                  "schema {\n" +
+                  "  query: Query\n" +
+                  "}\n" +
+                  "type Query {\n" +
+                  "}  " );
+
+    final GraphQLSchema schema3 = schemaRepository.getSchema( components );
+
+    assertNotSame( schema1, schema3 );
+    assertNotSame( schema2, schema3 );
   }
 
   @Test
   public void getSchema_multipleFiles()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final Path schemaFile1 =
-        writeContent( "schema1.graphql",
-                      "schema {\n" +
-                      "  query: Query\n" +
-                      "}\n" +
-                      "type Query {\n" +
-                      "}" );
-      final Path schemaFile2 =
-        writeContent( "schema2.graphql",
-                      " type Person {\n" +
-                      "}\n" +
-                      "extend type Query {\n" +
-                      "  person(id: ID!): Person\n" +
-                      "}" );
-      final SchemaRepository schemaRepository = new SchemaRepository();
-      final List<Path> components = Arrays.asList( schemaFile1, schemaFile2 );
-
-      final GraphQLSchema schema1 = schemaRepository.getSchema( components );
-      final GraphQLSchema schema2 = schemaRepository.getSchema( components );
-
-      assertNotNull( schema1.getQueryType() );
-      assertEquals( schema1.getQueryType().getChildren().size(), 1 );
-      assertNull( schema1.getMutationType() );
-      assertNull( schema1.getSubscriptionType() );
-
-      // They must be the same instance
-      assertSame( schema1, schema2 );
-
-      //Slightly different file with trailing whitespace
+    // They must be the same instance
+    //Slightly different file with trailing whitespace
+    // Change the order of the files produces a different instance
+    final Path schemaFile1 =
       writeContent( "schema1.graphql",
                     "schema {\n" +
                     "  query: Query\n" +
                     "}\n" +
                     "type Query {\n" +
-                    "}  " );
+                    "}" );
+    final Path schemaFile2 =
+      writeContent( "schema2.graphql",
+                    " type Person {\n" +
+                    "}\n" +
+                    "extend type Query {\n" +
+                    "  person(id: ID!): Person\n" +
+                    "}" );
+    final SchemaRepository schemaRepository = new SchemaRepository();
+    final List<Path> components = Arrays.asList( schemaFile1, schemaFile2 );
 
-      final GraphQLSchema schema3 = schemaRepository.getSchema( components );
+    final GraphQLSchema schema1 = schemaRepository.getSchema( components );
+    final GraphQLSchema schema2 = schemaRepository.getSchema( components );
 
-      assertNotNull( schema3.getQueryType() );
-      assertEquals( schema3.getQueryType().getChildren().size(), 1 );
-      assertNull( schema3.getMutationType() );
-      assertNull( schema3.getSubscriptionType() );
+    assertNotNull( schema1.getQueryType() );
+    assertEquals( schema1.getQueryType().getChildren().size(), 1 );
+    assertNull( schema1.getMutationType() );
+    assertNull( schema1.getSubscriptionType() );
 
-      assertNotSame( schema1, schema3 );
-      assertNotSame( schema2, schema3 );
+    // They must be the same instance
+    assertSame( schema1, schema2 );
 
-      // Change the order of the files produces a different instance
-      final GraphQLSchema schema4 = schemaRepository.getSchema( Arrays.asList( schemaFile2, schemaFile1 ) );
+    //Slightly different file with trailing whitespace
+    writeContent( "schema1.graphql",
+                  "schema {\n" +
+                  "  query: Query\n" +
+                  "}\n" +
+                  "type Query {\n" +
+                  "}  " );
 
-      assertNotSame( schema4, schema3 );
-    } );
+    final GraphQLSchema schema3 = schemaRepository.getSchema( components );
+
+    assertNotNull( schema3.getQueryType() );
+    assertEquals( schema3.getQueryType().getChildren().size(), 1 );
+    assertNull( schema3.getMutationType() );
+    assertNull( schema3.getSubscriptionType() );
+
+    assertNotSame( schema1, schema3 );
+    assertNotSame( schema2, schema3 );
+
+    // Change the order of the files produces a different instance
+    final GraphQLSchema schema4 = schemaRepository.getSchema( Arrays.asList( schemaFile2, schemaFile1 ) );
+
+    assertNotSame( schema4, schema3 );
   }
 
   @Test
   public void getSchema_fileMissing()
-    throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final SchemaRepository schemaRepository = new SchemaRepository();
-      final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
-      final List<Path> components = Collections.singletonList( schemaFile );
+    final SchemaRepository schemaRepository = new SchemaRepository();
+    final Path schemaFile = FileUtil.getCurrentDirectory().resolve( "schema.graphql" );
+    final List<Path> components = Collections.singletonList( schemaFile );
 
-      final SchemaReadException exception =
-        expectThrows( SchemaReadException.class, () -> schemaRepository.getSchema( components ) );
-      assertTrue( exception.getMessage().startsWith( "Error reading schema file " ) );
-    } );
+    final SchemaReadException exception =
+      expectThrows( SchemaReadException.class, () -> schemaRepository.getSchema( components ) );
+    assertTrue( exception.getMessage().startsWith( "Error reading schema file " ) );
   }
 
   @Test
   public void getSchema_includeNonStandardScalars()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final Path schemaFile =
-        writeContent( "schema.graphql",
-                      "schema {\n" +
-                      "  query: Query\n" +
-                      "}\n" +
-                      "type Query {\n" +
-                      "}\n" +
-                      "scalar Date\n" +
-                      "type Person {\n" +
-                      "  DOB: Date\n" +
-                      "}" );
-      final SchemaRepository schemaRepository = new SchemaRepository();
-      final List<Path> components = Collections.singletonList( schemaFile );
+    final Path schemaFile =
+      writeContent( "schema.graphql",
+                    "schema {\n" +
+                    "  query: Query\n" +
+                    "}\n" +
+                    "type Query {\n" +
+                    "}\n" +
+                    "scalar Date\n" +
+                    "type Person {\n" +
+                    "  DOB: Date\n" +
+                    "}" );
+    final SchemaRepository schemaRepository = new SchemaRepository();
+    final List<Path> components = Collections.singletonList( schemaFile );
 
-      final GraphQLSchema schema = schemaRepository.getSchema( components );
+    final GraphQLSchema schema = schemaRepository.getSchema( components );
 
-      assertNotNull( schema.getType( "Date" ) );
-    } );
+    assertNotNull( schema.getType( "Date" ) );
   }
 
   @Test
   public void getSchema_SchemaProblem()
     throws Exception
   {
-    inIsolatedDirectory( () -> {
-      final Path schemaFile =
-        writeContent( "schema.graphql",
-                      "schema {\n" +
-                      "  query: Query\n" +
-                      "}\n" +
-                      "type Query {\n" +
-                      "}\n" +
-                      "type Person {\n" +
-                      "  DOB: Date\n" +
-                      "}" );
-      final SchemaRepository schemaRepository = new SchemaRepository();
-      final List<Path> components = Collections.singletonList( schemaFile );
+    final Path schemaFile =
+      writeContent( "schema.graphql",
+                    "schema {\n" +
+                    "  query: Query\n" +
+                    "}\n" +
+                    "type Query {\n" +
+                    "}\n" +
+                    "type Person {\n" +
+                    "  DOB: Date\n" +
+                    "}" );
+    final SchemaRepository schemaRepository = new SchemaRepository();
+    final List<Path> components = Collections.singletonList( schemaFile );
 
-      final SchemaProblem exception =
-        expectThrows( SchemaProblem.class, () -> schemaRepository.getSchema( components ) );
+    final SchemaProblem exception =
+      expectThrows( SchemaProblem.class, () -> schemaRepository.getSchema( components ) );
 
-      final List<GraphQLError> errors = exception.getErrors();
+    final List<GraphQLError> errors = exception.getErrors();
 
-      assertEquals( errors.size(), 1 );
-      final GraphQLError error = errors.iterator().next();
-      assertEquals( error.getMessage(), "The field type 'Date' is not present when resolving type 'Person' [@6:1]" );
-      assertEquals( error.getErrorType(), ErrorType.ValidationError );
-      final List<SourceLocation> locations = error.getLocations();
-      assertEquals( locations.size(), 1 );
-      final SourceLocation location = locations.get( 0 );
-      assertEquals( location.getSourceName(), schemaFile.toString() );
-      assertEquals( location.getLine(), 6 );
-      assertEquals( location.getColumn(), 1 );
-    } );
+    assertEquals( errors.size(), 1 );
+    final GraphQLError error = errors.iterator().next();
+    assertEquals( error.getMessage(), "The field type 'Date' is not present when resolving type 'Person' [@6:1]" );
+    assertEquals( error.getErrorType(), ErrorType.ValidationError );
+    final List<SourceLocation> locations = error.getLocations();
+    assertEquals( locations.size(), 1 );
+    final SourceLocation location = locations.get( 0 );
+    assertEquals( location.getSourceName(), schemaFile.toString() );
+    assertEquals( location.getLine(), 6 );
+    assertEquals( location.getColumn(), 1 );
   }
 }

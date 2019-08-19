@@ -64,48 +64,46 @@ public class FixtureTest
     final Path baseDir = fixtureDir().resolve( name );
     final Path inputDir = baseDir.resolve( "input" );
     final Path generatorOutputDir = baseDir.resolve( "output" ).resolve( generator );
-    inIsolatedDirectory( () -> {
-      final List<Path> schemaFiles = collectFilesRecursively( inputDir, ".graphqls" );
-      final List<Path> documentFiles = collectFilesRecursively( inputDir, ".graphql" );
-      final List<Path> typeMappingFiles = collectFilesRecursively( inputDir, "types.properties" );
-      final List<Path> fragmentMappingFiles = collectFilesRecursively( inputDir, "fragments.properties" );
+    final List<Path> schemaFiles = collectFilesRecursively( inputDir, ".graphqls" );
+    final List<Path> documentFiles = collectFilesRecursively( inputDir, ".graphql" );
+    final List<Path> typeMappingFiles = collectFilesRecursively( inputDir, "types.properties" );
+    final List<Path> fragmentMappingFiles = collectFilesRecursively( inputDir, "fragments.properties" );
 
-      final SchemaRepository schemaRepository = new SchemaRepository();
-      final DocumentRepository documentRepository = new DocumentRepository();
+    final SchemaRepository schemaRepository = new SchemaRepository();
+    final DocumentRepository documentRepository = new DocumentRepository();
 
-      final GraphQLSchema schema = schemaRepository.getSchema( schemaFiles );
-      final Document document =
-        documentFiles.isEmpty() ?
-        Document.newDocument().build() :
-        documentRepository.getDocument( schema, documentFiles );
-      final Map<String, String> typeMapping =
-        typeMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( typeMappingFiles );
-      final Map<String, String> fragmentMapping =
-        fragmentMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( fragmentMappingFiles );
-      final Path outputDirectory = FileUtil.createLocalTempDir();
+    final GraphQLSchema schema = schemaRepository.getSchema( schemaFiles );
+    final Document document =
+      documentFiles.isEmpty() ?
+      Document.newDocument().build() :
+      documentRepository.getDocument( schema, documentFiles );
+    final Map<String, String> typeMapping =
+      typeMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( typeMappingFiles );
+    final Map<String, String> fragmentMapping =
+      fragmentMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( fragmentMappingFiles );
+    final Path outputDirectory = FileUtil.createLocalTempDir();
 
-      final GlobalGeneratorContext context =
-        new GlobalGeneratorContext( schema,
-                                    document,
-                                    typeMapping,
-                                    fragmentMapping,
-                                    Collections.emptyMap(),
-                                    outputDirectory,
-                                    "com.example." + name );
+    final GlobalGeneratorContext context =
+      new GlobalGeneratorContext( schema,
+                                  document,
+                                  typeMapping,
+                                  fragmentMapping,
+                                  Collections.emptyMap(),
+                                  outputDirectory,
+                                  "com.example." + name );
 
-      new GeneratorRepository().getGenerator( generator ).generate( context );
+    new GeneratorRepository().getGenerator( generator ).generate( context );
 
-      if ( outputFixtureData() )
-      {
-        FileUtil.deleteDirIfExists( generatorOutputDir );
-        FileUtil.copyDirectory( outputDirectory, generatorOutputDir );
-      }
+    if ( outputFixtureData() )
+    {
+      FileUtil.deleteDirIfExists( generatorOutputDir );
+      FileUtil.copyDirectory( outputDirectory, generatorOutputDir );
+    }
 
-      final List<File> javaFiles = collectJavaFiles( outputDirectory, inputDir.resolve( "java" ) );
-      ensureGeneratedCodeCompiles( javaFiles );
+    final List<File> javaFiles = collectJavaFiles( outputDirectory, inputDir.resolve( "java" ) );
+    ensureGeneratedCodeCompiles( javaFiles );
 
-      assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
-    } );
+    assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
   }
 
   @Nonnull
