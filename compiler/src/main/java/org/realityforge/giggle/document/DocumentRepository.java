@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 /**
@@ -67,13 +66,8 @@ public final class DocumentRepository
     // TODO(graphql-java/graphql-java#1557): It should be an error if a single document contains multiple
     //  fragments with the same name. graphql-java should verify this but does not at the moment so we
     //  perform the validation.
-    final List<FragmentDefinition> fragments = document.getDefinitions()
-      .stream()
-      .filter( d -> d instanceof FragmentDefinition )
-      .map( d -> (FragmentDefinition) d )
-      .collect( Collectors.toList() );
     final Map<String, FragmentDefinition> fragmentMap = new HashMap<>();
-    for ( final FragmentDefinition fragment : fragments )
+    for ( final FragmentDefinition fragment : document.getDefinitionsOfType( FragmentDefinition.class ) )
     {
       final String name = fragment.getName();
       final FragmentDefinition existing = fragmentMap.get( name );
@@ -93,10 +87,8 @@ public final class DocumentRepository
   private void validateNoAnonymousOperations( @Nonnull final Document document,
                                               @Nonnull final List<ValidationError> errors )
   {
-    document.getDefinitions()
+    document.getDefinitionsOfType( OperationDefinition.class )
       .stream()
-      .filter( d -> d instanceof OperationDefinition )
-      .map( d -> (OperationDefinition) d )
       .filter( d -> null == d.getName() )
       .findAny()
       .ifPresent( definition -> errors.add( new ValidationError( ValidationErrorType.LoneAnonymousOperationViolation,
