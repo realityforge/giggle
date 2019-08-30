@@ -420,7 +420,7 @@ public class JavaClientGenerator
       fieldType = isList ? JavaGenUtil.listOf( ClassName.bestGuess( typeName ) ) : ClassName.bestGuess( typeName );
     }
 
-    final FieldSpec.Builder field = FieldSpec.builder( fieldType, name, Modifier.PRIVATE/*, Modifier.FINAL*/ );
+    final FieldSpec.Builder field = FieldSpec.builder( fieldType, name, Modifier.PRIVATE );
     if ( !fieldType.isPrimitive() )
     {
       field.addAnnotation( GraphQLTypeUtil.isNonNull( fieldDefinition.getType() ) ? Nonnull.class : Nullable.class );
