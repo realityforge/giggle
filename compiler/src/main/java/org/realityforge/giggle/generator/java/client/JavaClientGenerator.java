@@ -48,6 +48,7 @@ import org.realityforge.giggle.generator.GeneratorContext;
 import org.realityforge.giggle.generator.java.AbstractJavaGenerator;
 import org.realityforge.giggle.generator.java.JavaGenUtil;
 import org.realityforge.giggle.generator.java.NamingUtil;
+import org.realityforge.giggle.util.GraphQLUtil;
 
 @SuppressWarnings( "Duplicates" )
 @Generator.MetaData( name = "java-client" )
@@ -321,12 +322,7 @@ public class JavaClientGenerator
     assert null != name;
     final OperationDefinition.Operation operationType = operation.getOperation();
     final String typeName =
-      NamingUtil.uppercaseFirstCharacter( name ) +
-      (
-        OperationDefinition.Operation.QUERY == operationType ? "Query" :
-        OperationDefinition.Operation.MUTATION == operationType ? "Mutation" :
-        "Subscription"
-      );
+      NamingUtil.uppercaseFirstCharacter( name ) + GraphQLUtil.getTopLevelFieldName( operationType );
 
     final TypeSpec.Builder builder = TypeSpec.classBuilder( typeName );
     builder.addModifiers( Modifier.PUBLIC, Modifier.FINAL );

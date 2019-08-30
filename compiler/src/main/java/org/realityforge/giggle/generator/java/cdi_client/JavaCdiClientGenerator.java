@@ -29,6 +29,7 @@ import org.realityforge.giggle.generator.PropertyDef;
 import org.realityforge.giggle.generator.java.AbstractJavaGenerator;
 import org.realityforge.giggle.generator.java.JavaGenUtil;
 import org.realityforge.giggle.generator.java.NamingUtil;
+import org.realityforge.giggle.util.GraphQLUtil;
 
 @Generator.MetaData( name = "java-cdi-client" )
 public class JavaCdiClientGenerator
@@ -320,11 +321,6 @@ public class JavaCdiClientGenerator
     final String name = operation.getName();
     assert null != name;
     final OperationDefinition.Operation operationType = operation.getOperation();
-    return NamingUtil.uppercaseFirstCharacter( name ) +
-           (
-             OperationDefinition.Operation.QUERY == operationType ? "Query" :
-             OperationDefinition.Operation.MUTATION == operationType ? "Mutation" :
-             "Subscription"
-           );
+    return NamingUtil.uppercaseFirstCharacter( name ) + GraphQLUtil.getTopLevelFieldName( operationType );
   }
 }
