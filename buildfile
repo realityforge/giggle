@@ -70,6 +70,12 @@ define 'giggle' do
     integration_tests(project)
   end
 
+  ipr.add_testng_configuration('compiler',
+                               :module => 'compiler',
+                               :jvm_args => "-ea -Dgiggle.output_fixture_data=false -Dgiggle.fixture_dir=compiler/src/test/fixtures -Dgiggle.fixture.java-cdi-client.libs=#{Buildr.artifact(:javaee_api).to_s}:#{Buildr.artifact(:keycloak_jaxrs_client_authfilter).to_s} -Dgiggle.fixture.java-client.libs=#{Buildr.artifact(:javaee_api).to_s} -Dgiggle.fixture.all.libs=#{Buildr.artifact(:javax_annotation).to_s}:#{Buildr.artifact(:graphql_java).to_s}")
+  ipr.add_testng_configuration('integration-tests',
+                               :module => 'integration-tests',
+                               :jvm_args => '-ea -Dgiggle.output_fixture_data=false')
 
   iml.excluded_directories << project._('tmp')
 
