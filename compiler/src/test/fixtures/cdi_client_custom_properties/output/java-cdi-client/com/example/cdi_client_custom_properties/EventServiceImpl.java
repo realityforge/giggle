@@ -42,6 +42,6 @@ public class EventServiceImpl implements EventService {
 
   @Nonnull
   <T> Response $giggle$_call(@Nonnull final T entity) {
-    return ClientBuilder.newClient().target( URI.create( this.baseUrl + "/graphql" ) ).request( MediaType.APPLICATION_JSON_TYPE ).header( "Authorization", "bearer " + Objects.requireNonNull( this.keycloak.getAccessToken() ).getToken() ).post( Entity.json( entity ) );
+    return ClientBuilder.newClient().target( URI.create( this.baseUrl + "/graphql" ) ).request( MediaType.APPLICATION_JSON_TYPE ).header( "Authorization", "bearer " + Objects.requireNonNull( this.keycloak.getAccessToken() ).getAccessToken() ).post( Entity.json( entity ) );
   }
 }

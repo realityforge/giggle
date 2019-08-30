@@ -30,6 +30,4 @@ artifacts:
 
   glassfish_embedded: fish.payara.extras:payara-embedded-all:jar:5.192
 
-  keycloak_jaxrs_client_authfilter: org.realityforge.keycloak.client.authfilter:keycloak-jaxrs-client-authfilter:jar:0.2
-
-  keycloak_core: org.keycloak:keycloak-core:jar:2.0.0.Final
+  keycloak_jaxrs_client_authfilter: org.realityforge.keycloak.client.authfilter:keycloak-jaxrs-client-authfilter:jar:1.01

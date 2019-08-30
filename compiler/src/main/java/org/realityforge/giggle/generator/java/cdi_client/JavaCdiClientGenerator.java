@@ -175,7 +175,7 @@ public class JavaCdiClientGenerator
     if ( keycloakEnabled )
     {
       sb.append( ".header( \"Authorization\", " +
-                 "\"bearer \" + $T.requireNonNull( this.keycloak.getAccessToken() ).getToken() )" );
+                 "\"bearer \" + $T.requireNonNull( this.keycloak.getAccessToken() ).getAccessToken() )" );
       params.add( Objects.class );
     }
     sb.append( ".post( $T.json( entity ) )" );
