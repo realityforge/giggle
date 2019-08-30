@@ -357,6 +357,7 @@ public class JavaClientGenerator
       OperationDefinition.Operation.QUERY == operationType ? schema.getQueryType() :
       OperationDefinition.Operation.MUTATION == operationType ? schema.getMutationType() :
       schema.getSubscriptionType();
+    assert null != fieldsContainer;
     JavaGenUtil.writeTopLevelType( context, buildType( collector, operation, typeMap, typeName, fieldsContainer ) );
   }
 
