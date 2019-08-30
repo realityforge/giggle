@@ -49,10 +49,11 @@ define 'giggle' do
     test.options[:properties] = {
       'giggle.fixture_dir' => _('src/test/fixtures'),
       'giggle.fixture.all.libs' => "#{Buildr.artifact(:javax_annotation).to_s}:#{Buildr.artifact(:graphql_java).to_s}",
-      'giggle.fixture.java-cdi-client.libs' => "#{Buildr.artifact(:glassfish_embedded).to_s}:#{Buildr.artifact(:keycloak_jaxrs_client_authfilter).to_s}}"
+      'giggle.fixture.java-client.libs' => "#{Buildr.artifact(:javaee_api).to_s}",
+      'giggle.fixture.java-cdi-client.libs' => "#{Buildr.artifact(:javaee_api).to_s}:#{Buildr.artifact(:keycloak_jaxrs_client_authfilter).to_s}"
     }
     test.options[:java_args] = %w(-ea)
-    test.enhance(Buildr.artifacts(:glassfish_embedded, :keycloak_jaxrs_client_authfilter))
+    test.enhance(Buildr.artifacts(:javaee_api, :keycloak_jaxrs_client_authfilter))
   end
 
   desc 'Integration Tests'
@@ -69,7 +70,6 @@ define 'giggle' do
     integration_tests(project)
   end
 
-  ipr.add_default_testng_configuration(:jvm_args => "-ea -Dgiggle.output_fixture_data=false -Dgiggle.fixture_dir=compiler/src/test/fixtures -Dgiggle.fixture.java-cdi-client.libs=#{Buildr.artifact(:glassfish_embedded).to_s}:#{Buildr.artifact(:keycloak_jaxrs_client_authfilter).to_s}} -Dgiggle.fixture.all.libs=#{Buildr.artifact(:javax_annotation).to_s}:#{Buildr.artifact(:graphql_java).to_s}")
 
   iml.excluded_directories << project._('tmp')
 
