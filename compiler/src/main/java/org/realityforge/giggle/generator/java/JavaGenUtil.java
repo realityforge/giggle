@@ -27,6 +27,11 @@ import org.realityforge.giggle.generator.GeneratorContext;
 
 public final class JavaGenUtil
 {
+  @Nonnull
+  public static final String DATE_TYPE = "Date";
+  @Nonnull
+  public static final String DATE_TIME_TYPE = "DateTime";
+
   private JavaGenUtil()
   {
   }
@@ -259,7 +264,7 @@ public final class JavaGenUtil
     {
       return wrap( isList, ClassName.get( BigInteger.class ) );
     }
-    else if ( type.equals( "Date" ) || type.equals( "DateTime" ) )
+    else if ( type.equals( DATE_TYPE ) || type.equals( DATE_TIME_TYPE ) )
     {
       //TODO: Support other scalars through some sort of mapping configuration
       return wrap( isList, ClassName.get( Date.class ) );
