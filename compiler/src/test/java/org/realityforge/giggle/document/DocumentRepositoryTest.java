@@ -233,4 +233,36 @@ public class DocumentRepositoryTest
     assertEquals( error.getMessage(),
                   "Validation error of type LoneAnonymousOperationViolation: Giggle does not allow anonymous operations." );
   }
+
+
+  @Test
+  public void referenceQueryByMutation()
+    throws Exception
+  {
+    final GraphQLSchema schema =
+      buildGraphQLSchema( "type Person {\n" +
+                          "  name: String\n" +
+                          "}\n" +
+                          "extend type Query {\n" +
+                          "  person: Person" +
+                          "}\n" );
+
+    final Path documentFile =
+      writeContent( "document.graphql",
+                    "mutation personQuery {\n" +
+                    "  person {\n" +
+                    "    name\n" +
+                    "  }\n" +
+                    "}\n" );
+
+    final DocumentValidateException exception =
+      expectThrows( DocumentValidateException.class,
+                    () -> new DocumentRepository().getDocument( schema, Collections.singletonList( documentFile ) ) );
+    final List<ValidationError> errors = exception.getErrors();
+    assertEquals( errors.size(), 1 );
+    final ValidationError error = errors.get( 0 );
+    assertEquals( error.getValidationErrorType(), ValidationErrorType.FieldUndefined );
+    assertEquals( error.getMessage(),
+                  "Validation error of type FieldUndefined: Field 'person' of type 'Mutation' is undefined" );
+  }
 }

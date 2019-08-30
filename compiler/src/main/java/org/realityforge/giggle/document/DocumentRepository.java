@@ -1,9 +1,13 @@
 package org.realityforge.giggle.document;
 
 import graphql.language.Document;
+import graphql.language.Field;
 import graphql.language.FragmentDefinition;
 import graphql.language.OperationDefinition;
+import graphql.language.SelectionSet;
 import graphql.parser.Parser;
+import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 import graphql.validation.ValidationError;
 import graphql.validation.ValidationErrorType;
@@ -17,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.realityforge.giggle.util.GraphQLUtil;
 
 /**
  * Container responsible for building GraphQL documents.
@@ -50,6 +55,7 @@ public final class DocumentRepository
     final List<ValidationError> errors = _validator.validateDocument( schema, document );
     validateFragmentNamesUnique( document, errors );
     validateNoAnonymousOperations( document, errors );
+    validateTopLevelFieldsMatchOperationType( schema, document, errors );
     if ( errors.isEmpty() )
     {
       return document;
@@ -94,6 +100,32 @@ public final class DocumentRepository
       .ifPresent( definition -> errors.add( new ValidationError( ValidationErrorType.LoneAnonymousOperationViolation,
                                                                  definition.getSourceLocation(),
                                                                  "Giggle does not allow anonymous operations." ) ) );
+  }
+
+  private void validateTopLevelFieldsMatchOperationType( @Nonnull final GraphQLSchema schema,
+                                                         @Nonnull final Document document,
+                                                         @Nonnull final List<ValidationError> errors )
+  {
+    // TODO(graphql-java/graphql-java#1642): The toolkit should flag the scenario where invalid top-level fields
+    //  are present but does not at the moment so we perform the validation.
+    for ( final OperationDefinition definition : document.getDefinitionsOfType( OperationDefinition.class ) )
+    {
+      final SelectionSet selectionSet = definition.getSelectionSet();
+      final List<Field> fields = selectionSet.getSelectionsOfType( Field.class );
+      for ( final Field field : fields )
+      {
+        final String topLevelFieldName = GraphQLUtil.getTopLevelFieldName( definition.getOperation() );
+        final GraphQLObjectType query = schema.getObjectType( topLevelFieldName );
+        final GraphQLFieldDefinition fieldDefinition =
+          null == query ? null : query.getFieldDefinition( field.getName() );
+        if ( null == fieldDefinition )
+        {
+          final String message =
+            String.format( "Field '%s' of type '%s' is undefined", field.getName(), topLevelFieldName );
+          errors.add( new ValidationError( ValidationErrorType.FieldUndefined, field.getSourceLocation(), message ) );
+        }
+      }
+    }
   }
 
   private void mergeComponent( @Nonnull final Document.Builder builder, @Nonnull final Path component )
