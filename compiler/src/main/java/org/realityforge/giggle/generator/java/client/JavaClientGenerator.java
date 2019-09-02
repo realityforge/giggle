@@ -414,7 +414,8 @@ public class JavaClientGenerator
       subType.addModifiers( Modifier.STATIC );
       builder.addType( subType.build() );
       final boolean isList = JavaGenUtil.isList( fieldDefinition.getType() );
-      fieldType = isList ? JavaGenUtil.listOf( ClassName.bestGuess( typeName ) ) : ClassName.bestGuess( typeName );
+      final ClassName jpType = ClassName.bestGuess( typeName );
+      fieldType = isList ? JavaGenUtil.listOf( jpType ) : jpType;
     }
 
     final FieldSpec.Builder field = FieldSpec.builder( fieldType, name, Modifier.PRIVATE );
