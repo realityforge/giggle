@@ -1,6 +1,7 @@
 package com.example.basic;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Generated;
@@ -16,21 +17,26 @@ public final class EventInput {
   private final EventType type;
 
   @Nullable
-  private final Date startedAt;
+  private final LocalDate startedAt;
+
+  @Nullable
+  private final LocalDateTime reportedAt;
 
   private EventInput(@Nonnull final String name, @Nonnull final EventType type,
-      @Nullable final Date startedAt) {
+      @Nullable final LocalDate startedAt, @Nullable final LocalDateTime reportedAt) {
     this.name = Objects.requireNonNull( name );
     this.type = Objects.requireNonNull( type );
     this.startedAt = startedAt;
+    this.reportedAt = reportedAt;
   }
 
   @Nonnull
   public static EventInput from(@Nonnull final Map<String, Object> args) {
     final String $giggle$_name = (String) args.get( "name" );
     final EventType $giggle$_type = (EventType) args.get( "type" );
-    final Date $giggle$_startedAt = (Date) args.get( "startedAt" );
-    return new EventInput($giggle$_name, $giggle$_type, $giggle$_startedAt);
+    final LocalDate $giggle$_startedAt = (LocalDate) args.get( "startedAt" );
+    final LocalDateTime $giggle$_reportedAt = (LocalDateTime) args.get( "reportedAt" );
+    return new EventInput($giggle$_name, $giggle$_type, $giggle$_startedAt, $giggle$_reportedAt);
   }
 
   @Nullable
@@ -49,8 +55,13 @@ public final class EventInput {
   }
 
   @Nullable
-  public Date getStartedAt() {
+  public LocalDate getStartedAt() {
     return startedAt;
+  }
+
+  @Nullable
+  public LocalDateTime getReportedAt() {
+    return reportedAt;
   }
 
   @Override
@@ -61,17 +72,17 @@ public final class EventInput {
       return false;
     } else {
       final EventInput that = (EventInput) o;
-      return Objects.equals( name, that.name ) && Objects.equals( type, that.type ) && Objects.equals( startedAt, that.startedAt );
+      return Objects.equals( name, that.name ) && Objects.equals( type, that.type ) && Objects.equals( startedAt, that.startedAt ) && Objects.equals( reportedAt, that.reportedAt );
     }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash( name, type, startedAt );
+    return Objects.hash( name, type, startedAt, reportedAt );
   }
 
   @Override
   public String toString() {
-    return "EventInput[name=" + name + ", type=" + type + ", startedAt=" + startedAt + "]";
+    return "EventInput[name=" + name + ", type=" + type + ", startedAt=" + startedAt + ", reportedAt=" + reportedAt + "]";
   }
 }

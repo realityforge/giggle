@@ -3,6 +3,11 @@ schema {
 }
 
 type Query {
+  aQuery(input: AllTypesInput!): MyResponse
+}
+
+type MyResponse {
+  success: Boolean!
 }
 
 enum MyEnum {
@@ -12,6 +17,9 @@ enum MyEnum {
 input MyInput {
   v: String
 }
+
+scalar LocalDate
+scalar LocalDateTime
 
 input AllTypesInput {
   requiredBoolean: Boolean!
@@ -28,6 +36,10 @@ input AllTypesInput {
   optionalEnum: MyEnum
   requiredInput: MyInput!
   optionalInput: MyInput
+  requiredDate: LocalDate!
+  optionalDate: LocalDate
+  requiredDateTime: LocalDateTime!
+  optionalDateTime: LocalDateTime
   requiredBooleanList: [Boolean!]!
   requiredBooleanListContainingNulls: [Boolean]!
   optionalBooleanList: [Boolean]
@@ -49,4 +61,10 @@ input AllTypesInput {
   requiredInputList: [MyInput!]!
   requiredInputListContainingNulls: [MyInput]!
   optionalInputList: [MyInput]
+  requiredDateList: [LocalDate!]!
+  requiredDateListContainingNulls: [LocalDate]!
+  optionalDateList: [LocalDate]
+  requiredDateTimeList: [LocalDateTime!]!
+  requiredDateTimeListContainingNulls: [LocalDateTime]!
+  optionalDateTimeList: [LocalDateTime]
 }

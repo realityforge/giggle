@@ -59,6 +59,7 @@ define 'giggle' do
   desc 'Integration Tests'
   define 'integration-tests' do
     test.options[:java_args] = %w(-ea)
+    test.options[:properties] = {'user.timezone' => 'Australia/Melbourne'}
 
     test.using :testng
     test.compile.with :gir,

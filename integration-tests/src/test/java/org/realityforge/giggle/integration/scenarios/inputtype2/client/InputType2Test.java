@@ -1,10 +1,11 @@
-package org.realityforge.giggle.integration.scenarios.inputtype2.server;
+package org.realityforge.giggle.integration.scenarios.inputtype2.client;
 
 import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 import org.realityforge.giggle.integration.scenarios.AbstractScenarioTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -121,43 +122,57 @@ public class InputType2Test
   }
 
   @Test
-  public void from()
+  public void toJson()
   {
-    final HashMap<String, Object> inputArgs = new HashMap<>();
-    inputArgs.put( "v", "Blah" );
-
     final LocalDate date = LocalDate.of( 2001, 10, 20 );
     final LocalDateTime dateTime = LocalDateTime.of( 2001, 10, 20, 16, 30 );
 
-    final HashMap<String, Object> args = new HashMap<>();
-    args.put( "requiredBoolean", true );
-    args.put( "requiredInt", 1 );
-    args.put( "requiredFloat", 2.5F );
-    args.put( "requiredString", "MyString" );
-    args.put( "requiredID", "MyID" );
-    args.put( "requiredEnum", MyEnum.A_VALUE );
-    args.put( "requiredInput", inputArgs );
-    args.put( "requiredDate", date );
-    args.put( "requiredDateTime", dateTime );
-    args.put( "requiredBooleanList", Collections.singletonList( true ) );
-    args.put( "requiredBooleanListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredIntList", Collections.singletonList( 1 ) );
-    args.put( "requiredIntListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredFloatList", Collections.singletonList( 2.5F ) );
-    args.put( "requiredFloatListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredStringList", Collections.singletonList( "MyString" ) );
-    args.put( "requiredStringListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredIDList", Collections.singletonList( "MyID" ) );
-    args.put( "requiredIDListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredEnumList", Collections.singletonList( MyEnum.A_VALUE ) );
-    args.put( "requiredEnumListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredInputList", Collections.singletonList( inputArgs ) );
-    args.put( "requiredInputListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredDateList", Collections.singletonList( date ) );
-    args.put( "requiredDateListContainingNulls", Collections.singletonList( null ) );
-    args.put( "requiredDateTimeList", Collections.singletonList( dateTime ) );
-    args.put( "requiredDateTimeListContainingNulls", Collections.singletonList( null ) );
-    final AllTypesInput input = AllTypesInput.from( args );
+    final AllTypesInput input =
+      new AllTypesInput( true,
+                         null,
+                         1,
+                         null,
+                         2.5F,
+                         null,
+                         "MyString",
+                         null,
+                         "MyID",
+                         null,
+                         MyEnum.A_VALUE,
+                         null,
+                         new MyInput( "Blah" ),
+                         null,
+                         date,
+                         null,
+                         dateTime,
+                         null,
+                         Collections.singletonList( true ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( 1 ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( 2.5F ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( "MyString" ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( "MyID" ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( MyEnum.A_VALUE ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( new MyInput( "Blah" ) ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( date ),
+                         Collections.singletonList( null ),
+                         null,
+                         Collections.singletonList( dateTime ),
+                         Collections.singletonList( null ),
+                         null );
 
     assertNull( input.getOptionalBoolean() );
     assertNull( input.getOptionalInt() );
@@ -197,14 +212,77 @@ public class InputType2Test
     assertEquals( input.toString(),
                   "AllTypesInput[requiredBoolean=true, optionalBoolean=null, requiredInt=1, optionalInt=null, requiredFloat=2.5, optionalFloat=null, requiredString=MyString, optionalString=null, requiredID=MyID, optionalID=null, requiredEnum=A_VALUE, optionalEnum=null, requiredInput=MyInput[v=Blah], optionalInput=null, requiredDate=2001-10-20, optionalDate=null, requiredDateTime=2001-10-20T16:30, optionalDateTime=null, requiredBooleanList=[true], requiredBooleanListContainingNulls=[null], optionalBooleanList=null, requiredIntList=[1], requiredIntListContainingNulls=[null], optionalIntList=null, requiredFloatList=[2.5], requiredFloatListContainingNulls=[null], optionalFloatList=null, requiredStringList=[MyString], requiredStringListContainingNulls=[null], optionalStringList=null, requiredIDList=[MyID], requiredIDListContainingNulls=[null], optionalIDList=null, requiredEnumList=[A_VALUE], requiredEnumListContainingNulls=[null], optionalEnumList=null, requiredInputList=[MyInput[v=Blah]], requiredInputListContainingNulls=[null], optionalInputList=null, requiredDateList=[2001-10-20], requiredDateListContainingNulls=[null], optionalDateList=null, requiredDateTimeList=[2001-10-20T16:30], requiredDateTimeListContainingNulls=[null], optionalDateTimeList=null]" );
 
-    final AllTypesInput input2 = AllTypesInput.from( args );
-    args.put( "optionalID", "XXXX" );
-    final AllTypesInput input3 = AllTypesInput.from( args );
-
-    assertEquals( input, input );
-    assertEquals( input, input2 );
-    assertNotEquals( input, input3 );
-    assertEquals( input.hashCode(), input2.hashCode() );
-    assertNotEquals( input.hashCode(), input3.hashCode() );
+    final String json = JsonbBuilder.create( new JsonbConfig().withFormatting( true ) ).toJson( input );
+    assertEquals( json,
+                  "\n" +
+                  "{\n" +
+                  "    \"requiredBoolean\": true,\n" +
+                  "    \"requiredBooleanList\": [\n" +
+                  "        true\n" +
+                  "    ],\n" +
+                  "    \"requiredBooleanListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredDate\": \"2001-10-20\",\n" +
+                  "    \"requiredDateList\": [\n" +
+                  "        \"2001-10-20\"\n" +
+                  "    ],\n" +
+                  "    \"requiredDateListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredDateTime\": \"2001-10-20T16:30:00\",\n" +
+                  "    \"requiredDateTimeList\": [\n" +
+                  "        \"2001-10-20T16:30:00\"\n" +
+                  "    ],\n" +
+                  "    \"requiredDateTimeListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredEnum\": \"A_VALUE\",\n" +
+                  "    \"requiredEnumList\": [\n" +
+                  "        \"A_VALUE\"\n" +
+                  "    ],\n" +
+                  "    \"requiredEnumListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredFloat\": 2.5,\n" +
+                  "    \"requiredFloatList\": [\n" +
+                  "        2.5\n" +
+                  "    ],\n" +
+                  "    \"requiredFloatListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredID\": \"MyID\",\n" +
+                  "    \"requiredIDList\": [\n" +
+                  "        \"MyID\"\n" +
+                  "    ],\n" +
+                  "    \"requiredIDListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredInput\": {\n" +
+                  "        \"v\": \"Blah\"\n" +
+                  "    },\n" +
+                  "    \"requiredInputList\": [\n" +
+                  "        {\n" +
+                  "            \"v\": \"Blah\"\n" +
+                  "        }\n" +
+                  "    ],\n" +
+                  "    \"requiredInputListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredInt\": 1,\n" +
+                  "    \"requiredIntList\": [\n" +
+                  "        1\n" +
+                  "    ],\n" +
+                  "    \"requiredIntListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ],\n" +
+                  "    \"requiredString\": \"MyString\",\n" +
+                  "    \"requiredStringList\": [\n" +
+                  "        \"MyString\"\n" +
+                  "    ],\n" +
+                  "    \"requiredStringListContainingNulls\": [\n" +
+                  "        null\n" +
+                  "    ]\n" +
+                  "}" );
   }
 }

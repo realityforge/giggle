@@ -1,5 +1,7 @@
 package com.example.basic;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +33,12 @@ public final class SpecificEventResponse {
     @Nullable
     private EventType type;
 
+    @Nullable
+    private LocalDate startedAt;
+
+    @Nullable
+    private LocalDateTime reportedAt;
+
     @Nonnull
     public String getId() {
       return id;
@@ -56,6 +64,24 @@ public final class SpecificEventResponse {
 
     public void setType(@Nullable final EventType type) {
       this.type = type;
+    }
+
+    @Nullable
+    public LocalDate getStartedAt() {
+      return startedAt;
+    }
+
+    public void setStartedAt(@Nullable final LocalDate startedAt) {
+      this.startedAt = startedAt;
+    }
+
+    @Nullable
+    public LocalDateTime getReportedAt() {
+      return reportedAt;
+    }
+
+    public void setReportedAt(@Nullable final LocalDateTime reportedAt) {
+      this.reportedAt = reportedAt;
     }
   }
 }

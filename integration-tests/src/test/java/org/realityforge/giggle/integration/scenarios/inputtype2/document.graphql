@@ -1,0 +1,5 @@
+query aQuery($input: AllTypesInput!) {
+  aQuery(input: $input) {
+    success
+  }
+}

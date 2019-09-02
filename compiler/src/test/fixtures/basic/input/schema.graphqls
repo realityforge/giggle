@@ -14,7 +14,8 @@ type Mutation {
   createEvent(clientMutationId: String = null, event: EventInput!): CreateEventResponse
 }
 
-scalar Date
+scalar LocalDate
+scalar LocalDateTime
 
 """Classification of Event"""
 enum EventType {
@@ -31,7 +32,8 @@ enum EventType {
 input EventInput {
   name: String!
   type: EventType!
-  startedAt: Date
+  startedAt: LocalDate
+  reportedAt: LocalDateTime
 }
 
 input ObservationInput {
@@ -53,5 +55,7 @@ type Event {
   id: ID!
   name: String
   type: EventType
-  startedAt: Date
+  description: String
+  startedAt: LocalDate
+  reportedAt: LocalDateTime
 }

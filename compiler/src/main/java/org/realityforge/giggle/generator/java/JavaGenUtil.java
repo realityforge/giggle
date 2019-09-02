@@ -17,9 +17,6 @@ import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -28,9 +25,7 @@ import org.realityforge.giggle.generator.GeneratorContext;
 public final class JavaGenUtil
 {
   @Nonnull
-  public static final String DATE_TYPE = "Date";
-  @Nonnull
-  public static final String DATE_TIME_TYPE = "DateTime";
+  private static final ScalarTypeRegistry c_scalarTypeRegistry = ScalarTypeRegistry.createDefault();
 
   private JavaGenUtil()
   {
@@ -104,7 +99,7 @@ public final class JavaGenUtil
         .orElse( null );
     if ( null != name )
     {
-      return wrap( isList, ClassName.bestGuess( name ) );
+      return wrap( isList, isNonNull, ClassName.bestGuess( name ) );
     }
     else
     {
@@ -121,7 +116,7 @@ public final class JavaGenUtil
     final String typeName = typeMap.get( type );
     if ( null != typeName )
     {
-      return wrap( isList( valueType ), ClassName.bestGuess( typeName ) );
+      return wrap( isList( valueType ), GraphQLTypeUtil.isNonNull( valueType ), ClassName.bestGuess( typeName ) );
     }
     else
     {
@@ -147,7 +142,7 @@ public final class JavaGenUtil
 
     if ( Scalars.GraphQLID.equals( type ) && hasNumericDirective( container ) )
     {
-      return wrapPrimitive( isList, isNonnull, TypeName.INT );
+      return wrap( isList, isNonnull, TypeName.INT );
     }
     else
     {
@@ -160,59 +155,7 @@ public final class JavaGenUtil
                                              final boolean isNonnull,
                                              @Nonnull final GraphQLType type )
   {
-    if ( Scalars.GraphQLInt.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.INT );
-    }
-    else if ( Scalars.GraphQLBoolean.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.BOOLEAN );
-    }
-    else if ( Scalars.GraphQLByte.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.BYTE );
-    }
-    else if ( Scalars.GraphQLShort.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.SHORT );
-    }
-    else if ( Scalars.GraphQLLong.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.LONG );
-    }
-    else if ( Scalars.GraphQLChar.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.CHAR );
-    }
-    else if ( Scalars.GraphQLFloat.equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.FLOAT );
-    }
-    else if ( Scalars.GraphQLID.equals( type ) )
-    {
-      return wrap( isList, ClassName.get( String.class ) );
-    }
-    else if ( Scalars.GraphQLString.equals( type ) )
-    {
-      return wrap( isList, ClassName.get( String.class ) );
-    }
-    else if ( Scalars.GraphQLBigDecimal.equals( type ) )
-    {
-      return wrap( isList, ClassName.get( BigDecimal.class ) );
-    }
-    else if ( Scalars.GraphQLBigInteger.equals( type ) )
-    {
-      return wrap( isList, ClassName.get( BigInteger.class ) );
-    }
-    else if ( type.getName().equals( "Date" ) || type.getName().equals( "DateTime" ) )
-    {
-      //TODO: Support other scalars through some sort of mapping configuration
-      return wrap( isList, ClassName.get( Date.class ) );
-    }
-    else
-    {
-      throw new IllegalStateException( "Unknown type " + type.getName() );
-    }
+    return getScalarJavaType( isList, isNonnull, type.getName() );
   }
 
   @Nonnull
@@ -220,71 +163,16 @@ public final class JavaGenUtil
                                              final boolean isNonnull,
                                              @Nonnull final String type )
   {
-    if ( Scalars.GraphQLInt.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.INT );
-    }
-    else if ( Scalars.GraphQLBoolean.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.BOOLEAN );
-    }
-    else if ( Scalars.GraphQLByte.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.BYTE );
-    }
-    else if ( Scalars.GraphQLShort.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.SHORT );
-    }
-    else if ( Scalars.GraphQLLong.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.LONG );
-    }
-    else if ( Scalars.GraphQLChar.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.CHAR );
-    }
-    else if ( Scalars.GraphQLFloat.getName().equals( type ) )
-    {
-      return wrapPrimitive( isList, isNonnull, TypeName.FLOAT );
-    }
-    else if ( Scalars.GraphQLID.getName().equals( type ) )
-    {
-      return wrap( isList, ClassName.get( String.class ) );
-    }
-    else if ( Scalars.GraphQLString.getName().equals( type ) )
-    {
-      return wrap( isList, ClassName.get( String.class ) );
-    }
-    else if ( Scalars.GraphQLBigDecimal.getName().equals( type ) )
-    {
-      return wrap( isList, ClassName.get( BigDecimal.class ) );
-    }
-    else if ( Scalars.GraphQLBigInteger.getName().equals( type ) )
-    {
-      return wrap( isList, ClassName.get( BigInteger.class ) );
-    }
-    else if ( type.equals( DATE_TYPE ) || type.equals( DATE_TIME_TYPE ) )
-    {
-      //TODO: Support other scalars through some sort of mapping configuration
-      return wrap( isList, ClassName.get( Date.class ) );
-    }
-    else
-    {
-      throw new IllegalStateException( "Unknown type " + type );
-    }
+    return wrap( isList, isNonnull, c_scalarTypeRegistry.getType( type ) );
   }
 
   @Nonnull
-  private static TypeName wrap( final boolean isList, @Nonnull final TypeName type )
+  private static TypeName wrap( final boolean isList, final boolean isNonnull, @Nonnull final TypeName type )
   {
-    return isList ? listOf( type ) : type;
-  }
-
-  @Nonnull
-  private static TypeName wrapPrimitive( final boolean isList, final boolean isNonnull, @Nonnull final TypeName type )
-  {
-    return isList ? listOf( type.box() ) : isNonnull ? type : type.box();
+    final boolean primitive = type.isPrimitive();
+    return isList ?
+           listOf( primitive ? type.box() : type ) :
+           primitive && !isNonnull ? type.box() : type;
   }
 
   @Nonnull

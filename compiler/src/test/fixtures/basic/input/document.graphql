@@ -4,5 +4,7 @@ query specificEvent {
     id
     name
     type
+    startedAt
+    reportedAt
   }
 }

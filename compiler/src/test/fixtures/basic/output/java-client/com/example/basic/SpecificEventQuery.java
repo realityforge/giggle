@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class SpecificEventQuery {
   @Nonnull
-  private static final String QUERY = "query specificEvent {event(id:1) {id name type}}";
+  private static final String QUERY = "query specificEvent {event(id:1) {id name type startedAt reportedAt}}";
 
   private SpecificEventQuery() {
   }

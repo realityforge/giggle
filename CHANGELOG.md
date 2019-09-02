@@ -4,6 +4,19 @@
 
 * Upgrade the `org.realityforge.keycloak.client.authfilter:keycloak-jaxrs-client-authfilter` artifact to version `1.01`.
 * Add local validation to ensure top-level fields inside operations are defined by the schema.
+* Remove support for `Date` and `DateTime` scalars and instead add support for the following temporal scalars.
+    - `TimeZone`: Emitted as NormalizedCustomID as specified in java.util.TimeZone
+    - `Instant`: Formatted as `ISO_INSTANT`
+    - `Duration`: Duration is the ISO 8601 seconds based representation.
+    - `Period`: ISO 8661 Period representation
+    - `LocalDate`: `ISO_LOCAL_DATE`
+    - `LocalTime`: `ISO_LOCAL_TIME`
+    - `LocalDateTime`: `ISO_LOCAL_DATE_TIME`
+    - `ZonedDateTime`: `ISO_ZONED_DATE_TIME`
+    - `ZoneID`: ZoneID as specified in java.time.ZoneId
+    - `ZoneOffset`: Zone offset as specified in java.tim.ZoneOffset
+    - `OffsetDateTime`: `ISO_OFFSET_DATE_TIME`
+    - `OffsetTime`: `ISO_OFFSET_TIME`
 
 ### [v0.06](https://github.com/realityforge/giggle/tree/v0.06) (2019-08-19)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.05...v0.06)
