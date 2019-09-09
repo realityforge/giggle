@@ -1,5 +1,7 @@
 # Change Log
 
+### Unreleased
+
 ### [v0.07](https://github.com/realityforge/giggle/tree/v0.07) (2019-09-09)
 [Full Changelog](https://github.com/realityforge/giggle/compare/v0.06...v0.07)
 
