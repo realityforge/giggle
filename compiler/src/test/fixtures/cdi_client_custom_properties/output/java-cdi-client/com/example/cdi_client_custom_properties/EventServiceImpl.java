@@ -1,7 +1,6 @@
 package com.example.cdi_client_custom_properties;
 
 import java.net.URI;
-import java.util.Objects;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
@@ -12,6 +11,7 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.realityforge.keycloak.client.authfilter.Keycloak;
@@ -42,6 +42,19 @@ public class EventServiceImpl implements EventService {
 
   @Nonnull
   <T> Response $giggle$_call(@Nonnull final T entity) {
-    return ClientBuilder.newClient().target( URI.create( this.baseUrl + "/graphql" ) ).request( MediaType.APPLICATION_JSON_TYPE ).header( "Authorization", "bearer " + Objects.requireNonNull( this.keycloak.getAccessToken() ).getAccessToken() ).post( Entity.json( entity ) );
+    final URI uri = URI.create( this.baseUrl + "/graphql" );
+    Invocation.Builder request = ClientBuilder.newClient().target( uri ).request();
+    request = request.accept( MediaType.APPLICATION_JSON_TYPE );
+    request = request.header( "Authorization", "bearer " + $giggle$_getBearerToken() );
+    return request.post( Entity.json( entity ) );
+  }
+
+  @Nonnull
+  String $giggle$_getBearerToken() {
+    final String token = this.keycloak.getAccessToken();
+    if( null == token ) {
+      throw new GraphQLException( "Bearer token unavailable from Keycloak" );
+    }
+    return token;
   }
 }

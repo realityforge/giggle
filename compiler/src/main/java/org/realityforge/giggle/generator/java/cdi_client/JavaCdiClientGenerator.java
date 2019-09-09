@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
@@ -29,6 +28,7 @@ import org.realityforge.giggle.generator.PropertyDef;
 import org.realityforge.giggle.generator.java.AbstractJavaGenerator;
 import org.realityforge.giggle.generator.java.JavaGenUtil;
 import org.realityforge.giggle.generator.java.NamingUtil;
+import org.realityforge.giggle.generator.java.client.JavaClientGenerator;
 import org.realityforge.giggle.util.GraphQLUtil;
 
 @Generator.MetaData( name = "java-cdi-client" )
@@ -49,6 +49,8 @@ public class JavaCdiClientGenerator
   private static final ClassName RESPONSE_TYPE = ClassName.get( "javax.ws.rs.core", "Response" );
   private static final ClassName MEDIA_TYPE_TYPE = ClassName.get( "javax.ws.rs.core", "MediaType" );
   private static final ClassName CLIENT_BUILDER_TYPE = ClassName.get( "javax.ws.rs.client", "ClientBuilder" );
+  private static final ClassName INVOCATION_BUILDER_TYPE =
+    ClassName.get( "javax.ws.rs.client", "Invocation", "Builder" );
   private static final ClassName ENTITY_TYPE = ClassName.get( "javax.ws.rs.client", "Entity" );
   private static final ClassName KEYCLOAK_TYPE =
     ClassName.get( "org.realityforge.keycloak.client.authfilter", "Keycloak" );
@@ -139,8 +141,36 @@ public class JavaCdiClientGenerator
     }
 
     builder.addMethod( buildCallMethod( context ) );
+    final boolean keycloakEnabled = null != context.getProperty( KEYCLOAK_CLIENT_NAME_KEY );
+    if ( keycloakEnabled )
+    {
+      builder.addMethod( buildGetTokenMethod( context ) );
+    }
 
     return builder;
+  }
+
+  @Nonnull
+  private MethodSpec buildGetTokenMethod( @Nonnull final GeneratorContext context )
+  {
+    final MethodSpec.Builder method = MethodSpec
+      .methodBuilder( GEN_PREFIX + "getBearerToken" )
+      .addAnnotation( Nonnull.class )
+      .returns( String.class );
+
+    method.addStatement( "final $T token = this.keycloak.getAccessToken()", String.class );
+    final CodeBlock.Builder block = CodeBlock.builder();
+    block.beginControlFlow( "if( null == token )" );
+    final String exceptionType = context.getTypeMapping().get( JavaClientGenerator.GRAPH_QL_EXCEPTION_TYPE_NAME );
+    final ClassName exceptionClass =
+      ClassName.bestGuess( null != exceptionType ? exceptionType : JavaClientGenerator.GRAPH_QL_EXCEPTION_TYPE_NAME );
+    block.addStatement( "throw new $T( $S )", exceptionClass, "Bearer token unavailable from Keycloak" );
+    block.endControlFlow();
+    method.addCode( block.build() );
+
+    method.addStatement( "return token" );
+
+    return method.build();
   }
 
   @Nonnull
@@ -157,32 +187,27 @@ public class JavaCdiClientGenerator
                        .build() )
       .returns( RESPONSE_TYPE );
 
-    final StringBuilder sb = new StringBuilder();
-    final ArrayList<Object> params = new ArrayList<>();
-    sb.append( "return $T.newClient().target( $T.create( this.baseUrl " );
-    params.add( CLIENT_BUILDER_TYPE );
-    params.add( URI.class );
-
     final String urlSuffix = context.getProperty( URL_SUFFIX_KEY );
-    if ( null != urlSuffix )
+    if ( null == urlSuffix )
     {
-      sb.append( "+ $S " );
-      params.add( urlSuffix );
+      method.addStatement( "final $T uri = $T.create( this.baseUrl )", URI.class, URI.class );
     }
-    sb.append( ") ).request( $T.APPLICATION_JSON_TYPE )" );
-    params.add( MEDIA_TYPE_TYPE );
-
-    final boolean keycloakEnabled = null != context.getProperty( KEYCLOAK_CLIENT_NAME_KEY );
-    if ( keycloakEnabled )
+    else
     {
-      sb.append( ".header( \"Authorization\", " +
-                 "\"bearer \" + $T.requireNonNull( this.keycloak.getAccessToken() ).getAccessToken() )" );
-      params.add( Objects.class );
+      method.addStatement( "final $T uri = $T.create( this.baseUrl + $S )", URI.class, URI.class, urlSuffix );
     }
-    sb.append( ".post( $T.json( entity ) )" );
-    params.add( ENTITY_TYPE );
 
-    method.addStatement( sb.toString(), params.toArray() );
+    method.addStatement( "$T request = $T.newClient().target( uri ).request()",
+                         INVOCATION_BUILDER_TYPE,
+                         CLIENT_BUILDER_TYPE );
+    method.addStatement( "request = request.accept( $T.APPLICATION_JSON_TYPE )", MEDIA_TYPE_TYPE );
+
+    if ( null != context.getProperty( KEYCLOAK_CLIENT_NAME_KEY ) )
+    {
+      method.addStatement( "request = request.header( \"Authorization\", \"bearer \" + $N() )",
+                           GEN_PREFIX + "getBearerToken" );
+    }
+    method.addStatement( "return request.post( $T.json( entity ) )", ENTITY_TYPE );
 
     return method.build();
   }

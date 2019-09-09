@@ -9,6 +9,7 @@ import javax.enterprise.inject.Typed;
 import javax.transaction.Transactional;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,6 +34,9 @@ public class EventServiceImpl implements EventService {
 
   @Nonnull
   <T> Response $giggle$_call(@Nonnull final T entity) {
-    return ClientBuilder.newClient().target( URI.create( this.baseUrl ) ).request( MediaType.APPLICATION_JSON_TYPE ).post( Entity.json( entity ) );
+    final URI uri = URI.create( this.baseUrl );
+    Invocation.Builder request = ClientBuilder.newClient().target( uri ).request();
+    request = request.accept( MediaType.APPLICATION_JSON_TYPE );
+    return request.post( Entity.json( entity ) );
   }
 }
