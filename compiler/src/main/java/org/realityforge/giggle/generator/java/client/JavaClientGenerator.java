@@ -56,6 +56,7 @@ public class JavaClientGenerator
   extends AbstractJavaGenerator
 {
   private static final String GRAPH_QL_ERROR_TYPE_NAME = "GraphQLError";
+  private static final String GRAPH_QL_EXCEPTION_TYPE_NAME = "GraphQLException";
 
   @Override
   public void generate( @Nonnull final GeneratorContext context )
@@ -69,6 +70,7 @@ public class JavaClientGenerator
     fullTypeMap.putAll( generatedTypeMap );
 
     emitGraphQLError( context );
+    emitGraphQLException( context );
     emitEnums( context, types );
     emitInputs( context, fullTypeMap, types );
     emitOperations( context, fullTypeMap );
@@ -549,6 +551,37 @@ public class JavaClientGenerator
                            .addStatement( "this.extensions = extensions" )
                            .build() );
     }
+
+    JavaGenUtil.writeTopLevelType( context, builder );
+  }
+
+  private void emitGraphQLException( @Nonnull final GeneratorContext context )
+    throws IOException
+  {
+    final TypeSpec.Builder builder = TypeSpec.classBuilder( GRAPH_QL_EXCEPTION_TYPE_NAME );
+    builder.addModifiers( Modifier.PUBLIC );
+    builder.superclass( ClassName.get( RuntimeException.class ) );
+
+    builder.addMethod( MethodSpec.constructorBuilder().addModifiers( Modifier.PUBLIC ).build() );
+    builder.addMethod( MethodSpec
+                         .constructorBuilder()
+                         .addModifiers( Modifier.PUBLIC )
+                         .addParameter( ClassName.get( String.class ), "message", Modifier.FINAL )
+                         .addStatement( "super( message )" )
+                         .build() );
+    builder.addMethod( MethodSpec
+                         .constructorBuilder()
+                         .addModifiers( Modifier.PUBLIC )
+                         .addParameter( ClassName.get( String.class ), "message", Modifier.FINAL )
+                         .addParameter( ClassName.get( Throwable.class ), "cause", Modifier.FINAL )
+                         .addStatement( "super( message, cause )" )
+                         .build() );
+    builder.addMethod( MethodSpec
+                         .constructorBuilder()
+                         .addModifiers( Modifier.PUBLIC )
+                         .addParameter( ClassName.get( Throwable.class ), "cause", Modifier.FINAL )
+                         .addStatement( "super( cause )" )
+                         .build() );
 
     JavaGenUtil.writeTopLevelType( context, builder );
   }
