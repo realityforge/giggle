@@ -56,7 +56,7 @@ public class JavaClientGenerator
   extends AbstractJavaGenerator
 {
   private static final String GRAPH_QL_ERROR_TYPE_NAME = "GraphQLError";
-  private static final String GRAPH_QL_EXCEPTION_TYPE_NAME = "GraphQLException";
+  public static final String GRAPH_QL_EXCEPTION_TYPE_NAME = "GraphQLException";
 
   @Override
   public void generate( @Nonnull final GeneratorContext context )
