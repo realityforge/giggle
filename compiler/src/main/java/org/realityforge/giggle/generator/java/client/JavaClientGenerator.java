@@ -821,7 +821,7 @@ public class JavaClientGenerator
 
     // errors property
     {
-      final ArrayTypeName type = ArrayTypeName.of( ClassName.bestGuess( "GraphQLError" ) );
+      final ArrayTypeName type = ArrayTypeName.of( ClassName.bestGuess( GRAPH_QL_ERROR_TYPE_NAME ) );
       builder.addField( FieldSpec.builder( type, "errors", Modifier.PRIVATE ).addAnnotation( Nullable.class ).build() );
 
       builder.addMethod( MethodSpec.methodBuilder( "hasErrors" )
