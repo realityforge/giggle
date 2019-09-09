@@ -30,4 +30,4 @@ artifacts:
 
   javaee_api: javax:javaee-api:jar:8.0
 
-  keycloak_jaxrs_client_authfilter: org.realityforge.keycloak.client.authfilter:keycloak-jaxrs-client-authfilter:jar:1.01
+  keycloak_jaxrs_client_authfilter: org.realityforge.keycloak.client.authfilter:keycloak-jaxrs-client-authfilter:jar:1.02
