@@ -17,7 +17,7 @@ The Maven dependency is:
 <dependency>
   <groupId>org.realityforge.giggle</groupId>
   <artifactId>giggle</artifactId>
-  <version>0.06</version>
+  <version>0.07</version>
   <classification>all</classification>
 </dependency>
 ```
