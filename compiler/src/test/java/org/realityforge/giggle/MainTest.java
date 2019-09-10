@@ -62,6 +62,8 @@ public class MainTest
                   "   - cdi.service.name (required): The name of the generated service class\n" +
                   "   - cdi.base_url.jndi_name (required): The name of the JNDI resource that contains the base url for the endpoint\n" +
                   "   - cdi.url.suffix: The path added to the setting retrieved from the base_url.config.key to construct the url. If unspecified then no suffix is added\n" +
+                  "   - cdi.connect_timeout: The timeout in milliseconds after which a connect will fail. If unspecified then it defaults to 10s\n" +
+                  "   - cdi.read_timeout: The timeout in milliseconds after which a read will fail. If unspecified then it defaults to 10s\n" +
                   "   - cdi.keycloak.client.name: The name of the keycloak client used to authenticate the client. If unspecified then it is assumed no authentication step" );
   }
 

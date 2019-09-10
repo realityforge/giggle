@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
@@ -37,6 +38,8 @@ public class JavaCdiClientGenerator
 {
   private static final String SERVICE_NAME_KEY = "cdi.service.name";
   private static final String BASE_URL_KEY = "cdi.base_url.jndi_name";
+  private static final String CONNECT_TIMEOUT_KEY = "cdi.connect_timeout";
+  private static final String READ_TIMEOUT_KEY = "cdi.read_timeout";
   private static final String URL_SUFFIX_KEY = "cdi.url.suffix";
   private static final String KEYCLOAK_CLIENT_NAME_KEY = "cdi.keycloak.client.name";
   private static final ClassName RESOURCE_TYPE = ClassName.get( "javax.annotation", "Resource" );
@@ -67,6 +70,12 @@ public class JavaCdiClientGenerator
     properties.add( new PropertyDef( URL_SUFFIX_KEY,
                                      false,
                                      "The path added to the setting retrieved from the base_url.config.key to construct the url. If unspecified then no suffix is added" ) );
+    properties.add( new PropertyDef( CONNECT_TIMEOUT_KEY,
+                                     false,
+                                     "The timeout in milliseconds after which a connect will fail. If unspecified then it defaults to 10s" ) );
+    properties.add( new PropertyDef( READ_TIMEOUT_KEY,
+                                     false,
+                                     "The timeout in milliseconds after which a read will fail. If unspecified then it defaults to 10s" ) );
     properties.add( new PropertyDef( KEYCLOAK_CLIENT_NAME_KEY,
                                      false,
                                      "The name of the keycloak client used to authenticate the client. If unspecified then it is assumed no authentication step" ) );
@@ -202,6 +211,11 @@ public class JavaCdiClientGenerator
                          CLIENT_BUILDER_TYPE );
     method.addStatement( "request = request.accept( $T.APPLICATION_JSON_TYPE )", MEDIA_TYPE_TYPE );
 
+    method.addStatement( "request = request.property( $S, $L )", "jersey.config.client.connectTimeout",
+                         getTimeout( context, CONNECT_TIMEOUT_KEY ) );
+    method.addStatement( "request = request.property( $S, $L )", "jersey.config.client.readTimeout",
+                         getTimeout( context, READ_TIMEOUT_KEY ) );
+
     if ( null != context.getProperty( KEYCLOAK_CLIENT_NAME_KEY ) )
     {
       method.addStatement( "request = request.header( \"Authorization\", \"bearer \" + $N() )",
@@ -210,6 +224,29 @@ public class JavaCdiClientGenerator
     method.addStatement( "return request.post( $T.json( entity ) )", ENTITY_TYPE );
 
     return method.build();
+  }
+
+  private long getTimeout( @Nonnull final GeneratorContext context, @Nonnull final String key )
+  {
+    final String value = context.getProperty( key );
+    if ( null == value )
+    {
+      return TimeUnit.SECONDS.toMillis( 10 );
+    }
+    else
+    {
+      try
+      {
+        return Long.parseLong( value );
+      }
+      catch ( final NumberFormatException e )
+      {
+        final String message =
+          "Failed to parse configuration property " + key + " with " +
+          "value '" + value + "' due to " + e;
+        throw new IllegalStateException( message );
+      }
+    }
   }
 
   @Nonnull

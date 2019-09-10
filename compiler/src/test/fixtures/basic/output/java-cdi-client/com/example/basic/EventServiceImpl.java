@@ -37,6 +37,8 @@ public class EventServiceImpl implements EventService {
     final URI uri = URI.create( this.baseUrl );
     Invocation.Builder request = ClientBuilder.newClient().target( uri ).request();
     request = request.accept( MediaType.APPLICATION_JSON_TYPE );
+    request = request.property( "jersey.config.client.connectTimeout", 10000 );
+    request = request.property( "jersey.config.client.readTimeout", 10000 );
     return request.post( Entity.json( entity ) );
   }
 }
