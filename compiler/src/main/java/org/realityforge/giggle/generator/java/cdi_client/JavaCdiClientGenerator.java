@@ -170,16 +170,24 @@ public class JavaCdiClientGenerator
     method.addStatement( "final $T token = this.keycloak.getAccessToken()", String.class );
     final CodeBlock.Builder block = CodeBlock.builder();
     block.beginControlFlow( "if( null == token )" );
-    final String exceptionType = context.getTypeMapping().get( JavaClientGenerator.GRAPH_QL_EXCEPTION_TYPE_NAME );
-    final ClassName exceptionClass =
-      ClassName.bestGuess( null != exceptionType ? exceptionType : JavaClientGenerator.GRAPH_QL_EXCEPTION_TYPE_NAME );
-    block.addStatement( "throw new $T( $S )", exceptionClass, "Bearer token unavailable from Keycloak" );
+    block.addStatement( "throw new $T( $S )",
+                        getGraphQLExceptionClassName( context ),
+                        "Bearer token unavailable from Keycloak" );
     block.endControlFlow();
     method.addCode( block.build() );
 
     method.addStatement( "return token" );
 
     return method.build();
+  }
+
+  @Nonnull
+  private ClassName getGraphQLExceptionClassName( @Nonnull final GeneratorContext context )
+  {
+    final String exceptionType = context.getTypeMapping().get( JavaClientGenerator.GRAPH_QL_EXCEPTION_TYPE_NAME );
+    return ClassName.bestGuess( null != exceptionType ?
+                                exceptionType :
+                                JavaClientGenerator.GRAPH_QL_EXCEPTION_TYPE_NAME );
   }
 
   @Nonnull
