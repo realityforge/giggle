@@ -314,8 +314,18 @@ public class JavaCdiClientGenerator
 
     final CodeBlock.Builder code = CodeBlock.builder();
     code.beginControlFlow( sb.toString(), params.toArray() );
-    code.addStatement( "return response.readEntity( $T.class )",
+
+    final CodeBlock.Builder body = CodeBlock.builder();
+    body.beginControlFlow( "if( $T.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily() )", RESPONSE_TYPE );
+    body.addStatement( "return response.readEntity( $T.class )",
                        ClassName.get( context.getPackageName(), typeName, "Answer" ) );
+    body.nextControlFlow( "else" );
+    body.addStatement( "throw new $T( $S + response.getStatusInfo() )",
+                        getGraphQLExceptionClassName( context ),
+                        "Error invoking GraphQL endpoint. HTTP Status: " );
+    body.endControlFlow();
+    code.add( body.build() );
+
     code.endControlFlow();
     method.addCode( code.build() );
     return method.build();

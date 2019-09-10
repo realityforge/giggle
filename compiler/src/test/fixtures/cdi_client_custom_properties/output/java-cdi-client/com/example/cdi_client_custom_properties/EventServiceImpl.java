@@ -36,7 +36,11 @@ public class EventServiceImpl implements EventService {
   @Nonnull
   public EventQuery.Answer event(@Nonnull final String id) {
     try ( Response response = $giggle$_call( new EventQuery.Question( id ) ) ) {
-      return response.readEntity( EventQuery.Answer.class );
+      if( Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily() ) {
+        return response.readEntity( EventQuery.Answer.class );
+      } else {
+        throw new GraphQLException( "Error invoking GraphQL endpoint. HTTP Status: " + response.getStatusInfo() );
+      }
     }
   }
 
