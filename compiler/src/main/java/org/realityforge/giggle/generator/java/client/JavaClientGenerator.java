@@ -111,7 +111,7 @@ public class JavaClientGenerator
     final FieldCollector collector = new FieldCollector( context.getDocument() );
     final FragmentCollector fragmentCollector = new FragmentCollector( context.getDocument() );
 
-    for ( final Definition definition : context.getDocument().getDefinitions() )
+    for ( final Definition<?> definition : context.getDocument().getDefinitions() )
     {
       if ( definition instanceof OperationDefinition )
       {
@@ -302,12 +302,13 @@ public class JavaClientGenerator
       .build();
   }
 
+  @SuppressWarnings( "rawtypes" )
   @Nonnull
   private String toCompactDocument( @Nonnull final GeneratorContext context,
                                     @Nonnull final FragmentCollector collector,
                                     @Nonnull final OperationDefinition operation )
   {
-    final ArrayList<Definition> definitions =
+    final List<Definition> definitions =
       new ArrayList<>( collector.collectFragments( operation.getSelectionSet() ) );
     definitions.add( operation );
     final Document document = context.getDocument().transform( b -> b.definitions( definitions ) );
@@ -365,7 +366,7 @@ public class JavaClientGenerator
 
   @Nonnull
   private TypeSpec.Builder buildType( @Nonnull final FieldCollector collector,
-                                      @Nonnull final SelectionSetContainer container,
+                                      @Nonnull final SelectionSetContainer<?> container,
                                       @Nonnull final Map<GraphQLType, String> typeMap,
                                       @Nonnull final String typeName,
                                       @Nonnull final GraphQLFieldsContainer fieldsContainer )
@@ -379,7 +380,7 @@ public class JavaClientGenerator
   private void buildSelectedValues( @Nonnull final FieldCollector collector,
                                     @Nonnull final Map<GraphQLType, String> typeMap,
                                     @Nonnull final GraphQLFieldsContainer fieldsContainer,
-                                    @Nonnull final SelectionSetContainer selectionSetContainer,
+                                    @Nonnull final SelectionSetContainer<?> selectionSetContainer,
                                     @Nonnull final TypeSpec.Builder builder )
   {
     final MergedSelectionSet selectionSet = collector.collectFields( selectionSetContainer.getSelectionSet() );

@@ -115,7 +115,7 @@ public class JavaCdiClientGenerator
                              .build() );
     builder.addAnnotation( AnnotationSpec.builder( TYPED_TYPE ).addMember( "value", "$T.class", serviceType ).build() );
 
-    for ( final Definition definition : context.getDocument().getDefinitions() )
+    for ( final Definition<?> definition : context.getDocument().getDefinitions() )
     {
       if ( definition instanceof OperationDefinition )
       {
@@ -340,7 +340,7 @@ public class JavaCdiClientGenerator
     final TypeSpec.Builder builder = TypeSpec.interfaceBuilder( self );
     builder.addModifiers( Modifier.PUBLIC );
 
-    for ( final Definition definition : context.getDocument().getDefinitions() )
+    for ( final Definition<?> definition : context.getDocument().getDefinitions() )
     {
       if ( definition instanceof OperationDefinition )
       {

@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Cleanup the compiler code so that it does not generate any type errors when enabling the linter.
+
 ### [v0.08](https://github.com/realityforge/giggle/tree/v0.08) (2019-09-10) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.07...v0.08)
 
 * Enhance the `java-client` generator to produce a `GraphQLException` class. The class will be used when if there is an error preparing, transmitting or receiving the GraphQL requests.

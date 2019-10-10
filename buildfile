@@ -80,6 +80,10 @@ define 'giggle' do
 
   iml.excluded_directories << project._('tmp')
 
+  ipr.add_component('JavacSettings') do |xml|
+    xml.option(:name => 'ADDITIONAL_OPTIONS_STRING', :value => '-Xlint:all,-processing,-serial')
+  end
+
   ipr.add_component_from_artifact(:idea_codestyle)
   ipr.add_component('JavaProjectCodeInsightSettings') do |xml|
     xml.tag!('excluded-names') do

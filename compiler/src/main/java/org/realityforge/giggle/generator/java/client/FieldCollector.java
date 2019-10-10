@@ -44,7 +44,7 @@ final class FieldCollector
                               @Nonnull final Map<String, MergedField> fields )
   {
 
-    for ( final Selection selection : selectionSet.getSelections() )
+    for ( final Selection<?> selection : selectionSet.getSelections() )
     {
       if ( selection instanceof Field )
       {

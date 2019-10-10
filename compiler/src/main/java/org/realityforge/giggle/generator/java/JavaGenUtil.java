@@ -68,9 +68,9 @@ public final class JavaGenUtil
 
   @Nonnull
   public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
-                                      @Nonnull final Type varType )
+                                      @Nonnull final Type<?> varType )
   {
-    Type type = varType;
+    Type<?> type = varType;
     boolean isNonNull = false;
     boolean isList = false;
     if ( type instanceof NonNullType )

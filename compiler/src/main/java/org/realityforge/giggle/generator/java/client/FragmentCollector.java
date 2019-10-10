@@ -43,7 +43,7 @@ final class FragmentCollector
   {
     if ( null != selectionSet )
     {
-      for ( final Selection selection : selectionSet.getSelections() )
+      for ( final Selection<?> selection : selectionSet.getSelections() )
       {
         if ( selection instanceof SelectionSetContainer )
         {

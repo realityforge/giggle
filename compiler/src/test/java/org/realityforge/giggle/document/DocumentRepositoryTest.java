@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.realityforge.giggle.AbstractTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -39,9 +40,9 @@ public class DocumentRepositoryTest
                      "  }\n" +
                      "}\n" );
 
-    final List<Definition> definitions = document.getDefinitions();
+    final List<Definition<?>> definitions = getDefinitions( document );
     assertEquals( definitions.size(), 1 );
-    final Definition definition2 = definitions.get( 0 );
+    final Definition<?> definition2 = definitions.get( 0 );
     assertTrue( definition2 instanceof OperationDefinition );
     final OperationDefinition operation = (OperationDefinition) definition2;
     assertEquals( operation.getName(), "myQuery" );
@@ -68,13 +69,13 @@ public class DocumentRepositoryTest
                              "    ...NameParts\n" +
                              "  }\n" +
                              "}\n" );
-    final List<Definition> definitions = document.getDefinitions();
+    final List<Definition<?>> definitions = getDefinitions( document );
     assertEquals( definitions.size(), 2 );
-    final Definition definition = definitions.get( 0 );
+    final Definition<?> definition = definitions.get( 0 );
     assertTrue( definition instanceof FragmentDefinition );
     final FragmentDefinition fragment = (FragmentDefinition) definition;
     assertEquals( fragment.getName(), "NameParts" );
-    final Definition definition2 = definitions.get( 1 );
+    final Definition<?> definition2 = definitions.get( 1 );
     assertTrue( definition2 instanceof OperationDefinition );
     final OperationDefinition operation = (OperationDefinition) definition2;
     assertEquals( operation.getName(), "myQuery" );
@@ -108,13 +109,13 @@ public class DocumentRepositoryTest
 
     final Document document =
       new DocumentRepository().getDocument( schema, Arrays.asList( documentFile1, documentFile2 ) );
-    final List<Definition> definitions = document.getDefinitions();
+    final List<Definition<?>> definitions = getDefinitions( document );
     assertEquals( definitions.size(), 2 );
-    final Definition definition = definitions.get( 0 );
+    final Definition<?> definition = definitions.get( 0 );
     assertTrue( definition instanceof FragmentDefinition );
     final FragmentDefinition fragment = (FragmentDefinition) definition;
     assertEquals( fragment.getName(), "NameParts" );
-    final Definition definition2 = definitions.get( 1 );
+    final Definition<?> definition2 = definitions.get( 1 );
     assertTrue( definition2 instanceof OperationDefinition );
     final OperationDefinition operation = (OperationDefinition) definition2;
     assertEquals( operation.getName(), "myQuery" );
@@ -234,7 +235,6 @@ public class DocumentRepositoryTest
                   "Validation error of type LoneAnonymousOperationViolation: Giggle does not allow anonymous operations." );
   }
 
-
   @Test
   public void referenceQueryByMutation()
     throws Exception
@@ -264,5 +264,12 @@ public class DocumentRepositoryTest
     assertEquals( error.getValidationErrorType(), ValidationErrorType.FieldUndefined );
     assertEquals( error.getMessage(),
                   "Validation error of type FieldUndefined: Field 'person' of type 'Mutation' is undefined" );
+  }
+
+  @SuppressWarnings( "unchecked" )
+  @Nonnull
+  private List<Definition<?>> getDefinitions( @Nonnull final Document document )
+  {
+    return (List<Definition<?>>) (List) document.getDefinitions();
   }
 }
