@@ -217,7 +217,7 @@ public class FixtureTest
         compiler.getTask( null,
                           fileManager,
                           listener,
-                          Arrays.asList( "-d", output.toString(), "-cp", classpath ),
+                          Arrays.asList( "-d", output.toString(), "-cp", classpath, "-Xlint:all,-processing,-serial" ),
                           null,
                           compilationUnits );
       if ( !compilationTask.call() )

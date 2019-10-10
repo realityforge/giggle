@@ -3,6 +3,7 @@
 ### Unreleased
 
 * Cleanup the compiler code so that it does not generate any type errors when enabling the linter.
+* Update `FixtureTest` so that it lints over generated code.
 
 ### [v0.08](https://github.com/realityforge/giggle/tree/v0.08) (2019-09-10) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.07...v0.08)
 
