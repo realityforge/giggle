@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Upgrade the `com.squareup` artifact to version `1.12.0`.
 * Upgrade the `org.realityforge.gir` artifact to version `0.11`.
 * Cleanup the compiler code so that it does not generate any type errors when enabling the linter.
 * Update `FixtureTest` so that it lints over generated code.

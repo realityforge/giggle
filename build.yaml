@@ -21,7 +21,7 @@ artifacts:
   slf4j_jdk14: org.slf4j:slf4j-jdk14:jar:1.7.25
   antlr4_runtime: org.antlr:antlr4-runtime:jar:4.7.2
 
-  javapoet: com.squareup:javapoet:jar:1.11.1
+  javapoet: com.squareup:javapoet:jar:1.12.0
 
   yasson: org.eclipse:yasson:jar:1.0.4
   jakarta_json: org.glassfish:jakarta.json:jar:1.1.5
