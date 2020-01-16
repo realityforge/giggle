@@ -13,7 +13,7 @@ artifacts:
 
   gir: org.realityforge.gir:gir-core:jar:0.11
 
-  guiceyloops: org.realityforge.guiceyloops:guiceyloops:jar:0.102
+  guiceyloops: org.realityforge.guiceyloops:guiceyloops:jar:0.106
 
   graphql_java: com.graphql-java:graphql-java:jar:13.0
 
