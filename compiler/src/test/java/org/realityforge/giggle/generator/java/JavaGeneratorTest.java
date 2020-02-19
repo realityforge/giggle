@@ -4,8 +4,8 @@ import gir.io.FileUtil;
 import graphql.introspection.Introspection;
 import graphql.language.Document;
 import graphql.schema.GraphQLEnumType;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLSchema;
-import graphql.schema.GraphQLType;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,9 +55,9 @@ public class JavaGeneratorTest
     final MyTestJavaGenerator gen = new MyTestJavaGenerator();
     final GeneratorContext context =
       new GeneratorContext( new GeneratorEntry( gen ), globalContext );
-    final Map<GraphQLType, String> mapping = gen.buildTypeMapping( context );
+    final Map<GraphQLNamedType, String> mapping = gen.buildTypeMapping( context );
     assertEquals( mapping.size(), 1 );
-    final Map.Entry<GraphQLType, String> entry = mapping.entrySet().iterator().next();
+    final Map.Entry<GraphQLNamedType, String> entry = mapping.entrySet().iterator().next();
     assertEquals( entry.getKey().getName(), "Person" );
     assertEquals( entry.getValue(), "com.biz.Person" );
   }
@@ -102,9 +102,9 @@ public class JavaGeneratorTest
     final MyTestJavaGenerator gen = new MyTestJavaGenerator();
     final GeneratorContext context =
       new GeneratorContext( new GeneratorEntry( gen ), globalContext );
-    final HashMap<GraphQLType, String> typeMap = new HashMap<>();
-    typeMap.put( schema.getType( "Person" ), "com.example.Person" );
-    typeMap.put( schema.getType( "Tanker" ), "com.example.Tanker" );
+    final HashMap<GraphQLNamedType, String> typeMap = new HashMap<>();
+    typeMap.put( (GraphQLNamedType) schema.getType( "Person" ), "com.example.Person" );
+    typeMap.put( (GraphQLNamedType) schema.getType( "Tanker" ), "com.example.Tanker" );
     gen.writeTypeMappingFile( context, typeMap );
 
     final Path file = Paths.get( dir.toString(), "com", "example", "types.mapping" );

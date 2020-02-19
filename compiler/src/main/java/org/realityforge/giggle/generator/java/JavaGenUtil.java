@@ -14,6 +14,7 @@ import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLDirectiveContainer;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLInputObjectField;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import java.io.IOException;
@@ -67,7 +68,7 @@ public final class JavaGenUtil
   }
 
   @Nonnull
-  public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
+  public static TypeName getJavaType( @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                       @Nonnull final Type<?> varType )
   {
     Type<?> type = varType;
@@ -108,11 +109,12 @@ public final class JavaGenUtil
   }
 
   @Nonnull
-  public static TypeName getJavaType( @Nonnull final Map<GraphQLType, String> typeMap,
-                                      @Nonnull final GraphQLDirectiveContainer container )
+  public static TypeName getJavaType( @Nonnull final Map<GraphQLNamedType, String> typeMap,
+                                      @Nonnull final GraphQLDirectiveContainer container,
+                                      @Nonnull final GraphQLType specifiedType )
   {
-    final GraphQLType valueType = getValueType( container );
-    final GraphQLType type = GraphQLTypeUtil.unwrapAll( valueType );
+    final GraphQLType valueType = getValueType( specifiedType );
+    final GraphQLNamedType type = GraphQLTypeUtil.unwrapAll( valueType );
     final String typeName = typeMap.get( type );
     if ( null != typeName )
     {
@@ -137,7 +139,7 @@ public final class JavaGenUtil
   private static TypeName getScalarJavaType( @Nonnull final GraphQLDirectiveContainer container,
                                              final boolean isList,
                                              final boolean isNonnull,
-                                             @Nonnull final GraphQLType type )
+                                             @Nonnull final GraphQLNamedType type )
   {
 
     if ( Scalars.GraphQLID.equals( type ) && hasNumericDirective( container ) )
@@ -153,7 +155,7 @@ public final class JavaGenUtil
   @Nonnull
   private static TypeName getScalarJavaType( final boolean isList,
                                              final boolean isNonnull,
-                                             @Nonnull final GraphQLType type )
+                                             @Nonnull final GraphQLNamedType type )
   {
     return getScalarJavaType( isList, isNonnull, type.getName() );
   }

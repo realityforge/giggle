@@ -5,6 +5,7 @@ import com.squareup.javapoet.TypeSpec;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
 import graphql.schema.GraphQLInputObjectType;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import java.io.File;
@@ -48,13 +49,13 @@ public abstract class AbstractJavaGenerator
    * @param type the type.
    * @return true if it is not an introspection type.
    */
-  protected final boolean isNotIntrospectionType( @Nonnull final GraphQLType type )
+  protected final boolean isNotIntrospectionType( @Nonnull final GraphQLNamedType type )
   {
     return !type.getName().startsWith( "__" );
   }
 
   protected final void writeTypeMappingFile( @Nonnull final GeneratorContext context,
-                                             @Nonnull final Map<GraphQLType, String> typeMap )
+                                             @Nonnull final Map<GraphQLNamedType, String> typeMap )
     throws IOException
   {
     final String typeMappingContent =
@@ -99,7 +100,7 @@ public abstract class AbstractJavaGenerator
    */
   @Nonnull
   protected final List<GraphQLType> extractTypesToGenerate( @Nonnull final GraphQLSchema schema,
-                                                            @Nonnull final Map<GraphQLType, String> existing )
+                                                            @Nonnull final Map<GraphQLNamedType, String> existing )
   {
     return schema.getAllTypesAsList()
       .stream()
@@ -109,25 +110,27 @@ public abstract class AbstractJavaGenerator
   }
 
   @Nonnull
-  protected final Map<GraphQLType, String> extractGeneratedDataTypes( @Nonnull final GeneratorContext context,
-                                                                      @Nonnull final List<GraphQLType> types )
+  protected final Map<GraphQLNamedType, String> extractGeneratedDataTypes( @Nonnull final GeneratorContext context,
+                                                                           @Nonnull final List<GraphQLType> types )
   {
-    final Map<GraphQLType, String> generatedTypeMap = new HashMap<>();
+    final Map<GraphQLNamedType, String> generatedTypeMap = new HashMap<>();
     for ( final GraphQLType type : types )
     {
       if ( type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType )
       {
-        generatedTypeMap.put( type, context.getPackageName() + "." + type.getName() );
+        final GraphQLNamedType namedType = (GraphQLNamedType) type;
+        generatedTypeMap.put( namedType, context.getPackageName() + "." + namedType.getName() );
       }
     }
     return generatedTypeMap;
   }
 
   @Nonnull
-  protected final Map<GraphQLType, String> buildTypeMapping( @Nonnull final GeneratorContext context )
+  protected final Map<GraphQLNamedType, String> buildTypeMapping( @Nonnull final GeneratorContext context )
   {
-    final Map<GraphQLType, String> typeMap = new HashMap<>();
-    context.getTypeMapping().forEach( ( key, value ) -> typeMap.put( context.getSchema().getType( key ), value ) );
+    final Map<GraphQLNamedType, String> typeMap = new HashMap<>();
+    context.getTypeMapping()
+      .forEach( ( key, value ) -> typeMap.put( context.getSchema().getTypeMap().get( key ), value ) );
     return typeMap;
   }
 

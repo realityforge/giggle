@@ -13,6 +13,7 @@ import graphql.language.Definition;
 import graphql.language.NonNullType;
 import graphql.language.OperationDefinition;
 import graphql.language.VariableDefinition;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLType;
 import java.net.URI;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class JavaCdiClientGenerator
   public void generate( @Nonnull final GeneratorContext context )
     throws Exception
   {
-    final Map<GraphQLType, String> typeMap = buildTypeMapping( context );
+    final Map<GraphQLNamedType, String> typeMap = buildTypeMapping( context );
     final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), typeMap );
 
     typeMap.putAll( extractGeneratedDataTypes( context, types ) );
@@ -100,7 +101,7 @@ public class JavaCdiClientGenerator
   @Nonnull
   private TypeSpec.Builder emitServiceImplementation( @Nonnull final GeneratorContext context,
                                                       @Nonnull final String serviceName,
-                                                      @Nonnull final Map<GraphQLType, String> typeMap )
+                                                      @Nonnull final Map<GraphQLNamedType, String> typeMap )
   {
     final String baseUrlKey = context.getRequiredProperty( BASE_URL_KEY );
 
@@ -259,7 +260,7 @@ public class JavaCdiClientGenerator
 
   @Nonnull
   private MethodSpec buildOperationMethodImplementation( @Nonnull final GeneratorContext context,
-                                                         @Nonnull final Map<GraphQLType, String> typeMap,
+                                                         @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                                          @Nonnull final OperationDefinition operation )
   {
     final Map<VariableDefinition, TypeName> variableTypes = buildVariableMap( operation, typeMap );
@@ -321,8 +322,8 @@ public class JavaCdiClientGenerator
                        ClassName.get( context.getPackageName(), typeName, "Answer" ) );
     body.nextControlFlow( "else" );
     body.addStatement( "throw new $T( $S + response.getStatusInfo() )",
-                        getGraphQLExceptionClassName( context ),
-                        "Error invoking GraphQL endpoint. HTTP Status: " );
+                       getGraphQLExceptionClassName( context ),
+                       "Error invoking GraphQL endpoint. HTTP Status: " );
     body.endControlFlow();
     code.add( body.build() );
 
@@ -334,7 +335,7 @@ public class JavaCdiClientGenerator
   @Nonnull
   private TypeSpec.Builder emitServiceInterface( @Nonnull final GeneratorContext context,
                                                  @Nonnull final String serviceName,
-                                                 @Nonnull final Map<GraphQLType, String> typeMap )
+                                                 @Nonnull final Map<GraphQLNamedType, String> typeMap )
   {
     final ClassName self = ClassName.get( context.getPackageName(), serviceName );
     final TypeSpec.Builder builder = TypeSpec.interfaceBuilder( self );
@@ -356,7 +357,7 @@ public class JavaCdiClientGenerator
 
   @Nonnull
   private MethodSpec buildOperationMethod( @Nonnull final GeneratorContext context,
-                                           @Nonnull final Map<GraphQLType, String> typeMap,
+                                           @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                            @Nonnull final OperationDefinition operation )
   {
     final Map<VariableDefinition, TypeName> variableTypes = buildVariableMap( operation, typeMap );
@@ -385,7 +386,7 @@ public class JavaCdiClientGenerator
 
   @Nonnull
   private Map<VariableDefinition, TypeName> buildVariableMap( @Nonnull final OperationDefinition operation,
-                                                              @Nonnull final Map<GraphQLType, String> typeMap )
+                                                              @Nonnull final Map<GraphQLNamedType, String> typeMap )
   {
     final Map<VariableDefinition, TypeName> variableTypes = new HashMap<>();
     for ( final VariableDefinition variable : operation.getVariableDefinitions() )

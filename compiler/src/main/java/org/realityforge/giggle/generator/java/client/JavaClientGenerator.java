@@ -28,6 +28,7 @@ import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
@@ -62,11 +63,11 @@ public class JavaClientGenerator
   public void generate( @Nonnull final GeneratorContext context )
     throws Exception
   {
-    final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
+    final Map<GraphQLNamedType, String> inputTypeMap = buildTypeMapping( context );
     final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), inputTypeMap );
-    final Map<GraphQLType, String> generatedTypeMap = extractGeneratedDataTypes( context, types );
+    final Map<GraphQLNamedType, String> generatedTypeMap = extractGeneratedDataTypes( context, types );
 
-    final Map<GraphQLType, String> fullTypeMap = new HashMap<>( inputTypeMap );
+    final Map<GraphQLNamedType, String> fullTypeMap = new HashMap<>( inputTypeMap );
     fullTypeMap.putAll( generatedTypeMap );
 
     emitGraphQLError( context );
@@ -91,7 +92,7 @@ public class JavaClientGenerator
   }
 
   private void emitInputs( @Nonnull final GeneratorContext context,
-                           @Nonnull final Map<GraphQLType, String> fullTypeMap,
+                           @Nonnull final Map<GraphQLNamedType, String> fullTypeMap,
                            @Nonnull final List<GraphQLType> types )
     throws IOException
   {
@@ -105,7 +106,7 @@ public class JavaClientGenerator
   }
 
   private void emitOperations( @Nonnull final GeneratorContext context,
-                               @Nonnull final Map<GraphQLType, String> typeMap )
+                               @Nonnull final Map<GraphQLNamedType, String> typeMap )
     throws IOException
   {
     final FieldCollector collector = new FieldCollector( context.getDocument() );
@@ -126,7 +127,7 @@ public class JavaClientGenerator
   }
 
   private void emitInput( @Nonnull final GeneratorContext context,
-                          @Nonnull final Map<GraphQLType, String> typeMap,
+                          @Nonnull final Map<GraphQLNamedType, String> typeMap,
                           @Nonnull final GraphQLInputObjectType type )
     throws IOException
   {
@@ -141,7 +142,7 @@ public class JavaClientGenerator
     final Map<GraphQLInputObjectField, TypeName> fieldTypes = new HashMap<>();
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
-      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field ) );
+      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field, field.getType() ) );
     }
 
     builder.addMethod( buildInputConstructor( type, fieldTypes ) );
@@ -317,7 +318,7 @@ public class JavaClientGenerator
 
   private void emitOperationType( @Nonnull final GeneratorContext context,
                                   @Nonnull final FragmentCollector fragmentCollector,
-                                  @Nonnull final Map<GraphQLType, String> typeMap,
+                                  @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                   @Nonnull final OperationDefinition operation )
     throws IOException
   {
@@ -346,7 +347,7 @@ public class JavaClientGenerator
 
   private void emitOperationResponse( @Nonnull final GeneratorContext context,
                                       @Nonnull final FieldCollector collector,
-                                      @Nonnull final Map<GraphQLType, String> typeMap,
+                                      @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                       @Nonnull final OperationDefinition operation )
     throws IOException
   {
@@ -367,7 +368,7 @@ public class JavaClientGenerator
   @Nonnull
   private TypeSpec.Builder buildType( @Nonnull final FieldCollector collector,
                                       @Nonnull final SelectionSetContainer<?> container,
-                                      @Nonnull final Map<GraphQLType, String> typeMap,
+                                      @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                       @Nonnull final String typeName,
                                       @Nonnull final GraphQLFieldsContainer fieldsContainer )
   {
@@ -378,7 +379,7 @@ public class JavaClientGenerator
   }
 
   private void buildSelectedValues( @Nonnull final FieldCollector collector,
-                                    @Nonnull final Map<GraphQLType, String> typeMap,
+                                    @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                     @Nonnull final GraphQLFieldsContainer fieldsContainer,
                                     @Nonnull final SelectionSetContainer<?> selectionSetContainer,
                                     @Nonnull final TypeSpec.Builder builder )
@@ -391,7 +392,7 @@ public class JavaClientGenerator
   }
 
   private void buildFieldSelection( @Nonnull final FieldCollector collector,
-                                    @Nonnull final Map<GraphQLType, String> typeMap,
+                                    @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                     @Nonnull final GraphQLFieldsContainer fieldsContainer,
                                     @Nonnull final TypeSpec.Builder builder,
                                     @Nonnull final MergedField mergedField )
@@ -406,7 +407,7 @@ public class JavaClientGenerator
     final TypeName fieldType;
     if ( selection.getChildren().isEmpty() )
     {
-      fieldType = JavaGenUtil.getJavaType( typeMap, fieldDefinition );
+      fieldType = JavaGenUtil.getJavaType( typeMap, fieldDefinition, fieldDefinition.getType() );
     }
     else
     {
@@ -629,7 +630,7 @@ public class JavaClientGenerator
   }
 
   @Nonnull
-  private TypeSpec.Builder buildVariableType( @Nonnull final Map<GraphQLType, String> typeMap,
+  private TypeSpec.Builder buildVariableType( @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                               @Nonnull final OperationDefinition operation )
   {
     final TypeSpec.Builder builder = TypeSpec.classBuilder( "Variables" );
@@ -711,7 +712,7 @@ public class JavaClientGenerator
   }
 
   @Nonnull
-  private TypeSpec.Builder buildQuestionType( @Nonnull final Map<GraphQLType, String> typeMap,
+  private TypeSpec.Builder buildQuestionType( @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                               @Nonnull final OperationDefinition operation )
   {
     final TypeSpec.Builder builder = TypeSpec.classBuilder( "Question" );

@@ -22,6 +22,7 @@ import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeUtil;
 import graphql.schema.GraphQLUnmodifiedType;
@@ -57,10 +58,10 @@ public class JavaServerGenerator
   public void generate( @Nonnull final GeneratorContext context )
     throws Exception
   {
-    final Map<GraphQLType, String> inputTypeMap = buildTypeMapping( context );
+    final Map<GraphQLNamedType, String> inputTypeMap = buildTypeMapping( context );
     final List<GraphQLType> types = extractTypesToGenerate( context.getSchema(), inputTypeMap );
-    final Map<GraphQLType, String> generatedTypeMap = extractGeneratedDataTypes( context, types );
-    final Map<GraphQLType, String> fullTypeMap = new HashMap<>( inputTypeMap );
+    final Map<GraphQLNamedType, String> generatedTypeMap = extractGeneratedDataTypes( context, types );
+    final Map<GraphQLNamedType, String> fullTypeMap = new HashMap<>( inputTypeMap );
     fullTypeMap.putAll( generatedTypeMap );
     for ( final GraphQLType type : types )
     {
@@ -94,7 +95,7 @@ public class JavaServerGenerator
   }
 
   private void emitArgs( @Nonnull final GeneratorContext context,
-                         @Nonnull final Map<GraphQLType, String> typeMap,
+                         @Nonnull final Map<GraphQLNamedType, String> typeMap,
                          @Nonnull final String name,
                          @Nonnull final List<GraphQLArgument> arguments )
     throws IOException
@@ -105,7 +106,7 @@ public class JavaServerGenerator
     final Map<GraphQLArgument, TypeName> argTypes = new HashMap<>();
     for ( final GraphQLArgument argument : arguments )
     {
-      argTypes.put( argument, JavaGenUtil.getJavaType( typeMap, argument ) );
+      argTypes.put( argument, JavaGenUtil.getJavaType( typeMap, argument, argument.getType() ) );
     }
 
     builder.addMethod( buildArgsFrom( name, arguments, argTypes ) );
@@ -173,7 +174,7 @@ public class JavaServerGenerator
   }
 
   private boolean isNumericIDType( @Nonnull final GraphQLDirectiveContainer container,
-                                   @Nonnull final GraphQLType inputType )
+                                   @Nonnull final GraphQLNamedType inputType )
   {
     return Scalars.GraphQLID.getName().equals( inputType.getName() ) &&
            JavaGenUtil.hasNumericDirective( container );
@@ -491,7 +492,7 @@ public class JavaServerGenerator
   }
 
   private void emitInput( @Nonnull final GeneratorContext context,
-                          @Nonnull final Map<GraphQLType, String> typeMap,
+                          @Nonnull final Map<GraphQLNamedType, String> typeMap,
                           @Nonnull final GraphQLInputObjectType type )
     throws IOException
   {
@@ -506,7 +507,7 @@ public class JavaServerGenerator
     final Map<GraphQLInputObjectField, TypeName> fieldTypes = new HashMap<>();
     for ( final GraphQLInputObjectField field : type.getFields() )
     {
-      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field ) );
+      fieldTypes.put( field, JavaGenUtil.getJavaType( typeMap, field, field.getType() ) );
     }
 
     builder.addMethod( buildInputFrom( type, typeMap, fieldTypes ) );
@@ -621,7 +622,7 @@ public class JavaServerGenerator
 
   @Nonnull
   private MethodSpec buildInputMaybeFrom( @Nonnull final GraphQLInputObjectType type,
-                                          @Nonnull final Map<GraphQLType, String> typeMap )
+                                          @Nonnull final Map<GraphQLNamedType, String> typeMap )
   {
     return MethodSpec.methodBuilder( "maybeFrom" )
       .addModifiers( Modifier.PUBLIC, Modifier.STATIC )
@@ -636,7 +637,7 @@ public class JavaServerGenerator
 
   @Nonnull
   private MethodSpec buildInputFrom( @Nonnull final GraphQLInputObjectType type,
-                                     @Nonnull final Map<GraphQLType, String> typeMap,
+                                     @Nonnull final Map<GraphQLNamedType, String> typeMap,
                                      @Nonnull final Map<GraphQLInputObjectField, TypeName> fieldTypes )
   {
     final MethodSpec.Builder method = MethodSpec.methodBuilder( "from" );
