@@ -14,7 +14,7 @@ public abstract class Generator
   @Documented
   @Target( ElementType.TYPE )
   @Retention( RetentionPolicy.RUNTIME )
-  public static @interface MetaData
+  public @interface MetaData
   {
     String name() default "<default>";
   }
