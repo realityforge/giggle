@@ -4,9 +4,15 @@ This document is essentially a list of shorthand notes describing work yet to be
 Unfortunately it is not complete enough for other people to pick work off the list and
 complete as there is too much un-said.
 
+* Compile fragments such that they disappear in the query
+
 * Convert between plural values in response and singular type. Maybe should name it with the underlying types name
   unless an alias is present? Probably we use the type if there is only one field of that type, otherwise we prefix
   type with name and/or alias or some other combination.
+
+* Update to the latest graphql-java that supposedly fixes https://github.com/graphql-java/graphql-java/issues/1642
+  which means we can remove our custom code to check that condition
+  - https://github.com/graphql-java/graphql-java/releases/tag/v14.0
 
 * Add support for operations that returns
   - a scalar
