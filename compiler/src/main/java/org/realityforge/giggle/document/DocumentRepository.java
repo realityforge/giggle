@@ -2,7 +2,6 @@ package org.realityforge.giggle.document;
 
 import graphql.language.Document;
 import graphql.language.Field;
-import graphql.language.FragmentDefinition;
 import graphql.language.OperationDefinition;
 import graphql.language.SelectionSet;
 import graphql.parser.Parser;
@@ -16,10 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import org.realityforge.giggle.util.GraphQLUtil;
 
@@ -53,7 +49,6 @@ public final class DocumentRepository
       document = document.transform( b -> mergeComponent( b, component ) );
     }
     final List<ValidationError> errors = _validator.validateDocument( schema, document );
-    validateFragmentNamesUnique( document, errors );
     validateNoAnonymousOperations( document, errors );
     validateTopLevelFieldsMatchOperationType( schema, document, errors );
     if ( errors.isEmpty() )
@@ -63,30 +58,6 @@ public final class DocumentRepository
     else
     {
       throw new DocumentValidateException( errors );
-    }
-  }
-
-  private void validateFragmentNamesUnique( @Nonnull final Document document,
-                                            @Nonnull final List<ValidationError> errors )
-  {
-    // TODO(graphql-java/graphql-java#1557): It should be an error if a single document contains multiple
-    //  fragments with the same name. graphql-java should verify this but does not at the moment so we
-    //  perform the validation.
-    final Map<String, FragmentDefinition> fragmentMap = new HashMap<>();
-    for ( final FragmentDefinition fragment : document.getDefinitionsOfType( FragmentDefinition.class ) )
-    {
-      final String name = fragment.getName();
-      final FragmentDefinition existing = fragmentMap.get( name );
-      if ( null == existing )
-      {
-        fragmentMap.put( name, fragment );
-      }
-      else
-      {
-        errors.add( new ValidationError( ValidationErrorType.FragmentCycle,
-                                         Arrays.asList( existing.getSourceLocation(), fragment.getSourceLocation() ),
-                                         "Multiple fragments defined with the name '" + name + "'" ) );
-      }
     }
   }
 

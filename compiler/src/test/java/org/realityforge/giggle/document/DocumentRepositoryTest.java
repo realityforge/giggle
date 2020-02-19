@@ -1,6 +1,7 @@
 package org.realityforge.giggle.document;
 
 import gir.io.FileUtil;
+import graphql.ErrorType;
 import graphql.language.Definition;
 import graphql.language.Document;
 import graphql.language.FragmentDefinition;
@@ -200,8 +201,10 @@ public class DocumentRepositoryTest
     final List<ValidationError> errors = exception.getErrors();
     assertEquals( errors.size(), 1 );
     final ValidationError error = errors.get( 0 );
+    assertEquals( error.getErrorType(), ErrorType.ValidationError );
+    assertEquals( error.getValidationErrorType(), ValidationErrorType.DuplicateFragmentName );
     assertEquals( error.getMessage(),
-                  "Validation error of type FragmentCycle: Multiple fragments defined with the name 'NameParts'" );
+                  "Validation error of type DuplicateFragmentName: There can be only one fragment named 'NameParts' @ 'NameParts'" );
   }
 
   @Test
