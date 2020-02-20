@@ -17,8 +17,10 @@ import graphql.language.Comment;
 import graphql.language.Definition;
 import graphql.language.Document;
 import graphql.language.Field;
+import graphql.language.FragmentDefinition;
 import graphql.language.NonNullType;
 import graphql.language.OperationDefinition;
+import graphql.language.SelectionSet;
 import graphql.language.SelectionSetContainer;
 import graphql.language.VariableDefinition;
 import graphql.schema.GraphQLDirective;
@@ -46,6 +48,7 @@ import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 import org.realityforge.giggle.generator.Generator;
 import org.realityforge.giggle.generator.GeneratorContext;
+import org.realityforge.giggle.generator.PropertyDef;
 import org.realityforge.giggle.generator.java.AbstractJavaGenerator;
 import org.realityforge.giggle.generator.java.JavaGenUtil;
 import org.realityforge.giggle.generator.java.NamingUtil;
@@ -56,8 +59,20 @@ import org.realityforge.giggle.util.GraphQLUtil;
 public class JavaClientGenerator
   extends AbstractJavaGenerator
 {
+  private static final String INLINE_FRAGMENTS_KEY = "java.inline_fragments";
   private static final String GRAPH_QL_ERROR_TYPE_NAME = "GraphQLError";
   public static final String GRAPH_QL_EXCEPTION_TYPE_NAME = "GraphQLException";
+
+  @Nonnull
+  @Override
+  public List<PropertyDef> getSupportedProperties()
+  {
+    final List<PropertyDef> properties = new ArrayList<>();
+    properties.add( new PropertyDef( INLINE_FRAGMENTS_KEY,
+                                     false,
+                                     "A boolean flag that indicates whether fragments should be inlined into the query. In most cases this behaviour is desired as it will produce a smaller query string. If unspecified then this defaults to 'true'" ) );
+    return properties;
+  }
 
   @Override
   public void generate( @Nonnull final GeneratorContext context )
@@ -309,11 +324,62 @@ public class JavaClientGenerator
                                     @Nonnull final FragmentCollector collector,
                                     @Nonnull final OperationDefinition operation )
   {
-    final List<Definition> definitions =
-      new ArrayList<>( collector.collectFragments( operation.getSelectionSet() ) );
+    final List<FragmentDefinition> requiredFragments = collector.collectFragments( operation.getSelectionSet() );
+    final List<Definition> definitions = new ArrayList<>( requiredFragments );
     definitions.add( operation );
     final Document document = context.getDocument().transform( b -> b.definitions( definitions ) );
-    return AstPrinter.printAstCompact( document );
+
+    final boolean noInlineFragments = "false".equals( context.getProperty( INLINE_FRAGMENTS_KEY ) );
+
+    final OperationDefinition newOperation =
+      operation.transform( c -> c.selectionSet( getSelectionSet( document, operation, noInlineFragments ) ) );
+
+    final Document.Builder documentBuilder = Document.newDocument();
+    if ( noInlineFragments )
+    {
+      documentBuilder.definitions( new ArrayList<>( requiredFragments ) );
+    }
+    documentBuilder.definition( newOperation );
+    return AstPrinter.printAstCompact( documentBuilder.build() );
+  }
+
+  private SelectionSet getSelectionSet( @Nonnull final Document document,
+                                        @Nonnull final OperationDefinition operation,
+                                        final boolean noInlineFragments )
+  {
+    final SelectionSet selectionSet = operation.getSelectionSet();
+    return noInlineFragments ? selectionSet : merge( new FieldCollector( document ), selectionSet );
+  }
+
+  @Nonnull
+  private SelectionSet merge( @Nonnull final FieldCollector fieldCollector,
+                              @Nonnull final SelectionSet... selectionSets )
+  {
+    final MergedSelectionSet mergedSelectionSet = fieldCollector.collectFields( selectionSets );
+    final SelectionSet.Builder builder = SelectionSet.newSelectionSet();
+    for ( final MergedField mergedField : mergedSelectionSet.getSubFields().values() )
+    {
+      final Field singleField = mergedField.getSingleField();
+      final Field.Builder fieldBuilder;
+      if ( singleField.getChildren().isEmpty() )
+      {
+        fieldBuilder = Field.newField( singleField.getName() );
+      }
+      else
+      {
+        final SelectionSet selectionSet =
+          merge( fieldCollector,
+                 mergedField.getFields().stream().map( Field::getSelectionSet ).toArray( SelectionSet[]::new ) );
+        fieldBuilder = Field.newField( singleField.getName(), selectionSet );
+      }
+      builder.selection( fieldBuilder
+                           .arguments( mergedField.getArguments() )
+                           .directives( singleField.getDirectives() )
+                           .ignoredChars( singleField.getIgnoredChars() )
+                           .build() );
+
+    }
+    return builder.build();
   }
 
   private void emitOperationType( @Nonnull final GeneratorContext context,

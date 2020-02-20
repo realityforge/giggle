@@ -1,4 +1,4 @@
-package com.example.multiple_operations;
+package com.example.named_fragments;
 
 import java.util.Objects;
 import javax.annotation.Generated;
@@ -6,11 +6,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
-public final class SpecificEventQuery {
+public final class EventCodesQuery {
   @Nonnull
-  private static final String QUERY = "query specificEvent {event(id:1) {id name}}";
+  private static final String QUERY = "query eventCodes {event {code name}}";
 
-  private SpecificEventQuery() {
+  private EventCodesQuery() {
   }
 
   public static final class Question {
@@ -22,7 +22,7 @@ public final class SpecificEventQuery {
 
   public static final class Answer {
     @Nullable
-    private SpecificEventResponse data;
+    private EventCodesResponse data;
 
     @Nullable
     private GraphQLError[] errors;
@@ -32,11 +32,11 @@ public final class SpecificEventQuery {
     }
 
     @Nonnull
-    public SpecificEventResponse getData() {
+    public EventCodesResponse getData() {
       return Objects.requireNonNull( data );
     }
 
-    public void setData(@Nullable final SpecificEventResponse data) {
+    public void setData(@Nullable final EventCodesResponse data) {
       this.data = data;
     }
 

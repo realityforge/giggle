@@ -57,6 +57,8 @@ public class MainTest
                   "Supported Generators:\n" +
                   "  java-server\n" +
                   "  java-client\n" +
+                  "   Supported Properties:\n" +
+                  "   - java.inline_fragments: A boolean flag that indicates whether fragments should be inlined into the query. In most cases this behaviour is desired as it will produce a smaller query string. If unspecified then this defaults to 'true'\n" +
                   "  java-cdi-client\n" +
                   "   Supported Properties:\n" +
                   "   - cdi.service.name (required): The name of the generated service class\n" +

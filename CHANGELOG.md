@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Change the default behaviour of the `java-client` generators so that the query string inlines fragments. This usually results in a significantly smaller query string but may result in a larger query if the fragment is reused multiple times within the same operation. This behaviour can be reverted to the previous behaviour by setting the property `java.inline_fragments` to `false`.
+
 ### [v0.09](https://github.com/realityforge/giggle/tree/v0.09) (2020-02-19) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.08...v0.09)
 
 * Upgrade the `org.realityforge.guiceyloops` artifact to version `0.106`.

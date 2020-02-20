@@ -1,9 +1,35 @@
 fragment EventName on Event {
   name
 }
+
+fragment EventSpec on Event {
+  id
+  name
+}
+
+fragment EventCode on Event {
+  code
+  name
+}
+
 query specificEvent {
   event(id: 1) {
     id
+    ...EventSpec
+    ...EventName
+  }
+}
+
+query eventCodes {
+  event {
+    ...EventCode
+    ...EventName
+  }
+}
+
+query eventCodesByID($id: ID!) {
+  event(id: $id) {
+    ...EventCode
     ...EventName
   }
 }

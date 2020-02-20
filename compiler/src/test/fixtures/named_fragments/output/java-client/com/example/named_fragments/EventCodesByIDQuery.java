@@ -6,14 +6,40 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
-public final class SpecificEventQuery {
+public final class EventCodesByIDQuery {
   @Nonnull
-  private static final String QUERY = "query specificEvent {event(id:1) {id name}}";
+  private static final String QUERY = "query eventCodesByID($id:ID!) {event(id:$id) {code name}}";
 
-  private SpecificEventQuery() {
+  private EventCodesByIDQuery() {
+  }
+
+  public static final class Variables {
+    @Nonnull
+    private final String id;
+
+    private Variables(@Nonnull final String id) {
+      this.id = Objects.requireNonNull( id );
+    }
+
+    @Nonnull
+    public String getId() {
+      return id;
+    }
   }
 
   public static final class Question {
+    @Nonnull
+    private final Variables variables;
+
+    public Question(@Nonnull final String id) {
+      this.variables = new Variables( id );
+    }
+
+    @Nonnull
+    public Variables getVariables() {
+      return variables;
+    }
+
     @Nonnull
     public String getQuery() {
       return QUERY;
@@ -22,7 +48,7 @@ public final class SpecificEventQuery {
 
   public static final class Answer {
     @Nullable
-    private SpecificEventResponse data;
+    private EventCodesByIDResponse data;
 
     @Nullable
     private GraphQLError[] errors;
@@ -32,11 +58,11 @@ public final class SpecificEventQuery {
     }
 
     @Nonnull
-    public SpecificEventResponse getData() {
+    public EventCodesByIDResponse getData() {
       return Objects.requireNonNull( data );
     }
 
-    public void setData(@Nullable final SpecificEventResponse data) {
+    public void setData(@Nullable final EventCodesByIDResponse data) {
       this.data = data;
     }
 

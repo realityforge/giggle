@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class OtherEventQuery {
   @Nonnull
-  private static final String QUERY = "fragment EventName2 on Event {name} fragment EventDesignator on Event {id name type} query otherEvent {event(id:2) {id ...EventName2 ...EventDesignator}}";
+  private static final String QUERY = "query otherEvent {event(id:2) {id name type}}";
 
   private OtherEventQuery() {
   }

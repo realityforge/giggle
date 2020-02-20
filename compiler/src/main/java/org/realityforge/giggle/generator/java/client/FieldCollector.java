@@ -32,10 +32,13 @@ final class FieldCollector
       .collect( Collectors.toMap( FragmentDefinition::getName, v -> v, ( a, b ) -> b ) );
   }
 
-  MergedSelectionSet collectFields( @Nonnull final SelectionSet selectionSet )
+  MergedSelectionSet collectFields( @Nonnull final SelectionSet... selectionSets )
   {
     final Map<String, MergedField> subFields = new LinkedHashMap<>();
-    collectFields( selectionSet, new ArrayList<>(), subFields );
+    for ( final SelectionSet selectionSet : selectionSets )
+    {
+      collectFields( selectionSet, new ArrayList<>(), subFields );
+    }
     return newMergedSelectionSet().subFields( subFields ).build();
   }
 

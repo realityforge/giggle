@@ -1,4 +1,4 @@
-package com.example.multiple_operations;
+package com.example.non_inlined_fragments;
 
 import java.util.Objects;
 import javax.annotation.Generated;
@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 @Generated("org.realityforge.giggle.Main")
 public final class SpecificEventQuery {
   @Nonnull
-  private static final String QUERY = "query specificEvent {event(id:1) {id name}}";
+  private static final String QUERY = "fragment EventSpec on Event {id name} fragment EventName on Event {name} query specificEvent {event(id:1) {id ...EventSpec ...EventName}}";
 
   private SpecificEventQuery() {
   }
