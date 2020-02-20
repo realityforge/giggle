@@ -129,11 +129,11 @@ public class FixtureTest
   {
     final String libraries = System.getProperty( "giggle.fixture." + generator + ".libs" );
     return null == libraries ?
-           new ArrayList<>(  ) :
+           new ArrayList<>() :
            Arrays
-      .stream( libraries.split( File.pathSeparator ) )
-      .map( File::new )
-      .collect( Collectors.toList() );
+             .stream( libraries.split( File.pathSeparator ) )
+             .map( File::new )
+             .collect( Collectors.toList() );
   }
 
   private void loadDefines( @Nonnull final Map<String, String> defines, @Nonnull final Path path )
