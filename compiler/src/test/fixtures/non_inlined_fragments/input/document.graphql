@@ -1,14 +1,19 @@
+# Here is some wonderful comments
 fragment EventName on Event {
+  # Here is some wonderful comments
   name
 }
 
+# Here is some wonderful comments
 fragment EventSpec on Event {
   id
   name
 }
 
 query specificEvent {
+  # Here is some wonderful comments
   event(id: 1) {
+    # Here is some wonderful comments
     id
     ...EventSpec
     ...EventName

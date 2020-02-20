@@ -5,6 +5,9 @@ import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class EventCodesResponse {
+  /**
+   * Some comments on event field selection
+   */
   @Nullable
   private Event event;
 
@@ -18,9 +21,15 @@ public final class EventCodesResponse {
   }
 
   public static final class Event {
+    /**
+     * Some comments on EventCode.code field
+     */
     @Nullable
     private String code;
 
+    /**
+     * Some comments on EventCode.name field
+     */
     @Nullable
     private String name;
 

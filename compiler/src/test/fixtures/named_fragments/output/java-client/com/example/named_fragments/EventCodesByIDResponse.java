@@ -18,9 +18,15 @@ public final class EventCodesByIDResponse {
   }
 
   public static final class Event {
+    /**
+     * Some comments on EventCode.code field
+     */
     @Nullable
     private String code;
 
+    /**
+     * Some comments on EventCode.name field
+     */
     @Nullable
     private String name;
 

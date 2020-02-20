@@ -8,10 +8,13 @@ fragment EventSpec on Event {
 }
 
 fragment EventCode on Event {
+  # Some comments on EventCode.code field
   code
+  # Some comments on EventCode.name field
   name
 }
 
+# Some wonderful comments on specificEvent query
 query specificEvent {
   event(id: 1) {
     id
@@ -21,8 +24,10 @@ query specificEvent {
 }
 
 query eventCodes {
+  # Some comments on event field selection
   event {
     ...EventCode
+    # Some comments on EventName fragment selection
     ...EventName
   }
 }

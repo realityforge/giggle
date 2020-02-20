@@ -6,6 +6,9 @@ import javax.annotation.Nullable;
 
 @Generated("org.realityforge.giggle.Main")
 public final class SpecificEventResponse {
+  /**
+   * Here is some wonderful comments
+   */
   @Nullable
   private Event event;
 
@@ -19,6 +22,9 @@ public final class SpecificEventResponse {
   }
 
   public static final class Event {
+    /**
+     * Here is some wonderful comments
+     */
     @Nonnull
     private String id;
 
