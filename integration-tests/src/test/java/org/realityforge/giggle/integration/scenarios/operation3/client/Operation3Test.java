@@ -10,7 +10,7 @@ public class Operation3Test
   @Test
   public void operationDocument()
   {
-    assertEquals( new EventQuery.Question( "X" ).getQuery(), "query event($id:ID!) {event(id:$id) {id name}}" );
+    assertEquals( new EventQuery.Question( "X" ).getQuery(), "query q($id:ID!) {event(id:$id) {id name}}" );
   }
 
   @Test
@@ -34,7 +34,7 @@ public class Operation3Test
   public void EventQuery_Variables()
   {
     final EventQuery.Question question = new EventQuery.Question( "73" );
-    assertEquals( question.getQuery(), "query event($id:ID!) {event(id:$id) {id name}}" );
+    assertEquals( question.getQuery(), "query q($id:ID!) {event(id:$id) {id name}}" );
     final EventQuery.Variables variables = question.getVariables();
     assertEquals( variables.getId(), "73" );
   }

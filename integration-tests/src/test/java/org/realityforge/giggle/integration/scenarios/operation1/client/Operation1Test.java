@@ -22,7 +22,7 @@ public class Operation1Test
   @Test
   public void operationDocument()
   {
-    assertEquals( new SpecificEventQuery.Question().getQuery(), "query specificEvent {event(id:1) {id name type}}" );
+    assertEquals( new SpecificEventQuery.Question().getQuery(), "query {event(id:1) {id name type}}" );
   }
 
   @Test

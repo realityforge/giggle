@@ -10,10 +10,8 @@ public class Operation2Test
   @Test
   public void operationDocument()
   {
-    assertEquals( new SpecificEventQuery.Question().getQuery(),
-                  "fragment EventName on Event {name} query specificEvent {event(id:1) {id ...EventName}}" );
-    assertEquals( new OtherEventQuery.Question().getQuery(),
-                  "fragment EventName on Event {name} fragment EventType on Event {type} query otherEvent {event(id:2) {id ...EventName ...EventType}}" );
+    assertEquals( new SpecificEventQuery.Question().getQuery(), "query {event(id:1) {id name}}" );
+    assertEquals( new OtherEventQuery.Question().getQuery(), "query {event(id:2) {id name type}}" );
   }
 
   @Test
