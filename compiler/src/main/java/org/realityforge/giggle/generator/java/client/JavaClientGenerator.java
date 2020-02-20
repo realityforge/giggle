@@ -60,6 +60,7 @@ public class JavaClientGenerator
   extends AbstractJavaGenerator
 {
   private static final String INLINE_FRAGMENTS_KEY = "java.inline_fragments";
+  private static final String OMIT_OPERATION_NAME_KEY = "java.omit_operation_name";
   private static final String GRAPH_QL_ERROR_TYPE_NAME = "GraphQLError";
   public static final String GRAPH_QL_EXCEPTION_TYPE_NAME = "GraphQLException";
 
@@ -71,6 +72,9 @@ public class JavaClientGenerator
     properties.add( new PropertyDef( INLINE_FRAGMENTS_KEY,
                                      false,
                                      "A boolean flag that indicates whether fragments should be inlined into the query. In most cases this behaviour is desired as it will produce a smaller query string. If unspecified then this defaults to 'true'" ) );
+    properties.add( new PropertyDef( OMIT_OPERATION_NAME_KEY,
+                                     false,
+                                     "A boolean flag that indicates whether operation names should be omitted/compressed to produce smaller query strings. If unspecified then this defaults to 'true'" ) );
     return properties;
   }
 
@@ -330,9 +334,13 @@ public class JavaClientGenerator
     final Document document = context.getDocument().transform( b -> b.definitions( definitions ) );
 
     final boolean noInlineFragments = "false".equals( context.getProperty( INLINE_FRAGMENTS_KEY ) );
+    final boolean omitOperationName = !"false".equals( context.getProperty( OMIT_OPERATION_NAME_KEY ) );
 
     final OperationDefinition newOperation =
-      operation.transform( c -> c.selectionSet( getSelectionSet( document, operation, noInlineFragments ) ) );
+      operation.transform( c -> c
+        .name( getOperationName( operation, omitOperationName ) )
+        .selectionSet( getSelectionSet( document, operation, noInlineFragments ) )
+      );
 
     final Document.Builder documentBuilder = Document.newDocument();
     if ( noInlineFragments )
@@ -341,6 +349,27 @@ public class JavaClientGenerator
     }
     documentBuilder.definition( newOperation );
     return AstPrinter.printAstCompact( documentBuilder.build() );
+  }
+
+  @Nullable
+  private String getOperationName( @Nonnull final OperationDefinition operation,
+                                   final boolean omitOperationName )
+  {
+    if ( omitOperationName )
+    {
+      if ( operation.getVariableDefinitions().isEmpty() )
+      {
+        return null;
+      }
+      else
+      {
+        return operation.getOperation().name().substring( 0, 1 ).toLowerCase();
+      }
+    }
+    else
+    {
+      return operation.getName();
+    }
   }
 
   private SelectionSet getSelectionSet( @Nonnull final Document document,

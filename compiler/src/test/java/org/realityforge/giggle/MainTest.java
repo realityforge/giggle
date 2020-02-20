@@ -59,6 +59,7 @@ public class MainTest
                   "  java-client\n" +
                   "   Supported Properties:\n" +
                   "   - java.inline_fragments: A boolean flag that indicates whether fragments should be inlined into the query. In most cases this behaviour is desired as it will produce a smaller query string. If unspecified then this defaults to 'true'\n" +
+                  "   - java.omit_operation_name: A boolean flag that indicates whether operation names should be omitted/compressed to produce smaller query strings. If unspecified then this defaults to 'true'\n" +
                   "  java-cdi-client\n" +
                   "   Supported Properties:\n" +
                   "   - cdi.service.name (required): The name of the generated service class\n" +
