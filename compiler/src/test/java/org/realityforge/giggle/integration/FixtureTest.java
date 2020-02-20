@@ -26,6 +26,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.realityforge.giggle.AbstractTest;
 import org.realityforge.giggle.document.DocumentRepository;
+import org.realityforge.giggle.document.DocumentValidateException;
 import org.realityforge.giggle.generator.GeneratorRepository;
 import org.realityforge.giggle.generator.GlobalGeneratorContext;
 import org.realityforge.giggle.schema.SchemaRepository;
@@ -77,10 +78,7 @@ public class FixtureTest
     final DocumentRepository documentRepository = new DocumentRepository();
 
     final GraphQLSchema schema = schemaRepository.getSchema( schemaFiles );
-    final Document document =
-      documentFiles.isEmpty() ?
-      Document.newDocument().build() :
-      documentRepository.getDocument( schema, documentFiles );
+    final Document document = getDocument( documentRepository, schema, documentFiles );
     final Map<String, String> typeMapping =
       typeMappingFiles.isEmpty() ? Collections.emptyMap() : MappingUtil.getMapping( typeMappingFiles );
     final Map<String, String> fragmentMapping =
@@ -122,6 +120,29 @@ public class FixtureTest
     ensureGeneratedCodeCompiles( javaFiles, classpathEntries );
 
     assertDirectoriesEquivalent( outputDirectory, generatorOutputDir );
+  }
+
+  @Nonnull
+  private Document getDocument( final DocumentRepository documentRepository,
+                                final GraphQLSchema schema,
+                                final List<Path> documentFiles )
+  {
+    if ( documentFiles.isEmpty() )
+    {
+      return Document.newDocument().build();
+    }
+    else
+    {
+      try
+      {
+        return documentRepository.getDocument( schema, documentFiles );
+      }
+      catch ( final DocumentValidateException e )
+      {
+        fail( "Failed to read document due to " + e.getErrors() );
+        throw e;
+      }
+    }
   }
 
   @Nonnull
