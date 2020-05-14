@@ -1,6 +1,6 @@
 # giggle: Generate artifacts from a GraphQL schema and operations
 
-[![Build Status](https://api.travis-ci.com/realityforge/giggle.svg?branch=master)](http://travis-ci.org/realityforge/giggle)
+[![Build Status](https://api.travis-ci.com/realityforge/giggle.svg?branch=master)](http://travis-ci.com/realityforge/giggle)
 [<img src="https://img.shields.io/maven-central/v/org.realityforge.giggle/giggle.svg?label=latest%20release"/>](https://search.maven.org/search?q=g:org.realityforge.giggle%20a:giggle)
 
 ## What is giggle?
