@@ -68,7 +68,7 @@ public final class GeneratorContext
       throw new IllegalStateException( message );
     }
     final String value = _context.getDefines().get( name );
-    if( null == value )
+    if ( null == value )
     {
       final String message =
         "Generator named '" + _generator.getName() + "' accessed required property named '" + name +

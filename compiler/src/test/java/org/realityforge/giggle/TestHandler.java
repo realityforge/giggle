@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 class TestHandler
   extends Handler
 {
-  private ArrayList<LogRecord> _records = new ArrayList<>();
+  private final ArrayList<LogRecord> _records = new ArrayList<>();
 
   @Override
   public void publish( final LogRecord record )

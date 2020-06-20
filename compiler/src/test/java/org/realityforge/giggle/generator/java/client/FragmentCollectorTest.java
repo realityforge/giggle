@@ -211,7 +211,6 @@ public class FragmentCollectorTest
                   Collections.singletonList( "Nameable" ) );
   }
 
-
   @Nonnull
   private List<FragmentDefinition> collectFragments( @Nonnull final Document document,
                                                      @Nonnull final String operationName )

@@ -52,7 +52,8 @@ public class InputTypeTest
     assertEquals( observations.get( 0 ).getValue(), 23 );
     assertEquals( observations.get( 1 ).getType(), "Windspeed" );
     assertEquals( observations.get( 1 ).getValue(), 14 );
-    assertEquals( input.toString(), "ObservationsInput[name=Ballarat, observations=[ObservationInput[type=Temp, value=23], ObservationInput[type=Windspeed, value=14]]]" );
+    assertEquals( input.toString(),
+                  "ObservationsInput[name=Ballarat, observations=[ObservationInput[type=Temp, value=23], ObservationInput[type=Windspeed, value=14]]]" );
   }
 
   @Test

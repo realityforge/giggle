@@ -90,7 +90,8 @@ public class GeneratorRepositoryTest
 
     final GenerateException exception =
       expectThrows( GenerateException.class,
-                    () -> repository.getGenerator( name ).generate( newContext( Files.createTempDirectory( "giggle") ) ) );
+                    () -> repository.getGenerator( name )
+                      .generate( newContext( Files.createTempDirectory( "giggle" ) ) ) );
 
     assertEquals( exception.getName(), name );
     assertTrue( exception.getCause() instanceof NumberFormatException );
@@ -105,7 +106,7 @@ public class GeneratorRepositoryTest
     repository.registerGenerator( generator );
 
     assertEquals( generator._generateCount, 0 );
-    repository.getGenerator( "test" ).generate( newContext( Files.createTempDirectory( "giggle") ) );
+    repository.getGenerator( "test" ).generate( newContext( Files.createTempDirectory( "giggle" ) ) );
     assertEquals( generator._generateCount, 1 );
   }
 
