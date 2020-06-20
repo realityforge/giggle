@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public final class GlobalGeneratorContext
 {
