@@ -41,7 +41,7 @@ public class FixtureTest
   @DataProvider( name = "fixtureTests" )
   public Object[][] fixtureTests()
   {
-    final ArrayList<Object[]> results = new ArrayList<>();
+    final List<Object[]> results = new ArrayList<>();
     final File file = fixtureDir().toFile();
     final File[] dirs = file.listFiles( File::isDirectory );
     if ( null != dirs )
