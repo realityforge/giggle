@@ -9,6 +9,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -41,6 +42,8 @@ public class EventServiceImpl implements EventService {
       } else {
         throw new GraphQLException( "Error invoking GraphQL endpoint. HTTP Status: " + response.getStatusInfo() );
       }
+    } catch ( final ProcessingException pe  ) {
+      throw new GraphQLException( "Communication error invoking the GraphQL endpoint.", pe );
     }
   }
 

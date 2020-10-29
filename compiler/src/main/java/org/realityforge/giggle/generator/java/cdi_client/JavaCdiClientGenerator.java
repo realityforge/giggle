@@ -56,6 +56,7 @@ public class JavaCdiClientGenerator
   private static final ClassName INVOCATION_BUILDER_TYPE =
     ClassName.get( "javax.ws.rs.client", "Invocation", "Builder" );
   private static final ClassName ENTITY_TYPE = ClassName.get( "javax.ws.rs.client", "Entity" );
+  private static final ClassName PROCESSING_EXCEPTION = ClassName.get( "javax.ws.rs", "ProcessingException" );
   private static final ClassName KEYCLOAK_TYPE =
     ClassName.get( "org.realityforge.keycloak.client.authfilter", "Keycloak" );
 
@@ -326,7 +327,10 @@ public class JavaCdiClientGenerator
                        "Error invoking GraphQL endpoint. HTTP Status: " );
     body.endControlFlow();
     code.add( body.build() );
-
+    code.nextControlFlow( "catch ( final $T pe  )", PROCESSING_EXCEPTION );
+    code.addStatement( "throw new $T( $S, pe )",
+                       getGraphQLExceptionClassName( context ),
+                       "Communication error invoking the GraphQL endpoint." );
     code.endControlFlow();
     method.addCode( code.build() );
     return method.build();
