@@ -1,6 +1,6 @@
 # Change Log
 
-### Unreleased
+### [v0.11](https://github.com/realityforge/giggle/tree/v0.11) (2020-10-29) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.10...v0.11)
 
 * Upgrade the `com.squareup` artifact to version `1.13.0`.
 * Generate a GraphQLException if we get http exceptions or timeouts when communicating with the GraphQL endpoint.
