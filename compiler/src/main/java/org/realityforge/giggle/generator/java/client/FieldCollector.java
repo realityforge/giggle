@@ -72,7 +72,8 @@ final class FieldCollector
 
   private void collectField( @Nonnull final Map<String, MergedField> fields, @Nonnull final Field field )
   {
-    final String name = null != field.getAlias() ? field.getAlias() : field.getName();
+    final String alias = field.getAlias();
+    final String name = null != alias ? alias : field.getName();
     final MergedField existing = fields.get( name );
     if ( null != existing )
     {
