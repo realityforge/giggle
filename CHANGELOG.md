@@ -1,6 +1,6 @@
 # Change Log
 
-### Unreleased
+### [v0.12](https://github.com/realityforge/giggle/tree/v0.12) (2020-11-16) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.11...v0.12)
 
 * Ensure that aliases are retained when queries fragments are compressed. A bug resulted in aliases being omitted and invalid queries being passed to the server.
 
