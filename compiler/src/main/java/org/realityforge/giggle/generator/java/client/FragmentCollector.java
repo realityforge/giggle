@@ -47,7 +47,7 @@ final class FragmentCollector
       {
         if ( selection instanceof SelectionSetContainer )
         {
-          collectFragments( ( (SelectionSetContainer) selection ).getSelectionSet(), visitedFragments, fragments );
+          collectFragments( ( (SelectionSetContainer<?>) selection ).getSelectionSet(), visitedFragments, fragments );
         }
         else if ( selection instanceof FragmentSpread )
         {
