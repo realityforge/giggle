@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Ensure that aliases are retained when queries fragments are compressed. A bug resulted in aliases being omitted and invalid queries being passed to the server.
+
 ### [v0.11](https://github.com/realityforge/giggle/tree/v0.11) (2020-10-29) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.10...v0.11)
 
 * Upgrade the `com.squareup` artifact to version `1.13.0`.

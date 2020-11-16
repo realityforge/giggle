@@ -395,6 +395,7 @@ public class JavaClientGenerator
         fieldBuilder = Field.newField( singleField.getName(), selectionSet );
       }
       builder.selection( fieldBuilder
+                           .alias( singleField.getAlias() )
                            .arguments( mergedField.getArguments() )
                            .directives( singleField.getDirectives() )
                            .ignoredChars( singleField.getIgnoredChars() )

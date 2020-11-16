@@ -15,12 +15,24 @@ public final class SpecificEventResponse {
   private Event event;
 
   @Nullable
+  private Event2 event2;
+
+  @Nullable
   public Event getEvent() {
     return event;
   }
 
   public void setEvent(@Nullable final Event event) {
     this.event = event;
+  }
+
+  @Nullable
+  public Event2 getEvent2() {
+    return event2;
+  }
+
+  public void setEvent2(@Nullable final Event2 event2) {
+    this.event2 = event2;
   }
 
   public static final class Event {
@@ -35,6 +47,9 @@ public final class SpecificEventResponse {
 
     @Nullable
     private LocalDate startedAt;
+
+    @Nullable
+    private LocalDate startedAt2;
 
     @Nullable
     private LocalDateTime reportedAt;
@@ -76,12 +91,35 @@ public final class SpecificEventResponse {
     }
 
     @Nullable
+    public LocalDate getStartedAt2() {
+      return startedAt2;
+    }
+
+    public void setStartedAt2(@Nullable final LocalDate startedAt2) {
+      this.startedAt2 = startedAt2;
+    }
+
+    @Nullable
     public LocalDateTime getReportedAt() {
       return reportedAt;
     }
 
     public void setReportedAt(@Nullable final LocalDateTime reportedAt) {
       this.reportedAt = reportedAt;
+    }
+  }
+
+  public static final class Event2 {
+    @Nonnull
+    private String id;
+
+    @Nonnull
+    public String getId() {
+      return id;
+    }
+
+    public void setId(@Nonnull final String id) {
+      this.id = id;
     }
   }
 }

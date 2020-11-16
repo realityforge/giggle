@@ -5,6 +5,11 @@ query specificEvent {
     name
     type
     startedAt
+    startedAt2: startedAt
     reportedAt
+  }
+
+  event2: event(id: 2) {
+    id
   }
 }
