@@ -356,14 +356,9 @@ public class JavaClientGenerator
   {
     if ( omitOperationName )
     {
-      if ( operation.getVariableDefinitions().isEmpty() )
-      {
-        return null;
-      }
-      else
-      {
-        return operation.getOperation().name().substring( 0, 1 ).toLowerCase();
-      }
+      return operation.getVariableDefinitions().isEmpty() ?
+             null :
+             operation.getOperation().name().substring( 0, 1 ).toLowerCase();
     }
     else
     {
