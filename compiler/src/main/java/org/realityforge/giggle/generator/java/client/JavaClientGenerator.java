@@ -352,8 +352,7 @@ public class JavaClientGenerator
   }
 
   @Nullable
-  private String getOperationName( @Nonnull final OperationDefinition operation,
-                                   final boolean omitOperationName )
+  private String getOperationName( @Nonnull final OperationDefinition operation, final boolean omitOperationName )
   {
     if ( omitOperationName )
     {
