@@ -339,8 +339,7 @@ public class JavaClientGenerator
     final OperationDefinition newOperation =
       operation.transform( c -> c
         .name( getOperationName( operation, omitOperationName ) )
-        .selectionSet( getSelectionSet( document, operation, noInlineFragments ) )
-      );
+        .selectionSet( getSelectionSet( document, operation, noInlineFragments ) ) );
 
     final Document.Builder documentBuilder = Document.newDocument();
     if ( noInlineFragments )
