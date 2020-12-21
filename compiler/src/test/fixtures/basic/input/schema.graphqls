@@ -58,4 +58,5 @@ type Event {
   description: String
   startedAt: LocalDate
   reportedAt: LocalDateTime
+  notes(noteType: String!): String
 }

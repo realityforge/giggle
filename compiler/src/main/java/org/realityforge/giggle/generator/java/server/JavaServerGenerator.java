@@ -85,7 +85,7 @@ public class JavaServerGenerator
             final String argsName =
               "Query".equals( name ) || "Mutation".equals( name ) ?
               definition.getName() :
-              container.getName() + definition.getName();
+              container.getName() + NamingUtil.uppercaseFirstCharacter( definition.getName() );
             emitArgs( context, fullTypeMap, NamingUtil.uppercaseFirstCharacter( argsName ) + "Args", arguments );
           }
         }
