@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.17`.
+
 ### [v0.13](https://github.com/realityforge/giggle/tree/v0.13) (2020-12-21) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.12...v0.13)
 
 * Ensure that the generated `Args` class uses a camel-case name in types other than `Query` and `Mutation` where the type is prefixed to the field name.
