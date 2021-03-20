@@ -3,6 +3,8 @@ require 'buildr/gpg'
 require 'buildr/single_intermediate_layout'
 require 'buildr/top_level_generate_dir'
 
+Buildr::MavenCentral.define_publish_tasks(:profile_name => 'org.realityforge', :username => 'realityforge')
+
 PACKAGED_DEPS =
   [
     :javax_annotation,
