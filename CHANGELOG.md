@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Update the `org.realityforge.gir` artifact to version `0.12`.
 * Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.17`.
 
 ### [v0.13](https://github.com/realityforge/giggle/tree/v0.13) (2020-12-21) · [Full Changelog](https://github.com/realityforge/giggle/compare/v0.12...v0.13)
