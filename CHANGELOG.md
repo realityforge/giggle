@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Update the `org.realityforge.guiceyloops` artifact to version `0.110`.
 * Update the `org.realityforge.gir` artifact to version `0.12`.
 * Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.17`.
 
